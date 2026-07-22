@@ -24,6 +24,12 @@ const shots: Shot[] = [
   { src: "/images/abn-real/abn-ig-10-hd.jpg", title: "Modern Kitchen Interior", category: "Kitchen", span: "" },
   { src: "/images/abn-real/abn-ig-12-hd.jpg", title: "Furnished Lounge", category: "Living", span: "" },
   { src: "/images/abn-real/abn-ig-9-hd.jpg", title: "Bright Bedroom Suite", category: "Bedroom", span: "" },
+  { src: "/images/properties/tantra4-living.jpg", title: "4 Bedroom Chandelier Lounge", category: "Living", span: "lg:col-span-2" },
+  { src: "/images/properties/tantra4-atrium.jpg", title: "Double-Height Atrium", category: "Living", span: "" },
+  { src: "/images/properties/tantra4-bedroom.jpg", title: "En-suite Bedroom, Tantra Hill", category: "Bedroom", span: "" },
+  { src: "/images/properties/semi3-bath.jpg", title: "Marble En-suite Bathroom", category: "Bath", span: "" },
+  { src: "/images/properties/semi3-facade.jpg", title: "Semi Furnished Facade", category: "Exterior", span: "" },
+  { src: "/images/properties/tantra4-compound.jpg", title: "Paved Compound at Dusk", category: "Exterior", span: "lg:col-span-2" },
 ];
 
 const categories = ["All", "Exterior", "Living", "Bedroom", "Kitchen", "Bath"] as const;

@@ -1,5 +1,6 @@
 import { Hero } from "@/components/site/hero";
 import { About } from "@/components/site/about";
+import { AvailableHomes } from "@/components/site/available-homes";
 import { Properties } from "@/components/site/properties";
 import { FeaturedSpotlight } from "@/components/site/featured-spotlight";
 import { VideoShowcase } from "@/components/site/video-showcase";
@@ -18,6 +19,7 @@ export default function Home() {
     <main className="relative min-h-screen bg-[#faf8f3]">
       <Hero />
       <About />
+      <AvailableHomes />
       <Properties />
       <FeaturedSpotlight />
       <VideoShowcase />

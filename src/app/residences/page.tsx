@@ -18,7 +18,7 @@ export default function ResidencesPage() {
         eyebrow="Our Residences"
         title="Three addresses. One uncompromising standard."
         subtitle="From the 2 bedroom penthouse at Tantra Hill with 75-inch Smart TVs and open rooftop bar, to the 4 bedroom ensuite at Achimota Petroleum Estate, every ABN residence is crafted for those who expect more from where they stay in Accra."
-        bgImage="/images/abn-real/abn-ig-2-hd.jpg"
+        bgImage="/images/properties/tantra4-atrium.jpg"
         breadcrumb="Residences"
       />
 

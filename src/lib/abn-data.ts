@@ -178,6 +178,14 @@ export const galleryShots: GalleryShot[] = [
   { src: "/images/abn-real/abn-ig-10-hd.jpg", title: "Modern Kitchen Interior", category: "Kitchen", caption: "Sleek cabinetry and stone counters make every ABN kitchen a pleasure to cook in." },
   { src: "/images/abn-real/abn-ig-12-hd.jpg", title: "Furnished Lounge", category: "Living", caption: "Move-in ready lounges styled and furnished by the ABN Homes team." },
   { src: "/images/abn-real/abn-ig-9-hd.jpg", title: "Bright Bedroom Suite", category: "Bedroom", caption: "Bright, airy bedroom suites available for December bookings and beyond." },
+  { src: "/images/properties/tantra4-living.jpg", title: "4 Bedroom Chandelier Lounge", category: "Living", caption: "The chandelier lounge inside our 4 bedroom en-suite home at Tantra Hill." },
+  { src: "/images/properties/tantra4-atrium.jpg", title: "Double-Height Atrium", category: "Interior", caption: "A dramatic double-height atrium with pendant lighting and a glass-railed staircase." },
+  { src: "/images/properties/tantra4-bedroom.jpg", title: "En-suite Bedroom, Tantra Hill", category: "Bedroom", caption: "A spacious en-suite bedroom with fitted wardrobes and air conditioning." },
+  { src: "/images/properties/tantra4-compound.jpg", title: "Paved Compound at Dusk", category: "Exterior", caption: "A private paved compound with feature lighting, ready for evening arrivals." },
+  { src: "/images/properties/semi3-lounge.jpg", title: "Mood Lit Lounge", category: "Living", caption: "Cove and mood lighting set the tone in our 3 bedroom semi furnished home." },
+  { src: "/images/properties/semi3-bath.jpg", title: "Marble En-suite Bathroom", category: "Bath", caption: "A clean marble en-suite bathroom with modern fittings." },
+  { src: "/images/properties/semi3-facade.jpg", title: "Semi Furnished Facade", category: "Exterior", caption: "The contemporary facade of our 3 bedroom en-suite semi furnished residence." },
+  { src: "/images/properties/furn1-atrium.jpg", title: "Furnished Apartment Entrance", category: "Interior", caption: "The striking double-height entrance of our furnished 1 bedroom apartment." },
 ];
 
 export type SocialPost = {

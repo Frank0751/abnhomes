@@ -17,7 +17,7 @@ export default function AmenitiesPage() {
         eyebrow="Amenities & Services"
         title="Considered details, included as standard."
         subtitle="From 75-inch Smart TVs and open rooftop bars to full construction and renovation services, ABN Homes delivers everything you need to live, build or invest in Accra."
-        bgImage="/images/abn-real/abn-ig-1-hd.jpg"
+        bgImage="/images/properties/semi3-lounge.jpg"
         breadcrumb="Amenities"
       />
 
