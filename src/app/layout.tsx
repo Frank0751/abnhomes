@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Inter, Cormorant_Garamond } from "next/font/google";
+import { Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { I18nProvider } from "@/components/site/i18n";
@@ -7,6 +8,7 @@ import { Navigation } from "@/components/site/navigation";
 import { Footer } from "@/components/site/footer";
 import { FloatingActions } from "@/components/site/floating-actions";
 
+// Serif display face for headings
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
@@ -14,18 +16,17 @@ const playfair = Playfair_Display({
   weight: ["400", "500", "600", "700", "800", "900"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+// Satoshi, self-hosted, as the primary sans / body typeface
+const satoshi = localFont({
+  variable: "--font-satoshi",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
-
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  src: [
+    { path: "./fonts/Satoshi-300.woff2", weight: "300", style: "normal" },
+    { path: "./fonts/Satoshi-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/Satoshi-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/Satoshi-700.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/Satoshi-900.woff2", weight: "900", style: "normal" },
+  ],
 });
 
 export const metadata: Metadata = {
@@ -175,7 +176,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${playfair.variable} ${inter.variable} ${cormorant.variable} antialiased bg-background text-foreground`}
+        className={`${playfair.variable} ${satoshi.variable} antialiased bg-background text-foreground`}
       >
         <I18nProvider>
           <Navigation />

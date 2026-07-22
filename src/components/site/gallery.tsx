@@ -19,7 +19,7 @@ const shots: Shot[] = [
   { src: "/images/abn-real/abn-ig-2-hd.jpg", title: "Building Facade with Parking", category: "Exterior", span: "lg:col-span-2" },
   { src: "/images/abn-real/abn-ig-4-hd.jpg", title: "Ensuite Bathroom", category: "Bath", span: "" },
   { src: "/images/abn-real/abn-ig-5-hd.jpg", title: "Master Ensuite Bedroom", category: "Bedroom", span: "" },
-  { src: "/images/abn-real/abn-ig-8-hd.jpg", title: "Minimalist Living Room", category: "Living", span: "" },
+  { src: "/images/abn-real/abn-ig-8-hd.jpg", title: "Chandelier Living Room", category: "Living", span: "" },
   { src: "/images/abn-real/abn-ig-3-hd.jpg", title: "Entrance and Arrival", category: "Exterior", span: "lg:col-span-2" },
   { src: "/images/abn-real/abn-ig-10-hd.jpg", title: "Modern Kitchen Interior", category: "Kitchen", span: "" },
   { src: "/images/abn-real/abn-ig-12-hd.jpg", title: "Furnished Lounge", category: "Living", span: "" },

@@ -173,7 +173,7 @@ export const galleryShots: GalleryShot[] = [
   { src: "/images/abn-real/abn-ig-2-hd.jpg", title: "Building Facade with Parking", category: "Exterior", caption: "Contemporary architecture with private parking, located on 8 Asiko Street." },
   { src: "/images/abn-real/abn-ig-4-hd.jpg", title: "Ensuite Bathroom", category: "Bath", caption: "Marble finished ensuite bathrooms with rainfall showers and modern fittings." },
   { src: "/images/abn-real/abn-ig-5-hd.jpg", title: "Master Ensuite Bedroom", category: "Bedroom", caption: "A serene master suite with a tufted headboard, climate control and soft light." },
-  { src: "/images/abn-real/abn-ig-8-hd.jpg", title: "Minimalist Living Room", category: "Living", caption: "Clean, minimalist living spaces built for comfort and effortless entertaining." },
+  { src: "/images/abn-real/abn-ig-8-hd.jpg", title: "Chandelier Living Room", category: "Living", caption: "Statement chandeliers and layered lighting bring warmth to every ABN lounge." },
   { src: "/images/abn-real/abn-ig-3-hd.jpg", title: "Entrance and Arrival", category: "Exterior", caption: "A welcoming arrival experience into your fully furnished ABN residence." },
   { src: "/images/abn-real/abn-ig-10-hd.jpg", title: "Modern Kitchen Interior", category: "Kitchen", caption: "Sleek cabinetry and stone counters make every ABN kitchen a pleasure to cook in." },
   { src: "/images/abn-real/abn-ig-12-hd.jpg", title: "Furnished Lounge", category: "Living", caption: "Move-in ready lounges styled and furnished by the ABN Homes team." },
