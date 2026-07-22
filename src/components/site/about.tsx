@@ -5,10 +5,10 @@ import { useRef, useEffect, useState } from "react";
 import { Building2, Award, Handshake, ShieldCheck } from "lucide-react";
 
 const stats = [
-  { value: 12, suffix: "+", label: "Years of Craft" },
-  { value: 350, suffix: "+", label: "Homes Delivered" },
-  { value: 3, suffix: "", label: "Accra Locations" },
-  { value: 98, suffix: "%", label: "Owner Satisfaction" },
+  { value: 3, suffix: "", label: "Homes Available Now" },
+  { value: 7, suffix: "", label: "Services In House" },
+  { value: 24, suffix: "/7", label: "On Site Security" },
+  { value: 100, suffix: "%", label: "Vertically Integrated" },
 ];
 
 const values = [
@@ -147,10 +147,19 @@ function StatCard({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
-  const [count, setCount] = useState(0);
+  // Seed with the final value so the correct number is always in the HTML
+  // (SSR, no-JS and reduced-motion all show the real figure, never zero).
+  const [count, setCount] = useState(value);
 
   useEffect(() => {
     if (!inView) return;
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      setCount(value);
+      return;
+    }
     const duration = 1800;
     const start = performance.now();
     let raf = 0;

@@ -75,11 +75,11 @@ export function Properties() {
             <div className="flex items-center gap-3 mb-6">
               <span className="w-10 h-px bg-[#0d9488]" />
               <span className="text-[11px] tracking-[0.4em] text-[#0d9488] font-medium uppercase">
-                Our Residences
+                Furnished Stays
               </span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.02em] max-w-2xl">
-              Three addresses. One uncompromising standard.
+              Fully furnished apartments, ready when you are.
             </h2>
           </motion.div>
 
@@ -90,7 +90,7 @@ export function Properties() {
             transition={{ duration: 0.8, delay: 0.15 }}
             className="text-white/65 text-base lg:text-lg leading-relaxed max-w-md"
           >
-            Each ABN residence is shaped by the neighbourhood it sits in, yet shares the same commitment to space, light and craft. Click any residence to explore the full detail.
+            Beyond the homes for sale above, ABN runs a collection of fully furnished apartments for short and long stays. Book a night, a month or a whole season. Click any stay to explore the full detail.
           </motion.p>
         </div>
 

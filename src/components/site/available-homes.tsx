@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
+import { useState, useEffect, useCallback } from "react";
 import {
   BedDouble,
   Bath,
@@ -183,11 +184,12 @@ function ListingCard({ listing, index }: { listing: Listing; index: number }) {
                 <source src={current.src} type="video/mp4" />
               </video>
             ) : (
-              <div
-                className="h-full w-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${current.src})` }}
-                role="img"
-                aria-label={current.alt}
+              <Image
+                src={current.src}
+                alt={current.alt}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover"
               />
             )}
           </motion.div>

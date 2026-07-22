@@ -7,6 +7,7 @@ import { I18nProvider } from "@/components/site/i18n";
 import { Navigation } from "@/components/site/navigation";
 import { Footer } from "@/components/site/footer";
 import { FloatingActions } from "@/components/site/floating-actions";
+import { ScrollProgress } from "@/components/site/scroll-progress";
 
 // Serif display face for headings
 const playfair = Playfair_Display({
@@ -179,6 +180,7 @@ export default function RootLayout({
         className={`${playfair.variable} ${satoshi.variable} antialiased bg-background text-foreground`}
       >
         <I18nProvider>
+          <ScrollProgress />
           <Navigation />
           {children}
           <Footer />
