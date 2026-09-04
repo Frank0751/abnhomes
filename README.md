@@ -1,331 +1,171 @@
-# ABN Homes Company Limited Website
+# ABN Homes — Operations Platform
 
-A world-class, full-stack luxury real estate website for **ABN Homes Company Limited**, Accra, Ghana. Built with Next.js 16, TypeScript, Tailwind CSS 4, Prisma, and Framer Motion.
+The system that runs ABN Homes' buildings: nightly guests and long-term tenants, the money behind
+both, the repairs, and the owners who need paying.
 
-![ABN Homes](public/images/logo/abn-homes-logo-real.png)
+It is built on top of the existing ABN Homes website rather than beside it. The marketing site is
+still there, unchanged in look, and now reads live availability from the same database the front
+desk works in — so the website can never offer a night the office has already sold.
 
-## Features
+---
 
-- **7 Independent Pages** with Next.js App Router
-  - Home (`/`) - Full single-page experience with 13 sections
-  - About (`/about`) - Company story, 8 services, process, testimonials
-  - Residences (`/residences`) - Property listings with detail modal, mortgage calculator
-  - Amenities (`/amenities`) - 12 amenities + 8 detailed services
-  - Gallery (`/gallery`) - Filterable masonry gallery with lightbox + social feed
-  - Locations (`/locations`) - 3 Accra areas with Google Map embed
-  - Contact (`/contact`) - Enquiry form, contact card, newsletter signup
+## What it does
 
-- **Backend API** with Prisma + SQLite
-  - `POST /api/enquiries` - Contact form submissions (with Zod validation, honeypot, rate limiting)
-  - `POST /api/subscribers` - Newsletter signup
-  - `POST /api/tours` - Tour booking requests
-  - `GET /api/enquiries` - Admin-only enquiry retrieval (Bearer token auth)
+**Two letting models, one system.** ABN runs nightly serviced apartments *and* yearly tenancies.
+Letting mode is a property of the unit, not of the software, so a unit can be sold by the night in
+December and let for a year in January without anything being re-keyed.
 
-- **Real ABN Content**
-  - 12 real Instagram images from @abn_homes
-  - 6 real TikTok cover images from @greatpuffy
-  - 11 real Instagram captions integrated into the site
-  - Real company bio: "We Build and Sell affordable Houses, We Buy and Sell Lands, Constructions, Project Management, Architectural Drawings, Project Supervising, Renovations"
-  - Real address: 8 Asiko Street, Tantra Hill, Accra
-  - Real phone: 054 170 4048
+| Short stay | Long let |
+| --- | --- |
+| Availability calendar, per unit | Leases with term, cycle and escalation |
+| Reservations, check-in and check-out | The monthly rent run |
+| Seasonal rate plans and minimum stays | Advance rent, earned month by month |
+| Housekeeping turnovers, generated automatically | Arrears aging and reminders |
+| Booking-site calendar sync | Service charges and late fees |
+| Occupancy, nightly rate, revenue per available night | Collection rate |
 
-- **Interactive Features**
-  - Cinematic hero with animated "ABN HOMES" 3D letter reveal
-  - Property detail modal with image gallery and inline mortgage calculator
-  - WhatsApp floating chat button with expandable preview
-  - EN/FR language switcher with full i18n
-  - Filterable gallery with keyboard-navigable lightbox
-  - Parallax interior spotlight carousel
-  - Animated count-up stats
-  - Back-to-top button
+Both post into the same ledger, appear on the same owner statement, and raise the same maintenance
+tickets.
 
-- **SEO & PWA**
-  - JSON-LD structured data (RealEstateAgent schema)
-  - PWA manifest (installable)
-  - Sitemap.xml and robots.txt
-  - OpenGraph and Twitter card metadata
-  - Per-page unique metadata
+**Multi-owner from the first line of schema.** ABN owns some buildings and manages others. Every
+property carries a management agreement — ABN's own at a zero fee — so statements are produced by
+one code path and always reconcile.
 
-- **Design**
-  - Brand colors: Deep charcoal (#0a0e1a) + Teal (#0d9488) + Cream (#faf8f3)
-  - Typography: Playfair Display (serif headings), Inter (body), Cormorant Garamond (display)
-  - Fully responsive (mobile, tablet, desktop)
-  - Custom SVG logo and favicon
-  - No em dashes, no italics in headings (per brand spec)
+**Built for how letting actually works in Ghana.** Mobile money as a first-class rail, not a
+footnote. Phone-number identity with one-time codes. Cash receipts that work with no signal. Ghana
+Card capture. Advance rent treated as a liability that unwinds monthly, which is the single most
+important local difference and the one most off-the-shelf software gets wrong.
 
-## Tech Stack
+---
 
-| Category | Technology |
-|----------|-----------|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript 5 |
-| Styling | Tailwind CSS 4 + shadcn/ui |
-| Database | Prisma ORM + SQLite |
-| Animations | Framer Motion |
-| Icons | Lucide React |
-| Validation | Zod |
-| Fonts | next/font (Playfair Display, Inter, Cormorant Garamond) |
+## Getting it running
 
-## Quick Start
-
-### Prerequisites
-
-- Node.js 18.17+ (or Bun)
-- npm, yarn, pnpm, or bun
-
-### Installation
-
-1. **Clone or download this folder**
-
-```bash
-cd abn-homes-website
-```
-
-2. **Install dependencies**
+You need Node 18.17+ and a PostgreSQL database. [Neon](https://neon.tech) and
+[Supabase](https://supabase.com) both have a free tier that works.
 
 ```bash
 npm install
-# or
-yarn install
-# or
-pnpm install
-# or
-bun install
 ```
 
-3. **Set up environment variables**
+Put your connection string in `.env`:
 
 ```bash
-cp .env.example .env
+DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
+AUTH_SECRET="run: openssl rand -base64 32"
 ```
 
-Edit `.env` and set your values:
-```env
-DATABASE_URL=file:./db/custom.db
-ABN_ADMIN_TOKEN=your-secret-admin-token-here
-ABN_WEBHOOK_URL=  # Optional: Slack/Discord webhook for enquiry notifications
-```
-
-4. **Initialize the database**
+Then create the schema, install the database guarantees, and load ABN's real portfolio:
 
 ```bash
-npm run db:push
+npm run db:setup
 ```
 
-5. **Run the development server**
+That runs three things — `db push`, `db:constraints` and `db:seed`. Start the app:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Sign in at [localhost:3000/signin](http://localhost:3000/signin). The seed prints the accounts it
+created; every one uses the password `AbnHomes2026!`.
 
-## Deploy to Vercel
+| Account | Sees |
+| --- | --- |
+| `admin@abnhomes.com.gh` | Everything |
+| `manager@abnhomes.com.gh` | Assigned buildings, no settings |
+| `desk@abnhomes.com.gh` | Bookings and taking payment |
+| `finance@abnhomes.com.gh` | All money, no leases or bookings |
+| `housekeeping@abnhomes.com.gh` | The changeover board |
+| `owner@example.com` | The owner portal |
+| `tenant@example.com` | The tenant portal |
 
-### Option 1: One-Click Deploy (Recommended)
+**Change these before the system holds anything real.**
 
-1. Push this folder to a GitHub repository:
-```bash
-git init
-git add .
-git commit -m "Initial commit: ABN Homes website"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/abn-homes-website.git
-git push -u origin main
-```
+---
 
-2. Go to [vercel.com/new](https://vercel.com/new) and import your GitHub repository.
+## The parts worth knowing about
 
-3. Vercel will auto-detect Next.js. Add these environment variables in the Vercel dashboard:
-   - `DATABASE_URL` - Use a PostgreSQL URL (see Database Setup below)
-   - `ABN_ADMIN_TOKEN` - A secret token for the admin API
-   - `ABN_WEBHOOK_URL` - Optional, for enquiry notifications
+### Money is append-only
 
-4. Click **Deploy**. Your site will be live in ~2 minutes.
+No table stores a balance. A balance is the sum of `LedgerEntry` rows, computed on read. A
+correction is a reversing entry, never an edit, and the original stays visible forever.
 
-### Option 2: Vercel CLI
+This is enforced by the database, not by good intentions — `prisma/sql/001_constraints.sql`
+installs a trigger that makes `UPDATE` and `DELETE` on the ledger raise an error. A careless
+`prisma.ledgerEntry.update()` in a future feature fails loudly instead of quietly breaking the
+guarantee everything else rests on.
 
-```bash
-npm i -g vercel
-vercel
-```
+Every amount is an integer number of minor units (pesewas, cents) carried with its currency. No
+floating-point number touches money anywhere in the stack.
 
-Follow the prompts. Set environment variables with:
-```bash
-vercel env add DATABASE_URL
-vercel env add ABN_ADMIN_TOKEN
-```
+### Double bookings are impossible, not unlikely
 
-### Database Setup for Production
+Availability is checked in the application for a good error message, and enforced in Postgres with
+an exclusion constraint for correctness. Two clerks confirming the same dates in the same second
+both pass the application check; the second `INSERT` fails at the database. Stays occupy the
+half-open interval `[checkIn, checkOut)`, so a departure morning stays sellable.
 
-SQLite works locally but is NOT suitable for Vercel (serverless, no persistent filesystem). Use one of these for production:
+### Advance rent is a liability, not income
 
-**Option A: Vercel Postgres (Recommended)**
-1. In Vercel dashboard, go to Storage > Create Database > Postgres
-2. Copy the `DATABASE_URL` to your environment variables
-3. Update `prisma/schema.prisma` datasource provider from `sqlite` to `postgresql`
-4. Run `npx prisma db push`
+A tenant paying two years up front has not handed the owner two years of income. The payment sits
+as credit; the rent run raises one charge a month and settles it from that credit; owner statements
+recognise revenue from charges raised, never payments received. The unearned balance is therefore
+derived, not stored, and can never drift from the ledger.
 
-**Option B: PlanetScale, Supabase, or Neon**
-- Create a free PostgreSQL database on [neon.tech](https://neon.tech) or [supabase.com](https://supabase.com)
-- Copy the connection string to `DATABASE_URL`
-- Update the Prisma schema provider to `postgresql`
-- Run `npx prisma db push`
+### Offline is scoped to the people who need it
 
-## Project Structure
+Staff collecting cash in a stairwell need it. Guests, tenants and owners do not. Payments carry a
+client-generated idempotency key so replaying a queue eleven times still produces one payment, and
+anything captured offline stays visibly `PENDING` until the office confirms it against the float.
 
-```
-abn-homes-website/
-├── prisma/
-│   └── schema.prisma          # Database models (Enquiry, Subscriber, TourBooking)
-├── public/
-│   ├── images/
-│   │   ├── abn-real/          # 19 real ABN Instagram + TikTok images (HD enhanced)
-│   │   ├── logo/              # ABN Homes logo (PNG variants)
-│   │   ├── properties/        # Additional property images
-│   │   ├── interiors/         # Additional interior images
-│   │   └── locations/         # Accra location images
-│   └── favicon.svg
-├── src/
-│   ├── app/
-│   │   ├── about/page.tsx     # /about
-│   │   ├── amenities/page.tsx # /amenities
-│   │   ├── api/
-│   │   │   ├── enquiries/route.ts   # POST + GET enquiries
-│   │   │   ├── subscribers/route.ts # POST subscribers
-│   │   │   └── tours/route.ts       # POST tour bookings
-│   │   ├── contact/page.tsx   # /contact
-│   │   ├── gallery/page.tsx   # /gallery
-│   │   ├── locations/page.tsx # /locations
-│   │   ├── residences/page.tsx# /residences
-│   │   ├── globals.css        # Global styles + ABN brand colors
-│   │   ├── layout.tsx         # Root layout (nav, footer, fonts, SEO)
-│   │   ├── manifest.ts        # PWA manifest
-│   │   ├── page.tsx           # Home page
-│   │   ├── robots.ts          # robots.txt
-│   │   └── sitemap.ts         # sitemap.xml
-│   ├── components/
-│   │   ├── site/              # 23 ABN-specific components
-│   │   └── ui/                # shadcn/ui components
-│   ├── lib/
-│   │   ├── abn-data.ts        # Shared ABN content (properties, amenities, etc.)
-│   │   ├── db.ts              # Prisma client
-│   │   └── utils.ts           # Utility functions
-│   └── hooks/
-├── .env.example
-├── .gitignore
-├── components.json            # shadcn/ui config
-├── eslint.config.mjs
-├── next.config.ts
-├── package.json
-├── postcss.config.mjs
-├── tailwind.config.ts
-└── tsconfig.json
-```
+---
 
-## Available Scripts
+## Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server on localhost:3000 |
-| `npm run build` | Create production build |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run db:push` | Push Prisma schema to database |
-| `npm run db:generate` | Generate Prisma client |
-| `npm run db:migrate` | Create and apply migration |
+| | |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run typecheck` | TypeScript, no emit |
+| `npm test` | Tests for the money, date, pricing and escalation arithmetic |
+| `npm run db:setup` | Schema, constraints and seed in one go |
+| `npm run db:push` | Schema only |
+| `npm run db:constraints` | The exclusion constraint and ledger triggers |
+| `npm run db:seed` | ABN's portfolio and demo accounts |
 
-## API Endpoints
+---
 
-### POST /api/enquiries
-Submit a contact form enquiry.
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "phone": "+233 24 000 0000",
-  "interest": "Tantra Hill",
-  "message": "I would like to tour the penthouse."
-}
-```
+## Scheduled jobs
 
-### GET /api/enquiries
-Retrieve all enquiries (admin only).
-```bash
-curl -H "Authorization: Bearer YOUR_ABN_ADMIN_TOKEN" https://your-domain.com/api/enquiries
-```
+Configured in `vercel.json`, protected by `CRON_SECRET`.
 
-### POST /api/subscribers
-Newsletter signup.
-```json
-{
-  "email": "subscriber@example.com",
-  "name": "Optional Name"
-}
-```
+| Job | When | What |
+| --- | --- | --- |
+| `/api/cron/rent-run` | 06:00 daily | Raises rent due, sweeps advance rent against it, applies late fees, sends reminders |
+| `/api/cron/ical-sync` | Hourly | Pulls booking-site calendars so their bookings block ours |
 
-### POST /api/tours
-Book a property tour.
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "phone": "+233 24 000 0000",
-  "property": "Tantra Hill",
-  "preferredDate": "2026-08-15",
-  "partySize": 2,
-  "virtual": false
-}
-```
+The rent run is idempotent — every charge carries a run key, so running it twice cannot bill a
+tenant twice. It can also be rehearsed from the interface before it touches anything.
 
-## Customization
+---
 
-### Update Content
-All site content is centralized in `src/lib/abn-data.ts`:
-- `COMPANY` - Business name, phone, email, address, social links
-- `properties` - Property listings (name, description, images, specs, pricing)
-- `amenities` - Amenity grid items
-- `services` - The 8 services from the official ABN bio
-- `galleryShots` - Gallery images with categories and captions
-- `socialPosts` - Social media feed posts
-- `testimonials` - Customer testimonials
-- `processSteps` - The 4-step booking process
-- `locations` - Accra locations
+## What is not built yet
 
-### Change Colors
-Edit `src/app/globals.css`:
-```css
-:root {
-  --background: #faf8f3;    /* Cream background */
-  --primary: #0a0e1a;        /* Deep charcoal */
-  --accent: #0d9488;         /* Teal (ABN brand) */
-}
-```
+Stated plainly, because a half-built feature you do not know about is worse than one you do.
 
-### Replace Images
-Put new images in `public/images/abn-real/` and update references in `src/lib/abn-data.ts`.
+- **Offline is designed for, not shipped.** The schema, idempotency keys and sync badges are all
+  in place; the service worker and IndexedDB working set are not. Payments recorded in the office
+  work today.
+- **PayPal is deliberately switched off.** PayPal has historically been send-only for Ghanaian
+  accounts. The channel exists in the payment layer and reports itself as unavailable until
+  someone confirms with PayPal what ABN can actually receive.
+- **Documents upload to nothing yet.** The `Document` model and its restricted-visibility flag
+  exist; object storage is not wired up.
+- **Opening balances need a migration session.** Existing tenants arrive with history — paid to a
+  date, owing an amount, some with years banked. That needs a spreadsheet from ABN and a
+  reconciliation sitting, not a guess.
+- **Calendar sync is not instant.** The booking sites poll their feeds every few hours. It closes
+  most of the double-booking window, not all of it.
 
-### Update Logo
-Replace files in `public/images/logo/`:
-- `abn-homes-logo-real.png` - Main logo (600x600, white background)
-- `abn-badge.png` - Favicon/monogram (180x180, dark background)
-
-## Real Content Sources
-
-All images and captions were extracted from:
-- **Instagram**: [@abn_homes](https://www.instagram.com/abn_homes/)
-- **TikTok**: [@greatpuffy](https://www.tiktok.com/@greatpuffy) (Abraham Nayo, CEO)
-
-Images were enhanced to 2x resolution using sharp with lanczos3 upscaling and sharpening filters.
-
-## License
-
-Proprietary - ABN Homes Company Limited. All rights reserved.
-
-## Contact
-
-- **Phone**: 054 170 4048
-- **Email**: hello@abnhomes.com.gh
-- **Address**: 8 Asiko Street, Tantra Hill, Accra, Ghana
-- **Instagram**: @abn_homes
-- **TikTok**: @greatpuffy
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the reasoning behind the money model, and
+[`docs/OPERATIONS.md`](docs/OPERATIONS.md) for running it day to day.
