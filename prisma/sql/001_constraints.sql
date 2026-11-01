@@ -27,7 +27,7 @@ ALTER TABLE "Reservation"
     "unitId" WITH =,
     daterange("checkIn"::date, "checkOut"::date, '[)') WITH &&
   )
-  WHERE (status::text IN ('PENDING', 'CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'));
+  WHERE (status IN ('PENDING', 'CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'));
 
 -- ---------------------------------------------------------------------------
 -- 2. The ledger is append-only, enforced by the database.

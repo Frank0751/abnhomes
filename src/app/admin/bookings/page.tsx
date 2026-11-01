@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ShareBookingLinkButton } from './share-link-button'
 import type { ReservationStatus } from '@prisma/client'
 
 const FILTERS: Array<{ key: string; label: string; statuses?: ReservationStatus[] }> = [
@@ -52,12 +53,15 @@ export default async function BookingsPage({
         title="Bookings"
         description="Every stay, direct or imported, across the short-stay portfolio."
         actions={
-          <Button asChild size="sm">
-            <Link href="/admin/bookings/new">
-              <Plus className="mr-1.5 size-4" />
-              New booking
-            </Link>
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <ShareBookingLinkButton />
+            <Button asChild size="sm">
+              <Link href="/admin/bookings/new">
+                <Plus className="mr-1.5 size-4" />
+                New booking
+              </Link>
+            </Button>
+          </div>
         }
       />
 

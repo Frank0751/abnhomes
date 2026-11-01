@@ -1,4 +1,4 @@
-import { Hero } from "@/components/site/hero";
+import { BookingHero } from "@/components/site/booking-hero";
 import { About } from "@/components/site/about";
 import { AvailableHomes } from "@/components/site/available-homes";
 import { Properties } from "@/components/site/properties";
@@ -17,7 +17,7 @@ import { Contact } from "@/components/site/contact";
 export default function Home() {
   return (
     <main className="relative min-h-screen bg-[#faf8f3]">
-      <Hero />
+      <BookingHero />
       <About />
       <AvailableHomes />
       <Properties />

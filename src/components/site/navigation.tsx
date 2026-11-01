@@ -84,10 +84,10 @@ export function Navigation() {
               <span className="font-medium">{COMPANY.phone}</span>
             </a>
             <Link
-              href="/contact"
+              href="/book"
               className="hidden md:inline-flex items-center px-5 py-2.5 bg-[#0d9488] hover:bg-[#14b8a6] text-white text-sm font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_10px_30px_-10px_rgba(13,148,136,0.7)]"
             >
-              Book a Tour
+              Book a Stay
             </Link>
 
             <button
@@ -138,11 +138,11 @@ export function Navigation() {
                 <span className="text-lg font-medium">{COMPANY.phone}</span>
               </a>
               <Link
-                href="/contact"
+                href="/book"
                 onClick={() => setMenuOpen(false)}
                 className="mt-2 px-6 py-3.5 bg-[#0d9488] text-white font-semibold tracking-wide text-center"
               >
-                Book a Tour
+                Book a Stay
               </Link>
             </div>
           </motion.div>
