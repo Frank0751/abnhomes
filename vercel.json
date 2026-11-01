@@ -21,7 +21,7 @@
     },
     {
       "path": "/api/cron/ical-sync",
-      "schedule": "17 * * * *"
+      "schedule": "17 6 * * *"
     }
   ]
 }

@@ -1,8 +1,12 @@
 /**
  * Pull every booking-site calendar.
  *
- * Runs frequently, because the gap between an Airbnb booking and our knowing
- * about it is exactly the window in which a double booking happens.
+ * Should run as often as the host allows, because the gap between an Airbnb
+ * booking and our knowing about it is exactly the window in which a double
+ * booking happens. Vercel's Hobby plan only permits daily crons; to restore
+ * an hourly cadence, either upgrade to Pro or point an external scheduler
+ * (cron-job.org, GitHub Actions, any pinger) at this URL with the
+ * CRON_SECRET bearer header — it accepts any caller holding the secret.
  */
 
 import { NextResponse } from 'next/server'

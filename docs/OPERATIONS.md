@@ -81,7 +81,8 @@ curl -H "Authorization: Bearer $CRON_SECRET" \
 
 ## Calendar sync
 
-Runs hourly. Two directions, and both need doing per unit:
+Runs daily at 06:17 UTC on Vercel's Hobby plan, which forbids anything more frequent (a deployment
+with an hourly cron is rejected outright). Two directions, and both need doing per unit:
 
 **Publish ours.** Unit page → *Publish this calendar* → copy the URL → paste into Airbnb or
 Booking.com. They will block the nights ABN has sold. The feed exposes only that a night is taken —
@@ -92,8 +93,11 @@ bookings then block this calendar.
 
 ### The limits, stated plainly
 
-The platforms poll feeds every few hours. This closes most of the double-booking window, not all of
-it. **For a same-day direct booking, still glance at the Airbnb app.**
+Vercel's Hobby plan runs this once a day. The platforms poll feeds every few hours, so a night sold
+on Airbnb can take most of a day to block here, and a direct booking most of a day to block there —
+the double-booking window is real. To narrow it, upgrade to Pro, or point a free external scheduler
+(cron-job.org is fine) at `/api/cron/ical-sync` hourly with the `Authorization: Bearer $CRON_SECRET`
+header. **For a same-day direct booking, still glance at the Airbnb app.**
 
 A failing feed does not silently drop its blocks — existing blocks stay in place and the error
 appears on the unit page and in Settings. Check Settings occasionally; a feed that has been failing
