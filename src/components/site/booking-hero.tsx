@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, ChevronDown, MapPin, Search, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import { COMPANY } from "@/lib/abn-data";
 
 /**
  * Booking-first hero.
@@ -346,9 +347,16 @@ export function BookingHero() {
           transition={{ delay: 1.8, duration: 0.8 }}
           className="mt-3 text-xs text-white/45"
         >
-          Looking for a yearly tenancy or to buy?{" "}
-          <a href="#residences" className="underline underline-offset-4 decoration-[#0d9488]/60 hover:text-white/70 transition-colors">
-            Explore residences
+          Yearly tenancy or to buy?{" "}
+          <a
+            href={`${COMPANY.whatsapp}?text=${encodeURIComponent(
+              "Hello ABN Homes, I am interested in a yearly tenancy or buying a property.",
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4 decoration-[#0d9488]/60 hover:text-white/70 transition-colors"
+          >
+            WhatsApp us
           </a>
         </motion.div>
       </div>
