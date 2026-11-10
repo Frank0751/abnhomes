@@ -23,13 +23,16 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
+# local env files — every secret lives only here and in the Vercel dashboard
 .env
-.env*.local
-.env.production
+.env.*
+!.env.example
 
 # vercel
 .vercel
+
+# prisma engine artifact that stalls downloads in some sandboxes
+/prisma/core
 
 # typescript
 *.tsbuildinfo
