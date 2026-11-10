@@ -21,6 +21,7 @@ import {
   checkOutGuest,
   confirmReservation,
   createReservation,
+  ensurePortalAccess,
 } from '@/lib/short-stay/reservations'
 import { quoteStay } from '@/lib/short-stay/pricing'
 import { AvailabilityError } from '@/lib/short-stay/availability'
@@ -139,7 +140,7 @@ async function loadForAction(reservationId: string, permission: 'bookings:write'
 export async function confirmBookingAction(reservationId: string): Promise<ActionResult> {
   try {
     const { actor } = await loadForAction(reservationId, 'bookings:write')
-    await confirmReservation(reservationId, actor.id)
+    const { portalCode } = await confirmReservation(reservationId, actor.id)
     await logAudit({
       actor,
       action: 'booking.confirmed',
@@ -148,7 +149,40 @@ export async function confirmBookingAction(reservationId: string): Promise<Actio
     })
     revalidatePath(`/admin/bookings/${reservationId}`)
     revalidatePath('/admin/calendar')
-    return { ok: true, message: 'Booking confirmed and the guest has been texted.' }
+    return {
+      ok: true,
+      message: portalCode
+        ? `Booking confirmed. Portal code ${portalCode} — share it with the guest.`
+        : 'Booking confirmed and the guest has been texted.',
+    }
+  } catch (error) {
+    return { ok: false, error: message(error) }
+  }
+}
+
+/**
+ * Issue the portal code for a confirmed booking that predates the portal, or
+ * whose code was never minted. Confirming a booking issues one automatically;
+ * this is only for the stragglers.
+ */
+export async function issuePortalCodeAction(reservationId: string): Promise<ActionResult> {
+  try {
+    const { actor, reservation } = await loadForAction(reservationId, 'bookings:write')
+    if (!['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'].includes(reservation.status)) {
+      return { ok: false, error: 'Portal access is issued once the booking is confirmed.' }
+    }
+
+    const code = await ensurePortalAccess(reservationId)
+    if (!code) return { ok: false, error: 'Portal access is issued once the booking is confirmed.' }
+
+    await logAudit({
+      actor,
+      action: 'booking.portal_code_issued',
+      entityType: 'Reservation',
+      entityId: reservationId,
+    })
+    revalidatePath(`/admin/bookings/${reservationId}`)
+    return { ok: true, message: `Portal code ${code} is ready to share with the guest.` }
   } catch (error) {
     return { ok: false, error: message(error) }
   }

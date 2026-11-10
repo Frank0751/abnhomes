@@ -24,9 +24,10 @@ export function SignInForm() {
 
   return (
     <Tabs defaultValue="staff" className="mt-8">
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="staff">Staff</TabsTrigger>
         <TabsTrigger value="phone">Tenant, owner or vendor</TabsTrigger>
+        <TabsTrigger value="portal">Booking code</TabsTrigger>
       </TabsList>
 
       <TabsContent value="staff" className="mt-6">
@@ -36,7 +37,88 @@ export function SignInForm() {
       <TabsContent value="phone" className="mt-6">
         <PhoneForm callbackUrl={callbackUrl} onDone={(url) => router.push(url)} />
       </TabsContent>
+
+      <TabsContent value="portal" className="mt-6">
+        <PortalCodeForm onDone={(url) => router.push(url)} />
+      </TabsContent>
     </Tabs>
+  )
+}
+
+/**
+ * The way in for short-stay guests: management confirms the booking, issues a
+ * code, and the guest signs in with it alongside the email or phone they
+ * booked with. The code alone opens nothing.
+ */
+function PortalCodeForm({ onDone }: { onDone: (url: string) => void }) {
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setPending(true)
+    setError(null)
+
+    const form = new FormData(event.currentTarget)
+    const result = await signIn('portal', {
+      identifier: String(form.get('identifier') ?? ''),
+      code: String(form.get('code') ?? ''),
+      redirect: false,
+    })
+
+    setPending(false)
+
+    if (result?.error) {
+      setError(
+        'We could not match that code to a confirmed booking. Check the code, and use the same email or phone you booked with.'
+      )
+      return
+    }
+    onDone('/portal')
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="identifier">Email or phone you booked with</Label>
+        <Input
+          id="identifier"
+          name="identifier"
+          type="text"
+          autoComplete="username"
+          placeholder="name@email.com or 024 000 0000"
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="portalCode">Portal code</Label>
+        <Input
+          id="portalCode"
+          name="code"
+          type="text"
+          className="font-mono tracking-[0.14em] uppercase"
+          placeholder="PIN-XXXXXX"
+          required
+          autoFocus
+        />
+        <p className="text-xs text-muted-foreground">
+          Given to you when your booking was confirmed. Call us on 054 170 4048 if you have
+          lost it.
+        </p>
+      </div>
+
+      {error && (
+        <p role="alert" className="text-sm text-destructive">
+          {error}
+        </p>
+      )}
+
+      <Button type="submit" className="w-full" disabled={pending}>
+        {pending && <Loader2 className="mr-2 size-4 animate-spin" />}
+        Open my portal
+      </Button>
+    </form>
   )
 }
 

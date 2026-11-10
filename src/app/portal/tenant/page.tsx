@@ -17,7 +17,7 @@ import { PayNowButton } from './pay-now'
 export default async function TenantPortal() {
   const { partyId } = await requireParty()
 
-  const [party, leases, balanceMinor, creditMinor, tickets] = await Promise.all([
+  const [party, leases, balanceGhsMinor, balanceUsdMinor, tickets, stays] = await Promise.all([
     db.party.findUniqueOrThrow({ where: { id: partyId } }),
     db.lease.findMany({
       where: { tenantPartyId: partyId, status: { in: ['ACTIVE', 'DRAFT'] } },
@@ -27,21 +27,39 @@ export default async function TenantPortal() {
       },
     }),
     partyBalanceIn(partyId, 'GHS'),
-    unappliedCredit(partyId, 'GHS'),
+    partyBalanceIn(partyId, 'USD'),
     db.ticket.findMany({
       where: { reporterPartyId: partyId },
       include: { unit: { select: { name: true } } },
       orderBy: { createdAt: 'desc' },
       take: 10,
     }),
+    db.reservation.findMany({
+      where: {
+        guestPartyId: partyId,
+        status: { in: ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'] },
+      },
+      include: {
+        unit: { include: { property: { select: { id: true, name: true, addressLine: true } } } },
+      },
+      orderBy: { checkIn: 'desc' },
+    }),
   ])
 
-  const statement = await partyStatement(partyId, { currency: 'GHS' })
   const lease = leases[0]
+
+  // Long-let tenants are billed in GHS; short-stay guests in the currency of
+  // their stay. Show whichever account actually has activity on it.
+  const displayCurrency =
+    balanceGhsMinor === 0 && balanceUsdMinor !== 0 ? ('USD' as const) : ('GHS' as const)
+  const balanceMinor = displayCurrency === 'USD' ? balanceUsdMinor : balanceGhsMinor
+  const creditMinor = await unappliedCredit(partyId, displayCurrency)
   const owes = balanceMinor > 0
 
+  const statement = await partyStatement(partyId, { currency: displayCurrency })
+
   const openCharges = await db.charge.findMany({
-    where: { partyId, status: { in: ['OPEN', 'PART_PAID'] }, currency: 'GHS' },
+    where: { partyId, status: { in: ['OPEN', 'PART_PAID'] }, currency: displayCurrency },
     include: { allocations: true },
     orderBy: { dueDate: 'asc' },
   })
@@ -69,7 +87,7 @@ export default async function TenantPortal() {
           {owes ? 'You owe' : 'Your account'}
         </p>
         <p className="mt-1 font-serif text-4xl tracking-tight tabular-nums">
-          {formatMinor(Math.abs(balanceMinor), 'GHS')}
+          {formatMinor(Math.abs(balanceMinor), displayCurrency)}
         </p>
         <p className="mt-1.5 text-sm text-muted-foreground">
           {owes
@@ -77,7 +95,7 @@ export default async function TenantPortal() {
               ? `Oldest charge was due ${formatDate(openCharges[0].dueDate)}.`
               : 'Due now.'
             : creditMinor > 0
-              ? `You are paid ahead. ${formatMinor(creditMinor, 'GHS')} is held on your account and will cover future rent as it falls due.`
+              ? `You are paid ahead. ${formatMinor(creditMinor, displayCurrency)} is held on your account and will cover future rent as it falls due.`
               : 'Nothing outstanding. Thank you.'}
         </p>
 
@@ -85,8 +103,8 @@ export default async function TenantPortal() {
           {owes && (
             <PayNowButton
               amountMinor={balanceMinor}
-              currency="GHS"
-              propertyId={lease?.unit.property.id ?? ''}
+              currency={displayCurrency}
+              propertyId={lease?.unit.property.id ?? openCharges[0]?.propertyId ?? ''}
             />
           )}
           {lease && (
@@ -98,6 +116,39 @@ export default async function TenantPortal() {
           )}
         </div>
       </div>
+
+      {stays.length > 0 && (
+        <Panel
+          className="mb-6"
+          title="Your stays"
+          description="Your bookings with us, from confirmation through to checkout."
+        >
+          <ul className="divide-y divide-black/6">
+            {stays.map((stay) => (
+              <li key={stay.id} className="px-4 py-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <p className="text-sm font-medium">
+                    {stay.unit.name} · {stay.unit.property.name}
+                  </p>
+                  <StatusPill status={stay.status} />
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {formatDate(stay.checkIn)} to {formatDate(stay.checkOut)} · {stay.nights}{' '}
+                  night{stay.nights === 1 ? '' : 's'} · {stay.adults} guest
+                  {stay.adults === 1 ? '' : 's'}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {stay.unit.property.addressLine} · booking reference {stay.code}
+                </p>
+                <p className="mt-1.5 text-sm">
+                  Total{' '}
+                  <Money minor={stay.totalMinor} currency={stay.currency} className="tabular-nums" />
+                </p>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      )}
 
       {openCharges.length > 0 && (
         <Panel className="mb-6" title="What this is for">
@@ -211,7 +262,7 @@ export default async function TenantPortal() {
         </Panel>
       )}
 
-      {!lease && (
+      {!lease && stays.length === 0 && (
         <Panel title="No active tenancy">
           <p className="px-4 py-6 text-sm text-muted-foreground">
             We do not have an active lease against your account. If that seems wrong, call the

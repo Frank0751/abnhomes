@@ -15,6 +15,7 @@ import {
   TableScroll,
 } from '@/components/admin/ui'
 import { BookingActions } from './booking-actions'
+import { PortalAccessCard } from './portal-access-card'
 import { ArrowLeft } from 'lucide-react'
 
 export default async function BookingDetail({
@@ -247,6 +248,12 @@ export default async function BookingDetail({
               />
             </dl>
           </Panel>
+
+          <PortalAccessCard
+            reservationId={reservation.id}
+            status={reservation.status}
+            portalCode={reservation.portalCode}
+          />
 
           <BookingActions
             reservationId={reservation.id}

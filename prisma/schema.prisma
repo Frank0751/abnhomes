@@ -583,6 +583,11 @@ model Reservation {
   syncState       SyncState @default(SYNCED)
   idempotencyKey  String?   @unique
 
+  /// Portal access code, e.g. PIN-8K3M2V. Issued when the stay is confirmed;
+  /// the guest signs into /portal with their email or phone plus this code.
+  portalCode         String?   @unique
+  portalCodeIssuedAt DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

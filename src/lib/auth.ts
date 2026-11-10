@@ -141,6 +141,66 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       },
     }),
+
+    Credentials({
+      id: 'portal',
+      name: 'Booking code sign in',
+      credentials: {
+        identifier: { label: 'Email or phone', type: 'text' },
+        code: { label: 'Portal code', type: 'text' },
+      },
+      async authorize(credentials) {
+        const raw = String(credentials?.identifier ?? '').trim()
+        const code = String(credentials?.code ?? '').trim().toUpperCase()
+        if (!raw || !code) return null
+
+        // The code only opens the booking it was issued for, and only when the
+        // email or phone the guest supplies matches that booking. Either half
+        // alone is useless.
+        const reservation = await db.reservation.findUnique({
+          where: { portalCode: code },
+          select: {
+            id: true,
+            status: true,
+            guest: { select: { id: true, email: true, phone: true } },
+          },
+        })
+        if (
+          !reservation ||
+          !['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'].includes(reservation.status)
+        ) {
+          return null
+        }
+
+        const guest = reservation.guest
+        const phone = normalisePhone(raw)
+        const matches =
+          (guest.email && guest.email.toLowerCase() === raw.toLowerCase()) ||
+          Boolean(guest.phone && phone && phoneVariants(guest.phone).includes(phone))
+        if (!matches) return null
+
+        // Created when the code was issued; the backfill keeps older bookings covered.
+        const user = await db.user.findUnique({
+          where: { partyId: guest.id },
+          include: { propertyAccess: true },
+        })
+        if (!user || !user.active) return null
+
+        await db.user.update({
+          where: { id: user.id },
+          data: { lastLoginAt: new Date() },
+        })
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          partyId: user.partyId,
+          propertyIds: user.propertyAccess.map((a) => a.propertyId),
+        }
+      },
+    }),
   ],
 })
 

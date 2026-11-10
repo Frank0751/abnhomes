@@ -11,9 +11,9 @@
 import { Prisma, type Currency, type ReservationSource } from '@prisma/client'
 import { db } from '@/lib/db'
 import { postCharge, postEntry, reverseEntry } from '@/lib/core/ledger'
-import { reservationCode } from '@/lib/core/ids'
+import { reservationCode, portalAccessCode } from '@/lib/core/ids'
 import { dateOnly, nightsBetween } from '@/lib/core/dates'
-import { normalisePhone } from '@/lib/core/phone'
+import { normalisePhone, phoneVariants } from '@/lib/core/phone'
 import { assertAvailable } from './availability'
 import { quoteFromUnit, type Quote } from './pricing'
 import { sendSms, templates } from '@/lib/messaging'
@@ -94,7 +94,7 @@ export async function createReservation(input: CreateReservationInput) {
     const existing = await db.reservation.findUnique({
       where: { idempotencyKey: input.idempotencyKey },
     })
-    if (existing) return { reservation: existing, quote: null, created: false as const }
+    if (existing) return { reservation: existing, quote: null, created: false as const, portalCode: existing.portalCode }
   }
 
   // Checked before the transaction for a clean error, and again inside it —
@@ -203,7 +203,121 @@ export async function createReservation(input: CreateReservationInput) {
       data: { status: status === 'CONFIRMED' ? 'RESERVED' : unit.status },
     })
 
-    return { reservation, quote, created: true as const }
+    // A booking the desk creates as already-confirmed (walk-in paying at the
+    // desk) gets portal access on the same terms as one confirmed later.
+    const portalCode =
+      reservation.status === 'CONFIRMED' ? await ensurePortalAccess(reservation.id) : null
+
+    return { reservation, quote, created: true as const, portalCode }
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Portal access — the code management reads out to the guest
+// ---------------------------------------------------------------------------
+
+/** Statuses that earn portal access. A cancelled stay opens nothing. */
+const PORTAL_ACCESS_STATUSES = ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT']
+
+/**
+ * Make sure a confirmed stay has a portal code and the guest has an account
+ * to sign into. Safe to call repeatedly — it mints nothing that exists.
+ *
+ * The code is stored in plain text on purpose: management reads it out over
+ * the phone and pastes it into WhatsApp, so a hash would defeat the point.
+ * It is only ever usable together with the guest's email or phone.
+ */
+export async function ensurePortalAccess(reservationId: string): Promise<string | null> {
+  const reservation = await db.reservation.findUnique({
+    where: { id: reservationId },
+    select: {
+      id: true,
+      status: true,
+      portalCode: true,
+      guestPartyId: true,
+      guest: { select: { id: true, name: true, email: true, phone: true } },
+    },
+  })
+  if (!reservation) throw new Error('Reservation not found.')
+  if (!PORTAL_ACCESS_STATUSES.includes(reservation.status)) return null
+
+  if (reservation.portalCode) {
+    // Older bookings may have a code but no guest account behind it yet.
+    await ensureGuestPortalUser(reservation.guest)
+    return reservation.portalCode
+  }
+
+  let issued: string | null = null
+  for (let attempt = 0; attempt < 5 && !issued; attempt++) {
+    const candidate = portalAccessCode()
+    try {
+      // The portalCode: null filter makes two desks issuing at the same
+      // instant safe — exactly one of them wins, the loser reads the winner's.
+      const result = await db.reservation.updateMany({
+        where: { id: reservationId, portalCode: null },
+        data: { portalCode: candidate, portalCodeIssuedAt: new Date() },
+      })
+
+      if (result.count === 1) {
+        issued = candidate
+        break
+      }
+
+      const fresh = await db.reservation.findUnique({
+        where: { id: reservationId },
+        select: { portalCode: true },
+      })
+      issued = fresh?.portalCode ?? null
+    } catch (error) {
+      // Another booking already holds this exact code — mint a different one.
+      if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')) {
+        throw error
+      }
+    }
+  }
+  if (!issued) throw new Error('Could not allocate a portal code. Try again.')
+
+  await ensureGuestPortalUser(reservation.guest)
+  return issued
+}
+
+/**
+ * Every confirmed guest gets a portal account, so a code someone reads out
+ * over the phone resolves to a real user. No password is set — the guest
+ * signs in with their booking's portal code, or a one-time SMS code.
+ */
+async function ensureGuestPortalUser(
+  party: { id: string; name: string; email: string | null; phone: string | null }
+) {
+  const linked = await db.user.findUnique({ where: { partyId: party.id } })
+  if (linked) return linked
+
+  const byEmail = party.email
+    ? await db.user.findUnique({ where: { email: party.email.toLowerCase() } })
+    : null
+  const byPhone = party.phone
+    ? await db.user.findFirst({ where: { phone: { in: phoneVariants(party.phone) } } })
+    : null
+
+  // An unclaimed account with the same contact details is the same person
+  // coming back — link it rather than duplicate it.
+  const unclaimed = [byEmail, byPhone].find((u) => u && !u.partyId && u.role === 'TENANT')
+  if (unclaimed) {
+    return db.user.update({ where: { id: unclaimed.id }, data: { partyId: party.id } })
+  }
+
+  return db.user.create({
+    data: {
+      name: party.name,
+      // Email and phone are unique across every account, staff included. If
+      // the contact detail already belongs to someone else, leave it off
+      // rather than fail the booking.
+      email: byEmail ? null : (party.email?.toLowerCase() ?? null),
+      phone: byPhone ? null : party.phone,
+      role: 'TENANT',
+      active: true,
+      partyId: party.id,
+    },
   })
 }
 
@@ -219,6 +333,10 @@ export async function confirmReservation(
 
   await db.unit.update({ where: { id: reservation.unitId }, data: { status: 'RESERVED' } })
 
+  // Confirmation is when the guest earns portal access: the code is minted
+  // here, shown to the desk for sharing, and texted with the confirmation.
+  const portalCode = await ensurePortalAccess(reservationId)
+
   if (reservation.guest.phone) {
     await sendSms({
       to: reservation.guest.phone,
@@ -226,7 +344,8 @@ export async function confirmReservation(
         reservation.guest.name.split(' ')[0],
         reservation.unit.name,
         formatDate(reservation.checkIn),
-        reservation.code
+        reservation.code,
+        portalCode ?? undefined
       ),
       template: 'booking_confirmed',
       entityType: 'Reservation',
@@ -234,7 +353,7 @@ export async function confirmReservation(
     })
   }
 
-  return reservation
+  return { ...reservation, portalCode }
 }
 
 /**

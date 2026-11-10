@@ -36,6 +36,9 @@ export const ticketCode = () => `TKT-${shortCode(6)}`
 export const leaseCode = () => `LSE-${shortCode(6)}`
 export const statementCode = () => `STM-${shortCode(6)}`
 
+/** Portal access code, e.g. PIN-8K3M2V. Issued when a booking is confirmed. */
+export const portalAccessCode = () => `PIN-${shortCode(6)}`
+
 /** Sequential document numbers, e.g. RCT-2026-000042. Padded so they sort. */
 export function sequentialCode(prefix: string, year: number, seq: number): string {
   return `${prefix}-${year}-${String(seq).padStart(6, '0')}`

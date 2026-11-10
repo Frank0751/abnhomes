@@ -125,8 +125,8 @@ export const templates = {
   rentOverdue: (name: string, amount: string, days: number) =>
     `Hello ${name}, your balance of ${amount} is now ${days} days overdue. Please contact us on 054 170 4048 to arrange payment. ABN Homes.`,
 
-  bookingConfirmed: (name: string, unit: string, checkIn: string, code: string) =>
-    `Hello ${name}, your stay at ${unit} is confirmed for ${checkIn}. Booking reference ${code}. ABN Homes, 054 170 4048.`,
+  bookingConfirmed: (name: string, unit: string, checkIn: string, code: string, portalCode?: string) =>
+    `Hello ${name}, your stay at ${unit} is confirmed for ${checkIn}. Booking reference ${code}.${portalCode ? ` Your portal code is ${portalCode} — sign in at abnhomes.vercel.app/portal with your email or phone and this code.` : ''} ABN Homes, 054 170 4048.`,
 
   checkInReminder: (name: string, unit: string, checkIn: string) =>
     `Hello ${name}, we look forward to welcoming you to ${unit} on ${checkIn}. Find us at 8 Asiko Street on Bolt or Google Maps. ABN Homes.`,

@@ -5,7 +5,7 @@ import { db } from '@/lib/db'
 import { requireParty } from '@/lib/session'
 import { createTicket } from '@/lib/operations/tickets'
 import { startPayment } from '@/lib/payments/gateway'
-import type { PaymentChannel } from '@prisma/client'
+import type { Currency, PaymentChannel } from '@prisma/client'
 
 export type ActionResult = { ok: true; message?: string } | { ok: false; error: string }
 
@@ -69,21 +69,38 @@ export async function startTenantPaymentAction(
   try {
     const { partyId } = await requireParty()
 
+    let propertyId: string | null = null
+    let currency: Currency = 'GHS'
+
     const lease = await db.lease.findFirst({
       where: { tenantPartyId: partyId, status: 'ACTIVE' },
       include: { unit: { select: { propertyId: true } } },
     })
-    if (!lease) return { ok: false, error: 'No active tenancy found on your account.' }
+
+    if (lease) {
+      propertyId = lease.unit.propertyId
+    } else {
+      // Short-stay guests have no lease. Their booking charges carry the
+      // property and currency, so pay against those instead.
+      const charge = await db.charge.findFirst({
+        where: { partyId, status: { in: ['OPEN', 'PART_PAID'] } },
+        orderBy: { dueDate: 'asc' },
+        select: { propertyId: true, currency: true },
+      })
+      if (!charge) return { ok: false, error: 'There is nothing to pay right now.' }
+      propertyId = charge.propertyId
+      currency = charge.currency
+    }
 
     if (amountMinor <= 0) return { ok: false, error: 'There is nothing to pay.' }
 
     const result = await startPayment({
-      propertyId: lease.unit.propertyId,
+      propertyId,
       partyId,
       amountMinor,
-      currency: 'GHS',
+      currency,
       channel,
-      metadata: { purpose: 'Rent payment from the tenant portal' },
+      metadata: { purpose: 'Payment from the tenant portal' },
     })
 
     return { ok: true, redirectUrl: result.redirectUrl, simulated: result.simulated }
