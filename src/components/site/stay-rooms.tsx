@@ -94,13 +94,6 @@ export function StayRooms() {
           transition={{ duration: 0.7 }}
           className="mb-10 flex flex-col gap-3 text-center lg:mb-14"
         >
-          <div className="flex items-center justify-center gap-3">
-            <span className="h-px w-10 bg-[#0d9488]" />
-            <span className="text-[11px] font-medium uppercase tracking-[0.4em] text-[#0d9488]">
-              Book direct — no platform fee
-            </span>
-            <span className="h-px w-10 bg-[#0d9488]" />
-          </div>
           <h2 className="font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-[#0a0e1a] md:text-5xl">
             Rooms available now
           </h2>

@@ -2,21 +2,19 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 /**
  * Shared full-height hero header for inner pages (About, Residences, etc.).
- * Full-bleed image with a Ken Burns drift, editorial bottom-aligned title,
- * breadcrumb and an optional subtitle, plus a subtle scroll cue.
+ * Full-bleed image with a Ken Burns drift, editorial bottom-aligned title
+ * and a breadcrumb.
  */
 export function PageHero({
-  eyebrow,
   title,
   subtitle,
   bgImage,
   breadcrumb,
 }: {
-  eyebrow: string;
   title: string;
   subtitle?: string;
   bgImage: string;
@@ -54,12 +52,6 @@ export function PageHero({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.15 }}
         >
-          <div className="mb-5 flex items-center gap-3">
-            <span className="h-px w-10 bg-[#0d9488]" />
-            <span className="text-[11px] font-medium uppercase tracking-[0.4em] text-[#0d9488]">
-              {eyebrow}
-            </span>
-          </div>
           <h1 className="max-w-4xl font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-white md:text-5xl lg:text-7xl">
             {title}
           </h1>
@@ -70,25 +62,6 @@ export function PageHero({
           )}
         </motion.div>
       </div>
-
-      {/* Scroll cue */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9, duration: 0.8 }}
-        className="pointer-events-none absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 [@media(min-height:640px)]:flex"
-      >
-        <span className="text-[10px] uppercase tracking-[0.4em] text-white/45">
-          Scroll
-        </span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-          className="text-[#0d9488]"
-        >
-          <ChevronDown className="h-5 w-5" />
-        </motion.div>
-      </motion.div>
     </section>
   );
 }

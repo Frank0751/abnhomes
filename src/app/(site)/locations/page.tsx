@@ -13,7 +13,6 @@ export default function LocationsPage() {
   return (
     <main className="min-h-screen bg-[#faf8f3]">
       <PageHero
-        eyebrow="Where We Build"
         title="Three Accra neighbourhoods, one address you will love."
         subtitle="From Tantra Hill to Achimota Petroleum Estate and across Greater Accra, ABN Homes operates where Accra lives, works and grows. Locate us on 8 Asiko Street on Bolt or Google Maps."
         bgImage="/images/abn-real/abn-ig-3-hd.jpg"

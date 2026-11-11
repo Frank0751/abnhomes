@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, ChevronDown, MapPin, Search, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import { CalendarDays, MapPin, Search, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { COMPANY } from "@/lib/abn-data";
 
 /**
@@ -93,49 +93,8 @@ export function BookingHero() {
 
       <ParticleField />
 
-      {/* Vertical side labels */}
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.6, duration: 0.8 }}
-        className="absolute left-5 lg:left-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-4 z-20"
-      >
-        <div className="w-px h-20 bg-gradient-to-b from-transparent via-[#0d9488]/60 to-transparent" />
-        <span className="text-[10px] tracking-[0.4em] text-[#0d9488] font-medium rotate-180" style={{ writingMode: "vertical-rl" }}>
-          EST. ACCRA
-        </span>
-        <div className="w-px h-20 bg-gradient-to-b from-transparent via-[#0d9488]/60 to-transparent" />
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.6, duration: 0.8 }}
-        className="absolute right-5 lg:right-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-4 z-20"
-      >
-        <div className="w-px h-20 bg-gradient-to-b from-transparent via-[#0d9488]/60 to-transparent" />
-        <span className="text-[10px] tracking-[0.4em] text-[#0d9488] font-medium" style={{ writingMode: "vertical-rl" }}>
-          SERVICED APARTMENTS
-        </span>
-        <div className="w-px h-20 bg-gradient-to-b from-transparent via-[#0d9488]/60 to-transparent" />
-      </motion.div>
-
       {/* Main content: wordmark, then the search card front and centre */}
       <div className="relative z-30 flex flex-1 flex-col items-center justify-center px-5 sm:px-6 pt-24 pb-32 text-center">
-        {/* Eyebrow */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.7 }}
-          className="flex items-center gap-3 mb-5"
-        >
-          <span className="w-8 sm:w-10 h-px bg-[#0d9488]" />
-          <span className="text-[10px] sm:text-[11px] tracking-[0.35em] text-[#0d9488] font-medium uppercase">
-            ABN Homes Company Limited
-          </span>
-          <span className="w-8 sm:w-10 h-px bg-[#0d9488]" />
-        </motion.div>
-
         {/* Animated ABN HOMES wordmark (brand animation preserved, quickened) */}
         <h1
           className="relative font-serif text-white text-[13vw] md:text-[10vw] lg:text-[6.5rem] xl:text-[8rem] leading-[0.95] tracking-[-0.04em] font-bold whitespace-nowrap"
@@ -360,23 +319,6 @@ export function BookingHero() {
           </a>
         </motion.div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.2, duration: 0.8 }}
-        className="pointer-events-none absolute bottom-16 left-1/2 z-30 hidden -translate-x-1/2 flex-col items-center gap-2 [@media(min-height:800px)]:flex"
-      >
-        <span className="text-[10px] tracking-[0.4em] text-white/50 uppercase">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-          className="text-[#0d9488]"
-        >
-          <ChevronDown className="h-5 w-5" />
-        </motion.div>
-      </motion.div>
 
       {/* Bottom marquee strip */}
       <motion.div

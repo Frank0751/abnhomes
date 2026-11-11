@@ -14,7 +14,6 @@ export default function AmenitiesPage() {
   return (
     <main className="min-h-screen bg-[#faf8f3]">
       <PageHero
-        eyebrow="Amenities & Services"
         title="Considered details, included as standard."
         subtitle="From 75-inch Smart TVs and open rooftop bars to full construction and renovation services, ABN Homes delivers everything you need to live, build or invest in Accra."
         bgImage="/images/properties/semi3-lounge.jpg"

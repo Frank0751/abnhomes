@@ -55,13 +55,6 @@ export function Contact() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <span className="w-10 h-px bg-[#0d9488]" />
-              <span className="text-[11px] tracking-[0.4em] text-[#0d9488] font-medium uppercase">
-                Begin the Conversation
-              </span>
-              <span className="w-10 h-px bg-[#0d9488]" />
-            </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em] mb-6">
               Book a tour, ask a question, or simply say hello.
             </h2>

@@ -36,7 +36,6 @@ const en: Dict = {
   "gallery.title": "Step inside the ABN way of living.",
   "locations.eyebrow": "Where We Build",
   "locations.title": "Three Accra neighbourhoods, one address you will love.",
-  "contact.eyebrow": "Begin the Conversation",
   "contact.title": "Book a tour, ask a question, or simply say hello.",
   "contact.body":
     "Whether you are ready to move this month or just starting to explore Accra, our advisors are here to help.",
@@ -80,7 +79,6 @@ const fr: Dict = {
   "gallery.title": "Entrez dans le mode de vie ABN.",
   "locations.eyebrow": "Ou Nous Construisons",
   "locations.title": "Trois quartiers d'Accra, une adresse que vous aimerez.",
-  "contact.eyebrow": "Demarrez la Conversation",
   "contact.title": "Reservez une visite, posez une question, ou dites simplement bonjour.",
   "contact.body":
     "Que vous soyez pret a demenager ce mois-ci ou que vous commenciez a explorer Accra, nos conseillers sont la pour vous aider.",

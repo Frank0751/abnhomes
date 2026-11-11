@@ -51,10 +51,7 @@ export default async function BookPage({
     <main className="pt-28 pb-24">
       <div className="mx-auto max-w-5xl px-5">
         <header className="mb-10">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-            Serviced apartments, Accra
-          </p>
-          <h1 className="mt-3 font-serif text-4xl tracking-tight text-balance sm:text-5xl">
+          <h1 className="font-serif text-4xl tracking-tight text-balance sm:text-5xl">
             Check availability
           </h1>
           <p className="mt-3 max-w-xl text-muted-foreground text-balance">

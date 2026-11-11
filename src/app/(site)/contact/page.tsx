@@ -13,7 +13,6 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen bg-[#faf8f3]">
       <PageHero
-        eyebrow="Begin the Conversation"
         title="Book a tour, ask a question, or simply say hello."
         subtitle="Whether you are ready to move this month or just starting to explore Accra, our advisors are here to help. Reach us by phone, WhatsApp, email or the form below."
         bgImage="/images/abn-real/abn-ig-8-hd.jpg"

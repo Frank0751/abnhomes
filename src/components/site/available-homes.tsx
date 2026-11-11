@@ -94,12 +94,6 @@ export function AvailableHomes() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <div className="mb-6 flex items-center gap-3">
-              <span className="h-px w-10 bg-[#0d9488]" />
-              <span className="text-[11px] font-medium uppercase tracking-[0.4em] text-[#0d9488]">
-                On the Market Now
-              </span>
-            </div>
             <h2 className="max-w-2xl font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-[#0a0e1a] md:text-5xl lg:text-6xl">
               Homes available today, straight from ABN.
             </h2>

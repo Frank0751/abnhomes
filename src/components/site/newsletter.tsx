@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Mail, Check, Loader2, ArrowRight } from "lucide-react";
+import { Check, Loader2, ArrowRight } from "lucide-react";
 
 export function Newsletter() {
   const [email, setEmail] = useState("");
@@ -41,12 +41,6 @@ export function Newsletter() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.7 }}
           >
-            <div className="flex items-center gap-3 mb-5">
-              <Mail className="h-5 w-5 text-[#0d9488]" strokeWidth={1.5} />
-              <span className="text-[11px] tracking-[0.4em] text-[#0d9488] font-medium uppercase">
-                ABN Insider
-              </span>
-            </div>
             <h3 className="font-serif text-3xl md:text-4xl lg:text-5xl leading-[1.05] mb-4">
               New releases, before they go public.
             </h3>

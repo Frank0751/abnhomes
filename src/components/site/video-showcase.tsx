@@ -62,12 +62,6 @@ export function VideoShowcase() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <div className="mb-6 flex items-center gap-3">
-              <span className="h-px w-10 bg-[#0d9488]" />
-              <span className="text-[11px] font-medium uppercase tracking-[0.4em] text-[#0d9488]">
-                In Motion
-              </span>
-            </div>
             <h2 className="max-w-2xl font-serif text-4xl leading-[1.05] tracking-[-0.02em] md:text-5xl lg:text-6xl">
               See the ABN Homes difference in full motion.
             </h2>

@@ -16,7 +16,6 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-[#faf8f3]">
       <PageHero
-        eyebrow="Our Story"
         title="Building Dreams in Every Home."
         subtitle="ABN Homes Company Limited is a Ghanaian real estate and construction company headquartered at 8 Asiko Street, Tantra Hill, Accra. We build, sell, rent and renovate homes, and we buy and sell lands across Greater Accra."
         bgImage="/images/abn-real/abn-ig-11-hd.jpg"

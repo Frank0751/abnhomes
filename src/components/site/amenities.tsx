@@ -91,12 +91,6 @@ export function Amenities() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <div className="flex items-center gap-3 mb-6">
-              <span className="w-10 h-px bg-[#0d9488]" />
-              <span className="text-[11px] tracking-[0.4em] text-[#0d9488] font-medium uppercase">
-                The ABN Standard
-              </span>
-            </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em]">
               Considered details, included as standard.
             </h2>
@@ -128,9 +122,6 @@ export function Amenities() {
               transition={{ duration: 0.5, delay: (i % 4) * 0.08 }}
               className="group bg-[#faf8f3] hover:bg-white p-7 lg:p-8 transition-colors duration-300 relative"
             >
-              <div className="absolute top-6 right-6 font-serif text-xs tracking-[0.3em] text-[#0d9488]/60 group-hover:text-[#0d9488] transition-colors">
-                {String(i + 1).padStart(2, "0")}
-              </div>
               <div className="w-12 h-12 border border-[#0d9488]/30 group-hover:border-[#0d9488] group-hover:bg-[#0d9488]/5 flex items-center justify-center mb-5 transition-all duration-300">
                 <amenity.icon
                   className="h-6 w-6 text-[#0a0e1a] group-hover:text-[#0d9488] transition-colors duration-300"
