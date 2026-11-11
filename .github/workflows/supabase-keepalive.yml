@@ -2,8 +2,9 @@
 # activity, which would take the demo site down silently. This job touches
 # the database twice a day so that never happens.
 #
-# The connection string sits here rather than in a secret because the repo is
-# private; if it ever goes public, move it into a repository secret first.
+# The connection string lives in the repository secret
+# SUPABASE_KEEPALIVE_DATABASE_URL — the repo is public and the value must
+# never sit in this file.
 name: Supabase keep-alive
 
 on:
@@ -21,7 +22,7 @@ jobs:
         env:
           # psql must not get Prisma's pgbouncer/connection_limit parameters —
           # libpq rejects them as unknown URI query parameters.
-          DATABASE_URL: postgresql://postgres.acxolkvfkvgrdjmlnjjn:Abnhomes2026@aws-0-eu-west-1.pooler.supabase.com:6543/postgres?sslmode=require
+          DATABASE_URL: ${{ secrets.SUPABASE_KEEPALIVE_DATABASE_URL }}
         run: |
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 \
             -c "SELECT 'supabase keep-alive', now() AS at;" \
