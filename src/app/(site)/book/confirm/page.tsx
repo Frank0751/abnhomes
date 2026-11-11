@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function ConfirmPage({
   searchParams,
 }: {
@@ -42,14 +44,57 @@ export default async function ConfirmPage({
   const quote = quoteFromUnit(unit, { checkIn, checkOut, guests })
   const stillFree = await isUnitAvailable({ unitId: unit.id, checkIn, checkOut })
 
+  const addOns = await db.addOn.findMany({
+    where: { active: true, OR: [{ unitId: null }, { unitId: unit.id }] },
+    orderBy: { sortOrder: 'asc' },
+  })
+
   return (
     <main className="pt-28 pb-24">
-      <div className="mx-auto max-w-3xl px-5">
+      <div className="mx-auto max-w-4xl px-5">
         <h1 className="font-serif text-3xl tracking-tight sm:text-4xl">Confirm your stay</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Ninety seconds, all-inclusive pricing, and your dates are held the moment you submit.
+        </p>
 
-        <div className="mt-8 grid gap-8 sm:grid-cols-[1fr_1.2fr]">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1.25fr_1fr]">
+          <div>
+            {!stillFree ? (
+              <div className="rounded-xl border border-amber-300 bg-amber-50/70 px-5 py-6">
+                <p className="font-serif text-lg tracking-tight text-amber-900">
+                  Those dates have just gone
+                </p>
+                <p className="mt-2 text-sm text-amber-900/80">
+                  Someone booked them while you were deciding. Search again for different dates, or
+                  call us on{' '}
+                  <a href="tel:+233541704048" className="underline underline-offset-2">
+                    054 170 4048
+                  </a>
+                  .
+                </p>
+              </div>
+            ) : (
+              <BookingRequestForm
+                unitId={unit.id}
+                checkIn={params.checkIn}
+                checkOut={params.checkOut}
+                guests={guests}
+                currency={quote.currency}
+                baseTotalMinor={quote.totalMinor}
+                addOns={addOns.map((a) => ({
+                  id: a.id,
+                  name: a.name,
+                  description: a.description ?? '',
+                  priceMinor: a.priceMinor,
+                  currency: a.currency,
+                  maxQty: a.maxQty,
+                }))}
+              />
+            )}
+          </div>
+
           <aside>
-            <div className="overflow-hidden rounded border border-black/10 bg-white">
+            <div className="overflow-hidden rounded-xl border border-black/10 bg-white shadow-soft lg:sticky lg:top-24">
               {unit.images[0] && (
                 <div className="relative aspect-[4/3]">
                   <Image
@@ -62,7 +107,7 @@ export default async function ConfirmPage({
                 </div>
               )}
 
-              <div className="space-y-3 p-4">
+              <div className="space-y-3 p-5">
                 <div>
                   <h2 className="font-serif text-lg tracking-tight">{unit.name}</h2>
                   <p className="text-xs text-muted-foreground">
@@ -87,40 +132,18 @@ export default async function ConfirmPage({
                 </dl>
 
                 <div className="flex items-baseline justify-between border-t border-black/8 pt-3">
-                  <span className="text-sm font-medium">Total</span>
+                  <span className="text-sm font-medium">From</span>
                   <span className="font-serif text-2xl tabular-nums">
                     {formatMinor(quote.totalMinor, quote.currency, { showCurrencyCode: true })}
                   </span>
                 </div>
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  Add-ons and promo codes update the total in the form. Free cancellation until 7
+                  days before arrival.
+                </p>
               </div>
             </div>
           </aside>
-
-          <div>
-            {!stillFree ? (
-              <div className="rounded border border-amber-300 bg-amber-50/70 px-5 py-6">
-                <p className="font-serif text-lg tracking-tight text-amber-900">
-                  Those dates have just gone
-                </p>
-                <p className="mt-2 text-sm text-amber-900/80">
-                  Someone booked them while you were deciding. Search again for different dates, or
-                  call us on{' '}
-                  <a href="tel:+233541704048" className="underline underline-offset-2">
-                    054 170 4048
-                  </a>
-                  .
-                </p>
-              </div>
-            ) : (
-              <BookingRequestForm
-                unitId={unit.id}
-                checkIn={params.checkIn}
-                checkOut={params.checkOut}
-                guests={guests}
-                totalLabel={formatMinor(quote.totalMinor, quote.currency)}
-              />
-            )}
-          </div>
         </div>
       </div>
     </main>

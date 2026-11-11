@@ -16,6 +16,7 @@ import { dateOnly, nightsBetween } from '@/lib/core/dates'
 import { normalisePhone, phoneVariants } from '@/lib/core/phone'
 import { assertAvailable } from './availability'
 import { quoteFromUnit, type Quote } from './pricing'
+import { validateCoupon, recordRedemption } from '@/lib/marketplace/coupons'
 import { notifyBookingCancelled, notifyBookingConfirmed } from '@/lib/notify'
 import { formatMinor } from '@/lib/core/money'
 import { formatDate } from '@/lib/core/dates'
@@ -81,6 +82,14 @@ export type CreateReservationInput = {
   discountMinor?: number
   guestNotes?: string | null
   internalNotes?: string | null
+  /** Checkout extras: airport pickup, early check-in, cot… */
+  addOns?: { addOnId: string; qty: number }[]
+  /** Validated inside the transaction; invalid codes abort the booking. */
+  couponCode?: string
+  arrivalTime?: string | null
+  purpose?: string | null
+  /** Unpaid web requests hold inventory only this long. */
+  expiresAt?: Date | null
   /** CONFIRMED skips the held state, e.g. a walk-in paying at the desk. */
   status?: 'PENDING' | 'CONFIRMED'
   /** Allow a stay below the minimum-night rule, with a manager's blessing. */
@@ -126,6 +135,40 @@ export async function createReservation(input: CreateReservationInput) {
     const guestPartyId = await findOrCreateGuest(input.guest, tx)
     const status = input.status ?? 'PENDING'
 
+    // Checkout extras, resolved inside the transaction so two submissions can
+    // never double-apply an add-on or a coupon.
+    const addOnLines: { addOnId: string; name: string; qty: number; unitAmountMinor: number; amountMinor: number; currency: Currency }[] = []
+    if (input.addOns?.length) {
+      const ids = input.addOns.map((a) => a.addOnId)
+      const rows = await tx.addOn.findMany({
+        where: { id: { in: ids }, active: true, OR: [{ unitId: null }, { unitId: unit.id }] },
+      })
+      for (const sel of input.addOns) {
+        const row = rows.find((r) => r.id === sel.addOnId)
+        if (!row) continue
+        const qty = Math.max(1, Math.min(sel.qty, row.maxQty))
+        addOnLines.push({ addOnId: row.id, name: row.name, qty, unitAmountMinor: row.priceMinor, amountMinor: row.priceMinor * qty, currency: row.currency })
+      }
+    }
+    const addOnsTotalMinor = addOnLines.reduce((s, l) => s + l.amountMinor, 0)
+
+    let couponDiscount = 0
+    let couponId: string | null = null
+    if (input.couponCode) {
+      const check = await validateCoupon(input.couponCode, {
+        propertyId: unit.propertyId,
+        partyId: guestPartyId,
+        subtotalMinor: quote.totalMinor,
+        currency: quote.currency,
+      })
+      if (!check.ok) throw new Error(check.error)
+      couponDiscount = check.discountMinor
+      couponId = check.coupon.id
+    }
+
+    const totalMinor = Math.max(0, quote.totalMinor + addOnsTotalMinor - couponDiscount)
+    const nightlyChargeMinor = Math.max(0, quote.accommodationMinor - quote.discountMinor - couponDiscount)
+
     const reservation = await tx.reservation.create({
       data: {
         code: reservationCode(),
@@ -141,16 +184,20 @@ export async function createReservation(input: CreateReservationInput) {
         currency: quote.currency,
         nightlyRateMinor: quote.averageNightlyMinor,
         cleaningFeeMinor: quote.cleaningFeeMinor,
-        discountMinor: quote.discountMinor,
-        totalMinor: quote.totalMinor,
+        discountMinor: quote.discountMinor + couponDiscount,
+        totalMinor,
         depositMinor: quote.depositMinor,
         guestNotes: input.guestNotes ?? null,
         internalNotes: input.internalNotes ?? null,
+        arrivalTime: input.arrivalTime ?? null,
+        purpose: input.purpose ?? null,
+        expiresAt: input.expiresAt ?? null,
         idempotencyKey: input.idempotencyKey ?? null,
       },
     })
 
-    // The stay itself, due on arrival.
+    // The stay itself, due on arrival. Promo discounts reduce this charge so
+    // the accounting stays one line, not a shadow ledger.
     await postCharge(
       {
         propertyId: unit.propertyId,
@@ -158,7 +205,7 @@ export async function createReservation(input: CreateReservationInput) {
         unitId: unit.id,
         type: 'NIGHTLY_STAY',
         description: `${quote.nights} night${quote.nights === 1 ? '' : 's'} at ${unit.name}, ${formatDate(reservation.checkIn)} to ${formatDate(reservation.checkOut)}`,
-        amountMinor: quote.accommodationMinor - quote.discountMinor,
+        amountMinor: nightlyChargeMinor,
         currency: quote.currency,
         dueDate: reservation.checkIn,
         periodStart: reservation.checkIn,
@@ -185,6 +232,46 @@ export async function createReservation(input: CreateReservationInput) {
         },
         tx
       )
+    }
+
+    // Extras become their own charges, priced from a snapshot so historical
+    // prices never shift when the add-on catalogue changes.
+    for (const line of addOnLines) {
+      await postCharge(
+        {
+          propertyId: unit.propertyId,
+          partyId: guestPartyId,
+          unitId: unit.id,
+          type: 'ADD_ON',
+          description: `${line.name}${line.qty > 1 ? ` × ${line.qty}` : ''} — booking ${reservation.code}`,
+          amountMinor: line.amountMinor,
+          currency: line.currency,
+          dueDate: reservation.checkIn,
+          reservationId: reservation.id,
+          actorUserId: input.actorUserId,
+        },
+        tx
+      )
+      await tx.reservationAddOn.create({
+        data: {
+          reservationId: reservation.id,
+          addOnId: line.addOnId,
+          name: line.name,
+          qty: line.qty,
+          unitAmountMinor: line.unitAmountMinor,
+          amountMinor: line.amountMinor,
+          currency: line.currency,
+        },
+      })
+    }
+
+    if (couponId) {
+      await recordRedemption({
+        couponId,
+        reservationId: reservation.id,
+        guestPartyId,
+        amountMinor: couponDiscount,
+      })
     }
 
     // The changeover clean, due at checkout.

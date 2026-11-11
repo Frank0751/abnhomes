@@ -505,7 +505,7 @@ export default async function StayPage({
                     )}
                     {quote.discountMinor > 0 && (
                       <div className="flex justify-between text-emerald-700">
-                        <dt>Weekly discount</dt>
+                        <dt>Promo discount</dt>
                         <dd className="tabular-nums">−{formatMinor(quote.discountMinor, quote.currency)}</dd>
                       </div>
                     )}
