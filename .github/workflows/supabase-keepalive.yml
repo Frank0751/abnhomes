@@ -19,7 +19,9 @@ jobs:
     steps:
       - name: Touch the database
         env:
-          DATABASE_URL: postgresql://postgres.acxolkvfkvgrdjmlnjjn:Abnhomes2026@aws-0-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1&sslmode=require
+          # psql must not get Prisma's pgbouncer/connection_limit parameters —
+          # libpq rejects them as unknown URI query parameters.
+          DATABASE_URL: postgresql://postgres.acxolkvfkvgrdjmlnjjn:Abnhomes2026@aws-0-eu-west-1.pooler.supabase.com:6543/postgres?sslmode=require
         run: |
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 \
             -c "SELECT 'supabase keep-alive', now() AS at;" \
