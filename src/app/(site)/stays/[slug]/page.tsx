@@ -28,6 +28,9 @@ import { formatMinor } from '@/lib/core/money'
 import { addDays, formatDate, toISODate, today } from '@/lib/core/dates'
 import { Gallery } from '@/components/site/listing-gallery'
 import { AvailabilityPreview } from '@/components/site/availability-preview'
+import { WishlistButton } from './wishlist-button'
+import { db } from '@/lib/db'
+import { currentActor } from '@/lib/session'
 
 export const dynamic = 'force-dynamic'
 
@@ -91,6 +94,13 @@ export default async function StayPage({
   const safety = (unit.safety ?? {}) as Safety
   const sleeping = (unit.sleeping ?? []) as Sleeping
   const nightlyFrom = unit.baseNightlyMinor ?? unit.ratePlans[0]?.nightlyMinor ?? 0
+
+  // Wishlist state for the signed-in guest; guests without accounts just see
+  // the heart, which takes them to sign-in.
+  const actor = await currentActor()
+  const saved = actor
+    ? Boolean(await db.wishlistItem.findUnique({ where: { userId_unitId: { userId: actor.id, unitId: unit.id } } }))
+    : false
 
   const freeUntil = addDays(checkIn, -7)
   const halfUntil = addDays(checkIn, -2)
@@ -166,6 +176,9 @@ export default async function StayPage({
                     ★ Guest favourite
                   </span>
                 )}
+                <span className="ml-auto">
+                  <WishlistButton unitId={unit.id} initiallySaved={saved} />
+                </span>
               </div>
               <h1 className="mt-2 font-serif text-3xl tracking-tight text-balance sm:text-4xl">
                 {unit.name}

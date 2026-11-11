@@ -25,13 +25,14 @@ import {
 import { ReportFaultDialog } from './report-fault'
 import { PayNowButton } from './pay-now'
 import { ReviewStayButton } from './review-stay'
+import { GuidebookButton } from './guidebook'
 
 const DAY = 24 * 60 * 60 * 1000
 
 export default async function TenantPortal() {
   const { partyId } = await requireParty()
 
-  const [party, leases, balanceGhsMinor, balanceUsdMinor, tickets, stays] = await Promise.all([
+  const [party, leases, balanceGhsMinor, balanceUsdMinor, tickets, stays, wishlist] = await Promise.all([
     db.party.findUniqueOrThrow({ where: { id: partyId } }),
     db.lease.findMany({
       where: { tenantPartyId: partyId, status: { in: ['ACTIVE', 'DRAFT'] } },
@@ -58,6 +59,14 @@ export default async function TenantPortal() {
         reviews: { where: { authorRole: 'GUEST' }, select: { id: true, status: true } },
       },
       orderBy: { checkIn: 'desc' },
+    }),
+    db.wishlistItem.findMany({
+      where: { user: { partyId } },
+      include: {
+        unit: { include: { property: { select: { name: true, slug: true, city: true } } } },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 6,
     }),
   ])
 
@@ -86,6 +95,16 @@ export default async function TenantPortal() {
     : creditMinor > 0
       ? `You are paid ahead. ${formatMinor(creditMinor, displayCurrency)} is held on your account and will cover future rent as it falls due.`
       : 'Nothing outstanding. Thank you.'
+
+  // The arriving-soon card: door codes release 24 hours before check-in, so
+  // guests see what they need exactly when they need it.
+  const now = Date.now()
+  const nextStay = stays
+    .filter((s) => s.status === 'CONFIRMED')
+    .sort((a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime())[0]
+  const hoursToCheckIn = nextStay ? (new Date(nextStay.checkIn).getTime() - now) / 3_600_000 : Infinity
+  const showArrival = nextStay && hoursToCheckIn <= 72 && hoursToCheckIn > -12
+  const doorCodeVisible = showArrival && hoursToCheckIn <= 24
 
   return (
     <>
@@ -154,12 +173,55 @@ export default async function TenantPortal() {
         </div>
       </div>
 
+      {showArrival && nextStay && (
+        <section className="shadow-lifted mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#134e4a] via-[#0f3d38] to-[#0a0e1a] px-6 py-6 text-white sm:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
+            {hoursToCheckIn <= 24 ? 'Your check-in is tomorrow' : 'Your check-in is coming up'}
+          </p>
+          <h2 className="mt-1 font-serif text-2xl tracking-tight">{nextStay.unit.name}</h2>
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-white/70">
+            <MapPin className="size-3.5" aria-hidden />
+            {nextStay.unit.property.addressLine}
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            {doorCodeVisible && nextStay.doorCode ? (
+              <div className="rounded-xl bg-white/10 px-4 py-2.5 ring-1 ring-white/15">
+                <p className="text-[10px] uppercase tracking-[0.16em] text-white/60">Door code</p>
+                <p className="font-mono text-xl tracking-[0.3em]">{nextStay.doorCode}</p>
+              </div>
+            ) : (
+              <p className="rounded-xl bg-white/10 px-4 py-2.5 text-xs text-white/70 ring-1 ring-white/15">
+                🔐 Your door code arrives here 24 hours before check-in
+              </p>
+            )}
+            <GuidebookButton
+              data={{
+                homeName: nextStay.unit.name,
+                address: nextStay.unit.property.addressLine,
+                wifiName: nextStay.unit.wifiName,
+                wifiPassword: nextStay.unit.wifiPassword,
+                houseRules: nextStay.unit.houseRules,
+                safety: (nextStay.unit.safety ?? {}) as never,
+                backupPower: nextStay.unit.backupPower,
+                generatorKva: nextStay.unit.generatorKva,
+                waterStorageLitres: nextStay.unit.waterStorageLitres,
+                securityNotes: nextStay.unit.securityNotes,
+                doorCode: doorCodeVisible ? nextStay.doorCode : null,
+                accessNotes: nextStay.accessNotes,
+                checkInFrom: nextStay.unit.checkInFrom,
+                checkOutUntil: nextStay.unit.checkOutUntil,
+              }}
+            />
+          </div>
+        </section>
+      )}
+
       {stays.length > 0 && (
-        <Panel
-          className="mb-6"
-          title="Your stays"
-          description="Your bookings with us, from confirmation through to checkout."
-        >
+          <Panel
+            className="mb-6"
+            title="Your stays"
+            description="Your bookings with us, from confirmation through to checkout."
+          >
           <ul className="divide-y divide-black/[0.06]">
             {stays.map((stay) => (
               <li key={stay.id} className="px-5 py-4">
@@ -210,13 +272,53 @@ export default async function TenantPortal() {
                 </div>
 
                 {stay.status === 'CHECKED_OUT' && stay.reviews.length === 0 && (
-                  <div className="mt-3 pl-6">
+                  <div className="mt-3 flex flex-wrap gap-2 pl-6">
                     <ReviewStayButton reservationId={stay.id} homeName={stay.unit.name} />
+                    <GuidebookButton
+                      data={{
+                        homeName: stay.unit.name,
+                        address: stay.unit.property.addressLine,
+                        wifiName: stay.unit.wifiName,
+                        wifiPassword: stay.unit.wifiPassword,
+                        houseRules: stay.unit.houseRules,
+                        safety: (stay.unit.safety ?? {}) as never,
+                        backupPower: stay.unit.backupPower,
+                        generatorKva: stay.unit.generatorKva,
+                        waterStorageLitres: stay.unit.waterStorageLitres,
+                        securityNotes: stay.unit.securityNotes,
+                        doorCode: null,
+                        accessNotes: stay.accessNotes,
+                        checkInFrom: stay.unit.checkInFrom,
+                        checkOutUntil: stay.unit.checkOutUntil,
+                      }}
+                    />
                   </div>
                 )}
               </li>
             ))}
           </ul>
+        </Panel>
+      )}
+
+      {wishlist.length > 0 && (
+        <Panel className="mb-6" title="Saved for later" description="Homes you starred while browsing.">
+          <div className="grid gap-3 px-5 py-4 sm:grid-cols-2 lg:grid-cols-3">
+            {wishlist.map((item) => (
+              <a
+                key={item.id}
+                href={`/stays/${item.unit.slug ?? item.unit.code}`}
+                className="group flex items-center gap-3 rounded-xl border border-black/[0.08] bg-white px-4 py-3 transition hover:shadow-soft"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{item.unit.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {item.unit.property.name} · {item.unit.property.city}
+                  </p>
+                </div>
+                <span className="text-xs font-medium text-[#0d9488]">View →</span>
+              </a>
+            ))}
+          </div>
         </Panel>
       )}
 
