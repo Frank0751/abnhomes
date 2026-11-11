@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { ReportFaultDialog } from './report-fault'
 import { PayNowButton } from './pay-now'
+import { ReviewStayButton } from './review-stay'
 
 const DAY = 24 * 60 * 60 * 1000
 
@@ -54,6 +55,7 @@ export default async function TenantPortal() {
       },
       include: {
         unit: { include: { property: { select: { id: true, name: true, addressLine: true } } } },
+        reviews: { where: { authorRole: 'GUEST' }, select: { id: true, status: true } },
       },
       orderBy: { checkIn: 'desc' },
     }),
@@ -206,6 +208,12 @@ export default async function TenantPortal() {
                     />
                   </p>
                 </div>
+
+                {stay.status === 'CHECKED_OUT' && stay.reviews.length === 0 && (
+                  <div className="mt-3 pl-6">
+                    <ReviewStayButton reservationId={stay.id} homeName={stay.unit.name} />
+                  </div>
+                )}
               </li>
             ))}
           </ul>

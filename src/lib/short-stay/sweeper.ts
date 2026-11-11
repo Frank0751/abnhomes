@@ -12,7 +12,7 @@
 
 import { db } from '@/lib/db'
 import { cancelReservation } from './reservations'
-import { notifyCheckInReminder } from '@/lib/notify'
+import { notifyCheckInReminder, notifyReviewRequest } from '@/lib/notify'
 
 export async function expirePendingReservations(): Promise<string[]> {
   const stale = await db.reservation.findMany({
@@ -67,4 +67,30 @@ export async function sendCheckInReminders(): Promise<number> {
     }
   }
   return arriving.length
+}
+
+/** Ask guests whose stay ended in the last day or two to review it. */
+export async function sendReviewRequests(): Promise<number> {
+  const now = new Date()
+  const cutoff = new Date(now)
+  cutoff.setDate(cutoff.getDate() - 1)
+
+  const ended = await db.reservation.findMany({
+    where: {
+      status: 'CHECKED_OUT',
+      checkOut: { gte: cutoff, lte: now },
+      reviewRequestedAt: null,
+    },
+    select: { id: true },
+    take: 50,
+  })
+
+  for (const { id } of ended) {
+    try {
+      await notifyReviewRequest(id)
+    } catch (error) {
+      console.error('[sweeper] review request failed', error)
+    }
+  }
+  return ended.length
 }

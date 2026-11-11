@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processOutbox } from '@/lib/notify'
-import { expirePendingReservations, sendCheckInReminders } from '@/lib/short-stay/sweeper'
+import { expirePendingReservations, sendCheckInReminders, sendReviewRequests } from '@/lib/short-stay/sweeper'
+import { revealExpiredWindows } from '@/lib/marketplace/reviews'
 
 export const maxDuration = 60
 
 /**
  * Drains the notification outbox (email / SMS / WhatsApp with retry and
- * backoff), expires stale unpaid booking requests and sends day-before
- * check-in reminders. Protected by the CRON_SECRET bearer header, same as
- * the other crons.
+ * backoff), expires stale unpaid booking requests, sends day-before check-in
+ * reminders and post-stay review requests, and reveals double-blind reviews
+ * whose window has closed. Protected by the CRON_SECRET bearer header.
  */
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET
@@ -20,5 +21,7 @@ export async function GET(request: NextRequest) {
   const outbox = await processOutbox()
   const expiredReservations = await expirePendingReservations()
   const checkInReminders = await sendCheckInReminders()
-  return NextResponse.json({ ok: true, outbox, expiredReservations, checkInReminders })
+  const reviewRequests = await sendReviewRequests()
+  const reviewsRevealed = await revealExpiredWindows()
+  return NextResponse.json({ ok: true, outbox, expiredReservations, checkInReminders, reviewRequests, reviewsRevealed })
 }
