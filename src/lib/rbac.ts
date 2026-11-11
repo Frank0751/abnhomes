@@ -48,6 +48,9 @@ export type Permission =
   | 'settings:write'
   | 'users:manage'
   | 'audit:read'
+  // Marketplace
+  | 'reviews:moderate'
+  | 'promotions:manage'
   // Self-service portals
   | 'portal:owner'
   | 'portal:tenant'
@@ -62,6 +65,7 @@ const ALL: Permission[] = [
   'housekeeping:read', 'housekeeping:complete',
   'reports:read', 'owners:read', 'owners:manage',
   'settings:write', 'users:manage', 'audit:read',
+  'reviews:moderate', 'promotions:manage',
   'portal:owner', 'portal:tenant', 'portal:vendor',
 ]
 
@@ -76,6 +80,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'maintenance:read', 'maintenance:report', 'maintenance:manage',
     'housekeeping:read', 'housekeeping:complete',
     'reports:read', 'owners:read',
+    'reviews:moderate', 'promotions:manage',
   ],
 
   // Takes bookings and money at the desk; cannot alter what is owed.
@@ -85,6 +90,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'money:read', 'money:record',
     'maintenance:report',
     'housekeeping:read',
+    'reviews:moderate',
   ],
 
   // Sees money everywhere. Deliberately cannot change leases or bookings.

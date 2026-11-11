@@ -12,6 +12,7 @@ import type { Currency, PaymentChannel } from '@prisma/client'
 import { db } from '@/lib/db'
 import { recordPayment } from '@/lib/core/ledger'
 import { shortCode } from '@/lib/core/ids'
+import { afterPaymentRecorded } from './after-payment'
 import * as paystack from './paystack'
 
 export type SupportedChannel = {
@@ -189,6 +190,10 @@ export async function settleFromProvider(args: {
     notes: args.notes ?? null,
     idempotencyKey: `provider:${verified.providerRef}`,
   })
+
+  // Receipt to the guest and, when the payment settles a booking, the
+  // instant-book confirmation. Idempotent — safe under webhook retries.
+  await afterPaymentRecorded(payment.id)
 
   return { recorded: true, paymentId: payment.id }
 }

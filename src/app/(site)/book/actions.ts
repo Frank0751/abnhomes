@@ -14,6 +14,7 @@ import { db } from '@/lib/db'
 import { createReservation } from '@/lib/short-stay/reservations'
 import { AvailabilityError } from '@/lib/short-stay/availability'
 import { startPayment } from '@/lib/payments/gateway'
+import { notifyBookingRequested } from '@/lib/notify'
 import { normalisePhone } from '@/lib/core/phone'
 import { logAudit } from '@/lib/audit'
 
@@ -85,6 +86,14 @@ export async function requestBookingAction(
       actorLabel: `Website — ${input.name}`,
       after: { code: reservation.code, unit: unit.name },
     })
+
+    // Tell the guest their request landed — email if we have an address, SMS
+    // either way — and give the team an in-app nudge. Never blocks the booking.
+    try {
+      await notifyBookingRequested(reservation.id)
+    } catch (notifyError) {
+      console.error('[booking] notification failed', notifyError)
+    }
 
     // Offer payment straight away. If the gateway is not configured this
     // returns null and the guest is simply asked to expect a call.

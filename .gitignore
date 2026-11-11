@@ -67,3 +67,7 @@ skills/
 upload/
 download/
 worklog.md
+
+# embedded local postgres (dev only)
+/pgdata
+/spec-extracted.md

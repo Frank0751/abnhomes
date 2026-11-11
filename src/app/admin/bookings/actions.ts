@@ -26,6 +26,7 @@ import {
 import { quoteStay } from '@/lib/short-stay/pricing'
 import { AvailabilityError } from '@/lib/short-stay/availability'
 import { recordPayment } from '@/lib/core/ledger'
+import { afterPaymentRecorded } from '@/lib/payments/after-payment'
 import { toMinor } from '@/lib/core/money'
 
 export type ActionResult = { ok: true; message?: string } | { ok: false; error: string }
@@ -294,6 +295,9 @@ export async function takePaymentAction(
       recordedById: actor.id,
       status: 'CONFIRMED',
     })
+
+    // Receipt to the guest; auto-confirms the booking when payment justifies it.
+    await afterPaymentRecorded(payment.id)
 
     await logAudit({
       actor,

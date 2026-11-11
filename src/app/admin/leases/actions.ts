@@ -11,6 +11,7 @@ import { activateLease, createLease } from '@/lib/long-let/leases'
 import { applyLateFees, runRentCycle } from '@/lib/long-let/rent-run'
 import { toMinor } from '@/lib/core/money'
 import { recordPayment } from '@/lib/core/ledger'
+import { afterPaymentRecorded } from '@/lib/payments/after-payment'
 
 export type ActionResult = { ok: true; message?: string } | { ok: false; error: string }
 
@@ -153,7 +154,7 @@ export async function createLeaseAction(
     // Record the advance up front, if it has already been handed over. It sits
     // as credit and is consumed month by month by the rent run.
     if (input.advancePaid === 'on' && input.advanceMonths > 0) {
-      await recordPayment({
+      const { payment } = await recordPayment({
         propertyId: unit.propertyId,
         partyId: lease.tenantPartyId,
         amountMinor: toMinor(input.rent, 'GHS') * input.advanceMonths,
@@ -163,6 +164,8 @@ export async function createLeaseAction(
         recordedById: actor.id,
         status: 'CONFIRMED',
       })
+      // Receipt for the advance, on the tenant's channels.
+      await afterPaymentRecorded(payment.id)
     }
 
     await logAudit({

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { useState } from 'react'
 import {
+  BarChart3,
   BedDouble,
   Building2,
   CalendarDays,
@@ -14,10 +15,17 @@ import {
   FileText,
   LayoutDashboard,
   LogOut,
+  Mail,
   Menu,
+  MessageSquare,
+  Package,
+  ScrollText,
   Settings,
   Sparkles,
+  Star,
+  Tag,
   TriangleAlert,
+  Users,
   Wrench,
   X,
 } from 'lucide-react'
@@ -25,6 +33,7 @@ import { cn } from '@/lib/utils'
 import { ROLE_LABELS, type Permission } from '@/lib/rbac'
 import type { Role } from '@prisma/client'
 import { Button } from '@/components/ui/button'
+import { NotificationBell } from '@/components/admin/notification-bell'
 
 type NavItem = {
   href: string
@@ -50,6 +59,13 @@ const NAV: Array<{ group: string; items: NavItem[] }> = [
     ],
   },
   {
+    group: 'Marketplace',
+    items: [
+      { href: '/admin/reviews', label: 'Reviews', icon: Star, permission: 'reviews:moderate' },
+      { href: '/admin/promotions', label: 'Promotions', icon: Tag, permission: 'promotions:manage' },
+    ],
+  },
+  {
     group: 'Tenancies',
     items: [
       { href: '/admin/leases', label: 'Leases', icon: FileText, permission: 'leases:read' },
@@ -61,14 +77,24 @@ const NAV: Array<{ group: string; items: NavItem[] }> = [
     items: [
       { href: '/admin/money', label: 'Payments', icon: Coins, permission: 'money:read' },
       { href: '/admin/owners', label: 'Owner statements', icon: ClipboardList, permission: 'owners:read' },
+      { href: '/admin/reports', label: 'Reports', icon: BarChart3, permission: 'reports:read' },
     ],
   },
   {
     group: 'Buildings',
     items: [
       { href: '/admin/maintenance', label: 'Maintenance', icon: Wrench, permission: 'maintenance:read' },
+      { href: '/admin/assets', label: 'Assets & servicing', icon: Package, permission: 'maintenance:manage' },
       { href: '/admin/portfolio', label: 'Portfolio', icon: Building2, permission: 'units:read' },
       { href: '/admin/settings', label: 'Settings', icon: Settings, permission: 'settings:write' },
+    ],
+  },
+  {
+    group: 'Platform',
+    items: [
+      { href: '/admin/messages', label: 'Messages', icon: MessageSquare, permission: 'settings:write' },
+      { href: '/admin/users', label: 'Users', icon: Users, permission: 'users:manage' },
+      { href: '/admin/audit', label: 'Audit log', icon: ScrollText, permission: 'audit:read' },
     ],
   },
 ]
@@ -179,7 +205,12 @@ export function AdminShell({
           </div>
         </aside>
 
-        <main className="min-w-0 px-4 py-6 sm:px-8 sm:py-10">{children}</main>
+        <div className="min-w-0">
+          <header className="sticky top-0 z-30 flex items-center justify-end border-b border-black/8 bg-[#f7f5f0]/85 px-4 py-2 backdrop-blur sm:px-8">
+            <NotificationBell />
+          </header>
+          <main className="min-w-0 px-4 py-6 sm:px-8 sm:py-10">{children}</main>
+        </div>
       </div>
     </div>
   )

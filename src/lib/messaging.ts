@@ -21,6 +21,24 @@ type SendArgs = {
   entityId?: string
 }
 
+/**
+ * Raw SMS dispatch without logging. Used by the notification outbox
+ * (src/lib/notify.ts); `sendSms` below is the log-and-forget wrapper that
+ * legacy call sites still use.
+ */
+export async function dispatchSms(to: string, body: string): Promise<string> {
+  const normalised = normalisePhone(to)
+  if (!normalised) throw new Error('Unrecognised phone number')
+
+  const provider = (process.env.SMS_PROVIDER ?? 'log').toLowerCase()
+  const apiKey = process.env.SMS_API_KEY
+  if (!apiKey || provider === 'log') {
+    console.info(`[sms:simulated] -> ${normalised}\n${body}`)
+    return 'simulated'
+  }
+  return dispatch(provider, normalised, body)
+}
+
 export async function sendSms(args: SendArgs): Promise<{ ok: boolean; simulated: boolean }> {
   const to = normalisePhone(args.to)
   if (!to) {

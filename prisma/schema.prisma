@@ -277,35 +277,104 @@ enum OtpPurpose {
 }
 
 // ===========================================================================
+// MARKETPLACE ENUMS
+// ===========================================================================
+
+/// Double-blind reviews: PENDING until both sides submit or the window closes.
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  HIDDEN
+}
+
+enum ReviewAuthorRole {
+  GUEST
+  HOST
+}
+
+enum CouponKind {
+  /// value is basis points, e.g. 1000 = 10% off.
+  PERCENT
+  /// value is minor units off, e.g. 5000 = 50.00.
+  FIXED
+}
+
+enum AddOnUnit {
+  PER_STAY
+  PER_NIGHT
+}
+
+enum ExpenseCategory {
+  CLEANING
+  MAINTENANCE
+  UTILITIES
+  SUPPLIES
+  MARKETING
+  INSURANCE
+  TAX
+  OTHER
+}
+
+enum PayoutMethod {
+  BANK_TRANSFER
+  MOBILE_MONEY
+  CASH
+}
+
+enum PayoutStatus {
+  PENDING
+  APPROVED
+  PAID
+  FAILED
+}
+
+enum ReferralStatus {
+  SENT
+  SIGNED_UP
+  REWARDED
+  REVOKED
+}
+
+// ===========================================================================
 // IDENTITY & ACCESS
 // ===========================================================================
 
 model User {
-  id            String   @id @default(cuid())
-  email         String?  @unique
+  id            String    @id @default(cuid())
+  email         String?   @unique
   /// E.164, e.g. +233541704048. Primary login for non-staff.
-  phone         String?  @unique
+  phone         String?   @unique
   name          String
   passwordHash  String?
-  role          Role     @default(TENANT)
-  active        Boolean  @default(true)
+  role          Role      @default(TENANT)
+  active        Boolean   @default(true)
   emailVerified DateTime?
   phoneVerified DateTime?
   lastLoginAt   DateTime?
-  locale        String   @default("en")
+
+  /// Trust & safety suspension. Suspended users cannot sign in.
+  suspendedAt      DateTime?
+  suspensionReason String?
+
+  notifications      Notification[]
+  wishlistItems      WishlistItem[]
+  referralsMade      Referral[]
+  reviewsWritten     Review[]                @relation("ReviewAuthorUser")
+  preventiveAssigned PreventiveMaintenance[] @relation("PreventiveAssignee")
+  locale             String                  @default("en")
 
   /// Links a login to the person/company record it represents.
   partyId String? @unique
   party   Party?  @relation(fields: [partyId], references: [id], onDelete: SetNull)
 
-  propertyAccess UserPropertyAccess[]
-  auditEvents    AuditEvent[]
-  paymentsTaken  Payment[]            @relation("PaymentRecordedBy")
-  ledgerWritten  LedgerEntry[]        @relation("LedgerCreatedBy")
-  ticketsAssigned Ticket[]            @relation("TicketAssignee")
-  tasksAssigned  HousekeepingTask[]   @relation("TaskAssignee")
-  documents      Document[]           @relation("DocumentUploader")
-  managedProperties Property[]        @relation("PropertyManager")
+  propertyAccess    UserPropertyAccess[]
+  auditEvents       AuditEvent[]
+  paymentsTaken     Payment[]            @relation("PaymentRecordedBy")
+  ledgerWritten     LedgerEntry[]        @relation("LedgerCreatedBy")
+  ticketsAssigned   Ticket[]             @relation("TicketAssignee")
+  tasksAssigned     HousekeepingTask[]   @relation("TaskAssignee")
+  documents         Document[]           @relation("DocumentUploader")
+  managedProperties Property[]           @relation("PropertyManager")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -347,18 +416,18 @@ model OneTimeCode {
 // ===========================================================================
 
 model Party {
-  id        String    @id @default(cuid())
-  type      PartyType @default(PERSON)
-  name      String
-  email     String?
+  id          String    @id @default(cuid())
+  type        PartyType @default(PERSON)
+  name        String
+  email       String?
   /// E.164. Matched leniently at the application layer (024… = +23324…).
-  phone     String?
-  altPhone  String?
+  phone       String?
+  altPhone    String?
   /// Ghana Card number, format GHA-XXXXXXXXX-X. Restricted visibility.
-  ghanaCard String?
+  ghanaCard   String?
   nationality String?
-  address   String?
-  notes     String?
+  address     String?
+  notes       String?
 
   isGuest  Boolean @default(false)
   isTenant Boolean @default(false)
@@ -368,6 +437,21 @@ model Party {
   /// Vendor-only fields
   vendorTrade    String?
   vendorRating   Int?
+  /// Vendor service description for the directory, e.g. "AC servicing".
+  vendorServices String?
+  vendorRateNote String?
+
+  /// Consent for marketing emails / WhatsApp campaigns.
+  marketingOptIn Boolean   @default(false)
+  /// Set when a Ghana Card / passport has been verified by staff.
+  idVerifiedAt   DateTime?
+
+  notifications       Notification[]
+  payouts             Payout[]
+  expensesIncurred    Expense[]               @relation("ExpenseVendor")
+  referralsReceived   Referral[]              @relation("ReferralInvitee")
+  reviewsWritten      Review[]                @relation("ReviewAuthorParty")
+  preventiveServicing PreventiveMaintenance[] @relation("PreventiveVendor")
 
   user            User?
   ownedProperties Property[]            @relation("PropertyOwner")
@@ -396,21 +480,26 @@ model Party {
 // ===========================================================================
 
 model Property {
-  id          String  @id @default(cuid())
-  slug        String  @unique
+  id          String   @id @default(cuid())
+  slug        String   @unique
   name        String
   addressLine String
-  city        String  @default("Accra")
-  region      String  @default("Greater Accra")
-  country     String  @default("Ghana")
+  city        String   @default("Accra")
+  region      String   @default("Greater Accra")
+  country     String   @default("Ghana")
   latitude    Float?
   longitude   Float?
   description String?
   amenities   String[]
   images      String[]
   /// Public listing visibility on the marketing site.
-  published   Boolean @default(false)
-  active      Boolean @default(true)
+  published   Boolean  @default(false)
+  active      Boolean  @default(true)
+
+  /// Neighbourhood name for marketplace filtering, e.g. "Osu", "East Legon".
+  neighbourhood String?
+  /// Host-written area guide shown on unit pages.
+  aboutArea     String?
 
   ownerPartyId String
   owner        Party  @relation("PropertyOwner", fields: [ownerPartyId], references: [id])
@@ -426,9 +515,14 @@ model Property {
   tickets       Ticket[]
   statements    OwnerStatement[]
   access        UserPropertyAccess[]
+  assets        Asset[]
+  expenses      Expense[]
+  preventive    PreventiveMaintenance[]
+  payouts       Payout[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  coupons   Coupon[]
 
   @@index([ownerPartyId])
   @@index([published, active])
@@ -438,11 +532,11 @@ model Property {
 /// ABN's own buildings get an agreement too, with a zero fee, so that every
 /// statement reconciles through the same code path.
 model ManagementAgreement {
-  id           String         @id @default(cuid())
+  id           String   @id @default(cuid())
   propertyId   String
   ownerPartyId String
-  property     Property       @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  owner        Party          @relation(fields: [ownerPartyId], references: [id])
+  property     Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  owner        Party    @relation(fields: [ownerPartyId], references: [id])
 
   /// Management fee in basis points of collected revenue. 1000 = 10%.
   feeBasisPoints Int            @default(1000)
@@ -482,6 +576,35 @@ model Unit {
   images      String[]
   published   Boolean     @default(false)
 
+  // --- Marketplace listing content ---
+  /// URL segment for the public detail page: property slug + unit code.
+  slug          String?  @unique
+  /// House rules as short lines, e.g. "No smoking indoors".
+  houseRules    String[]
+  /// Safety disclosures: smokeAlarm, coAlarm, fireExtinguisher, firstAidKit,
+  /// securityCameraNote, poolUngated, hazardNote.
+  safety        Json?
+  sleeping      Json?
+  wifiName      String?
+  wifiPassword  String?
+  wifiSpeedMbps Int?
+  checkInFrom   String?
+  checkOutUntil String?
+  selfCheckIn   Boolean  @default(false)
+  /// Ghana Tourism Authority licence number, shown where required.
+  licenseNumber String?
+  instantBook   Boolean  @default(true)
+  transitNotes  String?
+
+  // --- Ghana-specific structured disclosures ---
+  /// "generator" | "inverter" | "none" | "solar hybrid"
+  backupPower        String?
+  generatorKva       Float?
+  waterStorageLitres Int?
+  securityNotes      String?
+  /// Workspace suitable for remote work (desk + chair + reliable power).
+  deskSpace          Boolean @default(false)
+
   /// Fallback rate when no rate plan matches. Minor units.
   baseNightlyMinor Int?
   baseRentMinor    Int?
@@ -496,6 +619,12 @@ model Unit {
   ledgerEntries LedgerEntry[]
   tickets       Ticket[]
   tasks         HousekeepingTask[]
+  reviews       Review[]
+  addOns        AddOn[]
+  assets        Asset[]
+  wishlistItems WishlistItem[]
+  preventive    PreventiveMaintenance[]
+  expenses      Expense[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -503,6 +632,7 @@ model Unit {
   @@unique([propertyId, code])
   @@index([lettingMode, status])
   @@index([published])
+  @@index([slug])
 }
 
 // ===========================================================================
@@ -518,18 +648,18 @@ model RatePlan {
   name     String
   currency Currency @default(USD)
 
-  nightlyMinor      Int
-  weeklyMinor       Int?
-  monthlyMinor      Int?
-  cleaningFeeMinor  Int  @default(0)
-  minNights         Int  @default(1)
-  maxNights         Int?
+  nightlyMinor     Int
+  weeklyMinor      Int?
+  monthlyMinor     Int?
+  cleaningFeeMinor Int  @default(0)
+  minNights        Int  @default(1)
+  maxNights        Int?
 
   startDate DateTime?
   endDate   DateTime?
   /// Higher wins when windows overlap.
-  priority  Int      @default(0)
-  active    Boolean  @default(true)
+  priority  Int       @default(0)
+  active    Boolean   @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -557,31 +687,49 @@ model Reservation {
   status ReservationStatus @default(PENDING)
   source ReservationSource @default(DIRECT)
 
-  currency          Currency @default(USD)
-  nightlyRateMinor  Int
-  cleaningFeeMinor  Int      @default(0)
-  discountMinor     Int      @default(0)
-  totalMinor        Int
-  depositMinor      Int      @default(0)
+  currency         Currency @default(USD)
+  nightlyRateMinor Int
+  cleaningFeeMinor Int      @default(0)
+  discountMinor    Int      @default(0)
+  totalMinor       Int
+  depositMinor     Int      @default(0)
 
   guestNotes    String?
   internalNotes String?
+
+  /// Checkout extras collected from the guest.
+  arrivalTime         String?
+  /// LEISURE | BUSINESS | RELOCATION
+  purpose             String?
+  /// Entry code for a smart lock / keypad, issued at confirmation.
+  doorCode            String?
+  accessNotes         String?
+  /// Time-limited hold: unpaid PENDING reservations expire after this.
+  expiresAt           DateTime?
+  /// True when the booking confirmed automatically on payment (instant book).
+  instantBooked       Boolean   @default(false)
+  reviewRequestedAt   DateTime?
+  checkInNoticeSentAt DateTime?
+
   /// Set when the row originated from an external calendar feed.
-  externalUid   String?
-  externalRef   String?
+  externalUid String?
+  externalRef String?
 
   checkedInAt  DateTime?
   checkedOutAt DateTime?
   cancelledAt  DateTime?
   cancelReason String?
 
-  charges LedgerEntry[]
-  chargeRows Charge[]
-  tasks   HousekeepingTask[]
-  blocks  CalendarBlock[]
+  charges     LedgerEntry[]
+  chargeRows  Charge[]
+  tasks       HousekeepingTask[]
+  blocks      CalendarBlock[]
+  addOns      ReservationAddOn[]
+  reviews     Review[]
+  redemptions CouponRedemption[]
 
-  syncState       SyncState @default(SYNCED)
-  idempotencyKey  String?   @unique
+  syncState      SyncState @default(SYNCED)
+  idempotencyKey String?   @unique
 
   /// Portal access code, e.g. PIN-8K3M2V. Issued when the stay is confirmed;
   /// the guest signs into /portal with their email or phone plus this code.
@@ -600,40 +748,40 @@ model Reservation {
 /// Dates a unit is unavailable for reasons other than a reservation:
 /// imported OTA bookings, maintenance, owner use.
 model CalendarBlock {
-  id       String      @id @default(cuid())
-  unitId   String
-  unit     Unit        @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  id        String      @id @default(cuid())
+  unitId    String
+  unit      Unit        @relation(fields: [unitId], references: [id], onDelete: Cascade)
   startDate DateTime
   endDate   DateTime
-  source   BlockSource @default(MANUAL)
-  reason   String?
+  source    BlockSource @default(MANUAL)
+  reason    String?
 
   reservationId String?
   reservation   Reservation? @relation(fields: [reservationId], references: [id], onDelete: Cascade)
 
-  feedId String?
-  feed   IcalFeed? @relation(fields: [feedId], references: [id], onDelete: Cascade)
+  feedId      String?
+  feed        IcalFeed? @relation(fields: [feedId], references: [id], onDelete: Cascade)
   /// UID from the source calendar, used to reconcile on re-sync.
   externalUid String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([unitId, startDate, endDate])
   @@unique([feedId, externalUid])
+  @@index([unitId, startDate, endDate])
 }
 
 /// An external calendar to pull availability from (Airbnb, Booking.com).
 model IcalFeed {
-  id         String  @id @default(cuid())
+  id         String    @id @default(cuid())
   unitId     String
-  unit       Unit    @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unit       Unit      @relation(fields: [unitId], references: [id], onDelete: Cascade)
   label      String
   url        String
-  active     Boolean @default(true)
+  active     Boolean   @default(true)
   lastSyncAt DateTime?
   lastError  String?
-  eventCount Int     @default(0)
+  eventCount Int       @default(0)
 
   blocks CalendarBlock[]
 
@@ -661,23 +809,23 @@ model Lease {
   endDate   DateTime
   cycle     BillingCycle @default(MONTHLY)
 
-  currency   Currency @default(GHS)
-  rentMinor  Int
+  currency  Currency @default(GHS)
+  rentMinor Int
   /// Day of month rent falls due, 1–28.
-  dueDay     Int      @default(1)
+  dueDay    Int      @default(1)
 
-  depositMinor Int @default(0)
+  depositMinor     Int @default(0)
   /// Months of rent taken up front. The engine amortises this month by month.
-  advanceMonths Int @default(0)
+  advanceMonths    Int @default(0)
   advancePaidMinor Int @default(0)
 
   /// Annual escalation in basis points applied on each anniversary.
   escalationBasisPoints Int @default(0)
   /// Grace period before a late fee is charged.
-  graceDays  Int @default(5)
-  lateFeeBasisPoints Int @default(0)
+  graceDays             Int @default(5)
+  lateFeeBasisPoints    Int @default(0)
 
-  noticeDays Int      @default(30)
+  noticeDays Int       @default(30)
   signedAt   DateTime?
   endedAt    DateTime?
   endReason  String?
@@ -696,17 +844,17 @@ model Lease {
 
 /// Service charge, water, security levy — anything billed alongside rent.
 model RecurringCharge {
-  id       String       @id @default(cuid())
-  leaseId  String
-  lease    Lease        @relation(fields: [leaseId], references: [id], onDelete: Cascade)
-  type     ChargeType   @default(SERVICE_CHARGE)
-  label    String
+  id          String       @id @default(cuid())
+  leaseId     String
+  lease       Lease        @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  type        ChargeType   @default(SERVICE_CHARGE)
+  label       String
   amountMinor Int
-  currency Currency     @default(GHS)
-  cycle    BillingCycle @default(MONTHLY)
-  startDate DateTime
-  endDate  DateTime?
-  active   Boolean      @default(true)
+  currency    Currency     @default(GHS)
+  cycle       BillingCycle @default(MONTHLY)
+  startDate   DateTime
+  endDate     DateTime?
+  active      Boolean      @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -721,13 +869,13 @@ model RecurringCharge {
 /// Something owed, with the date it became owed. Charges are mutable only in
 /// status; the amount is fixed once posted (correct with a credit note).
 model Charge {
-  id         String     @id @default(cuid())
+  id         String   @id @default(cuid())
   propertyId String
-  property   Property   @relation(fields: [propertyId], references: [id])
+  property   Property @relation(fields: [propertyId], references: [id])
   unitId     String?
-  unit       Unit?      @relation(fields: [unitId], references: [id])
+  unit       Unit?    @relation(fields: [unitId], references: [id])
   partyId    String
-  party      Party      @relation(fields: [partyId], references: [id])
+  party      Party    @relation(fields: [partyId], references: [id])
 
   type        ChargeType
   description String
@@ -763,22 +911,22 @@ model Charge {
 /// THE SOURCE OF FINANCIAL TRUTH. Append-only: never update, never delete.
 /// To correct, insert a REVERSAL row pointing at the original.
 model LedgerEntry {
-  id         String          @id
+  id         String   @id
   propertyId String
-  property   Property        @relation(fields: [propertyId], references: [id])
+  property   Property @relation(fields: [propertyId], references: [id])
   partyId    String?
-  party      Party?          @relation(fields: [partyId], references: [id])
+  party      Party?   @relation(fields: [partyId], references: [id])
   unitId     String?
-  unit       Unit?           @relation(fields: [unitId], references: [id])
+  unit       Unit?    @relation(fields: [unitId], references: [id])
 
-  direction LedgerDirection
-  kind      LedgerKind
+  direction   LedgerDirection
+  kind        LedgerKind
   amountMinor Int
-  currency  Currency
+  currency    Currency
 
   /// Rate to the reporting base currency, captured at posting time so that
   /// history is never re-derived from today's rate.
-  fxRateToBase Decimal  @db.Decimal(18, 8) @default(1)
+  fxRateToBase Decimal  @default(1) @db.Decimal(18, 8)
   baseCurrency Currency @default(GHS)
 
   description String
@@ -786,15 +934,15 @@ model LedgerEntry {
   postedAt    DateTime @default(now())
 
   chargeId      String?
-  charge        Charge?      @relation(fields: [chargeId], references: [id])
+  charge        Charge?         @relation(fields: [chargeId], references: [id])
   paymentId     String?
-  payment       Payment?     @relation(fields: [paymentId], references: [id])
+  payment       Payment?        @relation(fields: [paymentId], references: [id])
   leaseId       String?
-  lease         Lease?       @relation(fields: [leaseId], references: [id])
+  lease         Lease?          @relation(fields: [leaseId], references: [id])
   reservationId String?
-  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+  reservation   Reservation?    @relation(fields: [reservationId], references: [id])
   ticketId      String?
-  ticket        Ticket?      @relation(fields: [ticketId], references: [id])
+  ticket        Ticket?         @relation(fields: [ticketId], references: [id])
   statementId   String?
   statement     OwnerStatement? @relation(fields: [statementId], references: [id])
 
@@ -814,28 +962,28 @@ model LedgerEntry {
 }
 
 model Payment {
-  id         String   @id @default(cuid())
+  id            String   @id @default(cuid())
   /// Sequential, human-readable, printed on the receipt.
-  receiptNumber String @unique
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id])
-  partyId    String
-  party      Party    @relation(fields: [partyId], references: [id])
+  receiptNumber String   @unique
+  propertyId    String
+  property      Property @relation(fields: [propertyId], references: [id])
+  partyId       String
+  party         Party    @relation(fields: [partyId], references: [id])
 
   amountMinor Int
   currency    Currency
   channel     PaymentChannel
-  status      PaymentStatus @default(PENDING)
+  status      PaymentStatus  @default(PENDING)
 
   /// Payer-supplied or bank reference.
   reference   String?
   /// Gateway transaction id.
-  providerRef String?  @unique
+  providerRef String? @unique
   payerPhone  String?
   payerName   String?
 
-  receivedAt DateTime
-  confirmedAt DateTime?
+  receivedAt   DateTime
+  confirmedAt  DateTime?
   failedReason String?
 
   recordedById String?
@@ -878,12 +1026,12 @@ model Allocation {
 }
 
 model FxRate {
-  id       String   @id @default(cuid())
-  from     Currency
-  to       Currency
-  rate     Decimal  @db.Decimal(18, 8)
-  asOf     DateTime
-  source   String   @default("manual")
+  id     String   @id @default(cuid())
+  from   Currency
+  to     Currency
+  rate   Decimal  @db.Decimal(18, 8)
+  asOf   DateTime
+  source String   @default("manual")
 
   createdAt DateTime @default(now())
 
@@ -921,13 +1069,13 @@ model Ticket {
   closedAt   DateTime?
   resolution String?
 
-  costMinor Int?
-  currency  Currency @default(GHS)
+  costMinor        Int?
+  currency         Currency @default(GHS)
   /// Whether the cost is recharged to the tenant rather than the owner.
-  rechargeToTenant Boolean @default(false)
+  rechargeToTenant Boolean  @default(false)
 
-  photos   String[]
-  comments TicketComment[]
+  photos        String[]
+  comments      TicketComment[]
   ledgerEntries LedgerEntry[]
 
   syncState      SyncState @default(SYNCED)
@@ -942,14 +1090,14 @@ model Ticket {
 }
 
 model TicketComment {
-  id       String @id @default(cuid())
-  ticketId String
-  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  ticketId     String
+  ticket       Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   authorUserId String?
   authorName   String
-  body     String
-  internal Boolean @default(false)
-  photos   String[]
+  body         String
+  internal     Boolean  @default(false)
+  photos       String[]
 
   createdAt DateTime @default(now())
 
@@ -989,13 +1137,13 @@ model HousekeepingTask {
 }
 
 model Document {
-  id       String       @id @default(cuid())
+  id         String       @id @default(cuid())
   /// Object storage key. Served only through signed URLs.
   storageKey String
-  filename String
-  mimeType String
-  sizeBytes Int
-  type     DocumentType @default(OTHER)
+  filename   String
+  mimeType   String
+  sizeBytes  Int
+  type       DocumentType @default(OTHER)
 
   /// Polymorphic link, validated at the application layer.
   entityType String
@@ -1004,9 +1152,9 @@ model Document {
   uploadedById String?
   uploadedBy   User?   @relation("DocumentUploader", fields: [uploadedById], references: [id])
 
-  expiresAt DateTime?
+  expiresAt  DateTime?
   /// Ghana Card scans and IDs are restricted to FINANCE and SUPER_ADMIN.
-  restricted Boolean @default(false)
+  restricted Boolean   @default(false)
 
   createdAt DateTime @default(now())
 
@@ -1032,10 +1180,10 @@ model OwnerStatement {
   periodEnd   DateTime
   currency    Currency @default(GHS)
 
-  grossRevenueMinor Int @default(0)
+  grossRevenueMinor  Int @default(0)
   managementFeeMinor Int @default(0)
-  expensesMinor     Int @default(0)
-  netPayableMinor   Int @default(0)
+  expensesMinor      Int @default(0)
+  netPayableMinor    Int @default(0)
 
   status   StatementStatus @default(DRAFT)
   issuedAt DateTime?
@@ -1045,6 +1193,7 @@ model OwnerStatement {
   notes    String?
 
   ledgerEntries LedgerEntry[]
+  payouts       Payout[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1059,19 +1208,19 @@ model OwnerStatement {
 // ===========================================================================
 
 model AuditEvent {
-  id         String   @id @default(cuid())
+  id          String   @id @default(cuid())
   actorUserId String?
-  actor      User?    @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
-  actorLabel String?
-  action     String
-  entityType String
-  entityId   String
-  before     Json?
-  after      Json?
-  ip         String?
-  userAgent  String?
-  deviceId   String?
-  at         DateTime @default(now())
+  actor       User?    @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  actorLabel  String?
+  action      String
+  entityType  String
+  entityId    String
+  before      Json?
+  after       Json?
+  ip          String?
+  userAgent   String?
+  deviceId    String?
+  at          DateTime @default(now())
 
   @@index([entityType, entityId])
   @@index([actorUserId, at])
@@ -1091,21 +1240,33 @@ model IdempotencyRecord {
 }
 
 model MessageLog {
-  id          String         @id @default(cuid())
-  channel     MessageChannel
-  toAddress   String
-  template    String?
-  body        String
-  status      MessageStatus  @default(QUEUED)
-  providerRef String?
-  error       String?
-  entityType  String?
-  entityId    String?
-  sentAt      DateTime?
-  createdAt   DateTime       @default(now())
+  id           String         @id @default(cuid())
+  channel      MessageChannel
+  toAddress    String
+  template     String?
+  /// Email subject line; SMS/WhatsApp bodies live in `body`.
+  subject      String?
+  body         String
+  status       MessageStatus  @default(QUEUED)
+  provider     String?
+  providerRef  String?
+  error        String?
+  entityType   String?
+  entityId     String?
+  /// Outbox: number of delivery attempts so far.
+  attempts     Int            @default(0)
+  /// Send at-or-after this time (scheduled / retry backoff).
+  scheduledFor DateTime?
+  /// When a failed delivery may be retried.
+  nextAttemptAt DateTime?
+  /// Arbitrary template variables snapshot for debugging and resend.
+  metadata     Json?
+  sentAt       DateTime?
+  createdAt    DateTime       @default(now())
 
   @@index([channel, status])
   @@index([entityType, entityId])
+  @@index([status, scheduledFor])
 }
 
 model Setting {
@@ -1119,48 +1280,369 @@ model Setting {
 // ===========================================================================
 
 model Enquiry {
-  id       String  @id @default(cuid())
-  name     String
-  email    String
-  phone    String?
-  interest String
-  message  String
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  phone         String?
+  interest      String
+  message       String
   preferredDate String?
-  language String  @default("en")
-  source   String  @default("website")
-  status   String  @default("new")
-  ipHash   String?
-  userAgent String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  language      String   @default("en")
+  source        String   @default("website")
+  status        String   @default("new")
+  ipHash        String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([status])
   @@index([createdAt])
 }
 
 model Subscriber {
-  id       String   @id @default(cuid())
-  email    String   @unique
-  name     String?
-  source   String   @default("website")
-  language String   @default("en")
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  source    String   @default("website")
+  language  String   @default("en")
   createdAt DateTime @default(now())
 }
 
 model TourBooking {
-  id       String   @id @default(cuid())
-  name     String
-  email    String
-  phone    String?
-  property String
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  phone         String?
+  property      String
   preferredDate DateTime
-  partySize Int     @default(2)
-  virtual  Boolean  @default(false)
-  notes    String?
-  status   String   @default("requested")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  partySize     Int      @default(2)
+  virtual       Boolean  @default(false)
+  notes         String?
+  status        String   @default("requested")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([status])
   @@index([preferredDate])
+}
+
+// ===========================================================================
+// MARKETPLACE — reviews, coupons, add-ons, wishlists, referrals
+// ===========================================================================
+
+/// Two-way, double-blind reviews anchored to a completed reservation.
+/// The guest reviews the stay; the host reviews the guest. Neither is shown
+/// until both have submitted or the 14-day window closes.
+model Review {
+  id            String           @id @default(cuid())
+  reservationId String
+  reservation   Reservation      @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  /// Denormalised for listing-page queries.
+  unitId        String
+  unit          Unit             @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  authorRole    ReviewAuthorRole
+
+  /// Guest side: the party. Host side: the staff user who wrote it.
+  authorPartyId String?
+  authorParty   Party?  @relation("ReviewAuthorParty", fields: [authorPartyId], references: [id], onDelete: SetNull)
+  authorUserId  String?
+  authorUser    User?   @relation("ReviewAuthorUser", fields: [authorUserId], references: [id], onDelete: SetNull)
+
+  /// 1-5 overall.
+  rating      Int
+  /// Sub-scores 1-5: cleanliness, accuracy, checkIn, communication, location, value.
+  subRatings  Json?
+  body        String
+  photos      String[]
+  /// Private note visible only to the platform (not to the other party).
+  privateNote String?
+
+  /// Host's single public reply.
+  hostResponse     String?
+  hostResponseAt   DateTime?
+  hostResponseById String?
+
+  status       ReviewStatus @default(PENDING)
+  publishedAt  DateTime?
+  /// When double-blind reveal happens automatically.
+  windowEndsAt DateTime
+
+  moderatedById  String?
+  moderationNote String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([reservationId, authorRole])
+  @@index([unitId, status])
+  @@index([status, windowEndsAt])
+}
+
+model Coupon {
+  id    String     @id @default(cuid())
+  code  String     @unique
+  kind  CouponKind @default(PERCENT)
+  /// PERCENT: basis points (1000 = 10%). FIXED: minor units.
+  value Int
+
+  currency         Currency  @default(GHS)
+  minSpendMinor    Int       @default(0)
+  maxDiscountMinor Int?
+  startsAt         DateTime?
+  endsAt           DateTime?
+  /// Total redemption cap across all guests.
+  maxRedemptions   Int?
+  /// Cap per guest party.
+  perPartyLimit    Int       @default(1)
+  /// Restrict to one property; null = all.
+  propertyId       String?
+  property         Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  /// First-booking-only coupons require the party to have no completed stays.
+  firstBookingOnly Boolean   @default(false)
+  active           Boolean   @default(true)
+  note             String?
+
+  redemptions CouponRedemption[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active])
+}
+
+model CouponRedemption {
+  id            String      @id @default(cuid())
+  couponId      String
+  coupon        Coupon      @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  /// Discount applied in the reservation currency, minor units.
+  amountMinor   Int
+  guestPartyId  String
+
+  createdAt DateTime @default(now())
+
+  @@unique([couponId, reservationId])
+  @@index([couponId])
+  @@index([guestPartyId])
+}
+
+/// Bookable checkout extras: airport pickup, early check-in, cot, groceries.
+/// unitId null means the add-on is offered on every unit.
+model AddOn {
+  id          String    @id @default(cuid())
+  unitId      String?
+  unit        Unit?     @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  icon        String?
+  priceMinor  Int
+  currency    Currency  @default(USD)
+  per         AddOnUnit @default(PER_STAY)
+  maxQty      Int       @default(1)
+  active      Boolean   @default(true)
+  sortOrder   Int       @default(0)
+
+  lines ReservationAddOn[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([unitId, active])
+}
+
+model ReservationAddOn {
+  id              String      @id @default(cuid())
+  reservationId   String
+  reservation     Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  addOnId         String?
+  addOn           AddOn?      @relation(fields: [addOnId], references: [id], onDelete: SetNull)
+  /// Snapshot fields so historical prices never shift.
+  name            String
+  qty             Int         @default(1)
+  unitAmountMinor Int
+  amountMinor     Int
+  currency        Currency    @default(USD)
+
+  @@index([reservationId])
+}
+
+/// In-app notification centre rows for staff and guests.
+model Notification {
+  id      String  @id @default(cuid())
+  userId  String?
+  user    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  partyId String?
+  party   Party?  @relation(fields: [partyId], references: [id], onDelete: Cascade)
+
+  /// booking | payment | task | message | system | review
+  category String
+  title    String
+  body     String?
+  link     String?
+  readAt   DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, readAt])
+  @@index([partyId, readAt])
+  @@index([createdAt])
+}
+
+/// Recurring servicing schedule that mints maintenance tickets ahead of due.
+model PreventiveMaintenance {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  unitId     String?
+  unit       Unit?    @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  name           String
+  description    String?
+  category       TicketCategory @default(OTHER)
+  priority       TicketPriority @default(NORMAL)
+  /// Repeat every N days.
+  intervalDays   Int
+  /// Create the ticket N days before the due date.
+  leadDays       Int            @default(3)
+  assigneeUserId String?
+  assignee       User?          @relation("PreventiveAssignee", fields: [assigneeUserId], references: [id], onDelete: SetNull)
+  vendorPartyId  String?
+  vendor         Party?         @relation("PreventiveVendor", fields: [vendorPartyId], references: [id], onDelete: SetNull)
+
+  lastCompletedAt DateTime?
+  nextDueAt       DateTime?
+  active          Boolean   @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId, active])
+  @@index([nextDueAt])
+}
+
+/// Per-unit asset register: appliances, serials, warranties.
+model Asset {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  unitId     String?
+  unit       Unit?    @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  name           String
+  category       String?
+  brand          String?
+  serial         String?
+  purchasedAt    DateTime?
+  warrantyUntil  DateTime?
+  lastServicedAt DateTime?
+  nextServiceAt  DateTime?
+  valueMinor     Int?
+  currency       Currency  @default(GHS)
+  notes          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+  @@index([unitId])
+}
+
+/// Operating expense with receipt evidence, allocated to a property/unit and
+/// optionally recharged or shown on the owner statement.
+model Expense {
+  id         String   @id @default(cuid())
+  code       String   @unique
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  unitId     String?
+  unit       Unit?    @relation(fields: [unitId], references: [id])
+
+  category    ExpenseCategory @default(OTHER)
+  description String
+  amountMinor Int
+  currency    Currency        @default(GHS)
+  incurredAt  DateTime
+
+  vendorPartyId String?
+  vendor        Party?    @relation("ExpenseVendor", fields: [vendorPartyId], references: [id], onDelete: SetNull)
+  ticketId      String?
+  receiptPhotos String[]
+  approvedById  String?
+  approvedAt    DateTime?
+  /// Set when the expense has been included in an owner statement.
+  statementId   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId, incurredAt])
+  @@index([category])
+}
+
+/// Money owed to an owner for a period, computed from the ledger and paid out.
+model Payout {
+  id           String          @id @default(cuid())
+  code         String          @unique
+  ownerPartyId String
+  owner        Party           @relation(fields: [ownerPartyId], references: [id])
+  propertyId   String
+  property     Property        @relation(fields: [propertyId], references: [id])
+  statementId  String?
+  statement    OwnerStatement? @relation(fields: [statementId], references: [id], onDelete: SetNull)
+
+  periodStart DateTime
+  periodEnd   DateTime
+  amountMinor Int
+  currency    Currency     @default(GHS)
+  method      PayoutMethod @default(BANK_TRANSFER)
+  /// Destination account / MoMo number hint (never full credentials).
+  destination String?
+  status      PayoutStatus @default(PENDING)
+  reference   String?
+  paidAt      DateTime?
+  notes       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerPartyId, status])
+  @@index([propertyId, periodStart])
+}
+
+model WishlistItem {
+  id     String  @id @default(cuid())
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unitId String
+  unit   Unit    @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  note   String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, unitId])
+  @@index([userId])
+}
+
+model Referral {
+  id             String  @id @default(cuid())
+  code           String  @unique
+  referrerUserId String
+  referrer       User    @relation(fields: [referrerUserId], references: [id], onDelete: Cascade)
+  invitedPartyId String?
+  invited        Party?  @relation("ReferralInvitee", fields: [invitedPartyId], references: [id], onDelete: SetNull)
+  invitedEmail   String?
+  invitedPhone   String?
+
+  status                ReferralStatus @default(SENT)
+  /// Credit granted when the first stay completes.
+  rewardAmountMinor     Int?
+  currency              Currency       @default(GHS)
+  rewardedReservationId String?
+  revokedReason         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([referrerUserId])
 }

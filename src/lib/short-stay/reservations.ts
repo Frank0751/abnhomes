@@ -16,7 +16,7 @@ import { dateOnly, nightsBetween } from '@/lib/core/dates'
 import { normalisePhone, phoneVariants } from '@/lib/core/phone'
 import { assertAvailable } from './availability'
 import { quoteFromUnit, type Quote } from './pricing'
-import { sendSms, templates } from '@/lib/messaging'
+import { notifyBookingCancelled, notifyBookingConfirmed } from '@/lib/notify'
 import { formatMinor } from '@/lib/core/money'
 import { formatDate } from '@/lib/core/dates'
 
@@ -334,24 +334,11 @@ export async function confirmReservation(
   await db.unit.update({ where: { id: reservation.unitId }, data: { status: 'RESERVED' } })
 
   // Confirmation is when the guest earns portal access: the code is minted
-  // here, shown to the desk for sharing, and texted with the confirmation.
+  // here, shown to the desk for sharing, and sent with the confirmation on
+  // every channel the guest has — email, SMS and WhatsApp.
   const portalCode = await ensurePortalAccess(reservationId)
 
-  if (reservation.guest.phone) {
-    await sendSms({
-      to: reservation.guest.phone,
-      body: templates.bookingConfirmed(
-        reservation.guest.name.split(' ')[0],
-        reservation.unit.name,
-        formatDate(reservation.checkIn),
-        reservation.code,
-        portalCode ?? undefined
-      ),
-      template: 'booking_confirmed',
-      entityType: 'Reservation',
-      entityId: reservation.id,
-    })
-  }
+  await notifyBookingConfirmed(reservation.id)
 
   return { ...reservation, portalCode }
 }
@@ -364,7 +351,7 @@ export async function cancelReservation(
   reservationId: string,
   args: { reason: string; actorUserId?: string | null }
 ) {
-  return db.$transaction(async (tx) => {
+  const result = await db.$transaction(async (tx) => {
     const reservation = await tx.reservation.findUniqueOrThrow({
       where: { id: reservationId },
       include: { chargeRows: { include: { ledgerEntries: true } } },
@@ -406,6 +393,9 @@ export async function cancelReservation(
 
     return updated
   })
+
+  await notifyBookingCancelled(reservationId, args.reason)
+  return result
 }
 
 export async function checkInGuest(reservationId: string, actorUserId?: string | null) {
