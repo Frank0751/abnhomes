@@ -6,6 +6,7 @@
 
 import { cn } from '@/lib/utils'
 import { formatMinor } from '@/lib/core/money'
+import { Inbox } from 'lucide-react'
 import type { Currency, SyncState } from '@prisma/client'
 
 export function PageHeader({
@@ -44,7 +45,7 @@ export function StatCard({
   tone?: 'default' | 'positive' | 'warning' | 'critical'
 }) {
   return (
-    <div className="rounded border border-black/8 bg-white px-4 py-3.5">
+    <div className="rounded-xl border border-black/[0.08] bg-white px-5 py-4 shadow-soft">
       <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
         {label}
       </p>
@@ -112,7 +113,7 @@ export function Pill({
   return (
     <span
       className={cn(
-        'inline-flex items-center whitespace-nowrap rounded-sm px-1.5 py-0.5 text-[11px] font-medium',
+        'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-medium',
         PILL_TONES[tone],
         className
       )}
@@ -166,7 +167,12 @@ const STATUS_TONES: Record<string, PillTone> = {
 }
 
 export function StatusPill({ status }: { status: string }) {
-  return <Pill tone={STATUS_TONES[status] ?? 'neutral'}>{humanise(status)}</Pill>
+  return (
+    <Pill tone={STATUS_TONES[status] ?? 'neutral'}>
+      <span aria-hidden className="size-1.5 rounded-full bg-current opacity-70" />
+      {humanise(status)}
+    </Pill>
+  )
 }
 
 export function humanise(value: string): string {
@@ -200,7 +206,8 @@ export function EmptyState({
   action?: React.ReactNode
 }) {
   return (
-    <div className="rounded border border-dashed border-black/12 bg-white/40 px-6 py-14 text-center">
+    <div className="rounded-xl border border-dashed border-black/12 bg-white/40 px-6 py-14 text-center">
+      <Inbox className="mx-auto mb-3 size-6 text-black/25" strokeWidth={1.5} />
       <p className="font-serif text-lg tracking-tight">{title}</p>
       {description && (
         <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted-foreground text-balance">
@@ -226,11 +233,11 @@ export function Panel({
   className?: string
 }) {
   return (
-    <section className={cn('rounded border border-black/8 bg-white', className)}>
+    <section className={cn('rounded-xl border border-black/[0.08] bg-white shadow-soft', className)}>
       {(title || actions) && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/8 px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.06] px-5 py-3.5">
           <div className="min-w-0">
-            {title && <h2 className="text-sm font-semibold tracking-tight">{title}</h2>}
+            {title && <h2 className="font-serif text-[17px] tracking-tight">{title}</h2>}
             {description && (
               <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
             )}

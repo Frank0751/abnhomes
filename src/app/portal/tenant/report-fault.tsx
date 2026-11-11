@@ -29,10 +29,12 @@ import { Loader2, Wrench } from 'lucide-react'
 export function ReportFaultDialog({
   unitId,
   unitName,
+  triggerClassName,
 }: {
   propertyId: string
   unitId: string
   unitName: string
+  triggerClassName?: string
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -41,7 +43,7 @@ export function ReportFaultDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className={triggerClassName}>
           <Wrench className="mr-1.5 size-4" />
           Report a problem
         </Button>

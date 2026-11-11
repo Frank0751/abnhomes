@@ -51,10 +51,12 @@ const CHANNELS: Array<{
 export function PayNowButton({
   amountMinor,
   currency,
+  className,
 }: {
   amountMinor: number
   currency: Currency
   propertyId: string
+  className?: string
 }) {
   const [open, setOpen] = useState(false)
   const [pending, start] = useTransition()
@@ -82,7 +84,7 @@ export function PayNowButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Pay {formatMinor(amountMinor, currency)}</Button>
+        <Button className={className}>Pay {formatMinor(amountMinor, currency)}</Button>
       </DialogTrigger>
 
       <DialogContent>
