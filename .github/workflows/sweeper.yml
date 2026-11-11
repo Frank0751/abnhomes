@@ -1,0 +1,32 @@
+# The booking sweeper drives everything time-sensitive that cannot wait for a
+# page view: the notification outbox (receipts, confirmations, reminders),
+# expiry of unpaid booking holds, day-before check-in reminders, post-stay
+# review requests, double-blind review reveals and preventive maintenance
+# tickets.
+#
+# Vercel's Hobby plan only allows cron jobs that run once a day, so the
+# 15-minute heartbeat lives here: scheduled Actions are free on public
+# repositories. The endpoint is idempotent and guarded by an atomic per-row
+# claim, so overlapping runs are safe. The daily Vercel cron (see vercel.json)
+# stays as a safety net for the rare days when Actions starts jobs late.
+#
+# Secrets: PROD_SITE_URL (e.g. https://abnhomes.vercel.app) and CRON_SECRET,
+# matching the CRON_SECRET environment variable on the Vercel project.
+name: Booking sweeper
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # lets us trigger it by hand from the Actions tab
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Drain outbox, expire holds, send reminders
+        env:
+          SITE_URL: ${{ secrets.PROD_SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -fsS --max-time 120 "$SITE_URL/api/cron/outbox" \
+            -H "Authorization: Bearer $CRON_SECRET"

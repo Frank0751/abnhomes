@@ -101,10 +101,32 @@ export async function queueMessage(args: QueueMessageArgs): Promise<string | nul
   return row.id
 }
 
-/** Attempt delivery of one queued message. Never throws. */
-export async function deliverMessage(id: string): Promise<'SENT' | 'FAILED' | 'RETRY'> {
+/**
+ * Attempt delivery of one queued message. Never throws.
+ *
+ * Opens with an atomic claim: two schedulers can drain the same outbox (the
+ * 15-minute GitHub Actions sweep and the daily Vercel cron may overlap), and
+ * a conditional update is won by exactly one of them, so a message is never
+ * handed to the provider twice. The winning caller has already counted the
+ * attempt with the claim itself, which keeps the retry bookkeeping honest
+ * even if the process dies mid-send.
+ */
+export async function deliverMessage(id: string): Promise<'SENT' | 'FAILED' | 'RETRY' | 'SKIPPED'> {
+  const now = new Date()
+  const claimed = await db.messageLog.updateMany({
+    where: {
+      id,
+      status: 'QUEUED',
+      scheduledFor: { lte: now },
+      OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+      attempts: { lt: MAX_ATTEMPTS },
+    },
+    data: { attempts: { increment: 1 } },
+  })
+  if (claimed.count === 0) return 'SKIPPED'
+
   const msg = await db.messageLog.findUnique({ where: { id } })
-  if (!msg || msg.status !== 'QUEUED') return 'FAILED'
+  if (!msg) return 'SKIPPED'
 
   try {
     let providerRef: string
@@ -117,12 +139,12 @@ export async function deliverMessage(id: string): Promise<'SENT' | 'FAILED' | 'R
     }
     await db.messageLog.update({
       where: { id },
-      data: { status: 'SENT', providerRef, sentAt: new Date(), error: null, attempts: { increment: 1 } },
+      data: { status: 'SENT', providerRef, sentAt: new Date(), error: null },
     })
     return 'SENT'
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    const attempts = msg.attempts + 1
+    const attempts = msg.attempts // already includes the failed attempt, counted by the claim
     const dead = attempts >= MAX_ATTEMPTS
     const backoff = BACKOFF_MINUTES[Math.min(attempts - 1, BACKOFF_MINUTES.length - 1)]
     await db.messageLog.update({
@@ -140,8 +162,14 @@ export async function deliverMessage(id: string): Promise<'SENT' | 'FAILED' | 'R
 
 /** Drain the outbox: deliver every due message. Called by the cron route. */
 export async function processOutbox(limit = 30): Promise<{ sent: number; retried: number; failed: number }> {
+  const now = new Date()
   const due = await db.messageLog.findMany({
-    where: { status: 'QUEUED', scheduledFor: { lte: new Date() }, attempts: { lt: MAX_ATTEMPTS } },
+    where: {
+      status: 'QUEUED',
+      scheduledFor: { lte: now },
+      OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+      attempts: { lt: MAX_ATTEMPTS },
+    },
     orderBy: { createdAt: 'asc' },
     take: limit,
     select: { id: true },
@@ -153,7 +181,8 @@ export async function processOutbox(limit = 30): Promise<{ sent: number; retried
     const outcome = await deliverMessage(id)
     if (outcome === 'SENT') sent++
     else if (outcome === 'RETRY') retried++
-    else failed++
+    else if (outcome === 'FAILED') failed++
+    // SKIPPED: another drainer won the claim. Not a failure.
   }
   return { sent, retried, failed }
 }

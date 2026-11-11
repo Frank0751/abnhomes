@@ -17,7 +17,7 @@
   "crons": [
     {
       "path": "/api/cron/outbox",
-      "schedule": "*/15 * * * *"
+      "schedule": "23 1 * * *"
     },
     {
       "path": "/api/cron/rent-run",
