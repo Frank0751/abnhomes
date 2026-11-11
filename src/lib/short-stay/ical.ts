@@ -15,7 +15,7 @@
  */
 
 import icalGenerator from 'ical-generator'
-import { db } from '@/lib/db'
+import { db, TX_OPTS } from '@/lib/db'
 import { dateOnly, toISODate } from '@/lib/core/dates'
 
 /**
@@ -146,7 +146,7 @@ export async function importFeed(feedId: string): Promise<SyncResult> {
       })
 
       return { imported, removed }
-    })
+    }, TX_OPTS)
 
     return { feedId, label: feed.label, ok: true, ...result }
   } catch (error) {

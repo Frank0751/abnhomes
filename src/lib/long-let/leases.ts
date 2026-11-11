@@ -23,7 +23,7 @@
  */
 
 import type { BillingCycle, Currency, Prisma } from '@prisma/client'
-import { db } from '@/lib/db'
+import { db, TX_OPTS } from '@/lib/db'
 import { leaseCode } from '@/lib/core/ids'
 import { addMonths, dateOnly, monthsPerCycle } from '@/lib/core/dates'
 import { applyBasisPoints } from '@/lib/core/money'
@@ -120,7 +120,7 @@ export async function createLease(input: CreateLeaseInput) {
     }
 
     return lease
-  })
+  }, TX_OPTS)
 }
 
 async function findOrCreateTenant(
@@ -167,7 +167,7 @@ export async function activateLease(leaseId: string) {
     })
     await tx.unit.update({ where: { id: lease.unitId }, data: { status: 'OCCUPIED' } })
     return lease
-  })
+  }, TX_OPTS)
 }
 
 export async function endLease(
@@ -191,7 +191,7 @@ export async function endLease(
 
     await tx.unit.update({ where: { id: lease.unitId }, data: { status: 'AVAILABLE' } })
     return lease
-  })
+  }, TX_OPTS)
 }
 
 /**

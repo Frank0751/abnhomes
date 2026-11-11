@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { db } from '@/lib/db'
+import { db, TX_OPTS } from '@/lib/db'
 import { requireActor } from '@/lib/session'
 import { assertCanOnProperty } from '@/lib/rbac'
 import { logAudit } from '@/lib/audit'
@@ -55,7 +55,7 @@ export async function completeTaskAction(taskId: string): Promise<ActionResult> 
           },
         })
       }
-    })
+    }, TX_OPTS)
 
     await logAudit({
       actor,

@@ -16,7 +16,7 @@
  */
 
 import type { Currency } from '@prisma/client'
-import { db } from '@/lib/db'
+import { db, TX_OPTS } from '@/lib/db'
 import { postCharge } from '@/lib/core/ledger'
 import {
   addMonths,
@@ -276,7 +276,7 @@ export async function applyCreditsToOpenCharges(
     }
 
     return { allocatedMinor, chargesSettled }
-  })
+  }, TX_OPTS)
 }
 
 /**

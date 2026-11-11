@@ -9,7 +9,7 @@
  */
 
 import { Prisma, type Currency, type ReservationSource } from '@prisma/client'
-import { db } from '@/lib/db'
+import { db, TX_OPTS } from '@/lib/db'
 import { postCharge, postEntry, reverseEntry } from '@/lib/core/ledger'
 import { reservationCode, portalAccessCode } from '@/lib/core/ids'
 import { dateOnly, nightsBetween } from '@/lib/core/dates'
@@ -299,7 +299,7 @@ export async function createReservation(input: CreateReservationInput) {
       reservation.status === 'CONFIRMED' ? await ensurePortalAccess(reservation.id) : null
 
     return { reservation, quote, created: true as const, portalCode }
-  })
+  }, TX_OPTS)
 }
 
 // ---------------------------------------------------------------------------
@@ -482,7 +482,7 @@ export async function cancelReservation(
     }
 
     return updated
-  })
+  }, TX_OPTS)
 
   await notifyBookingCancelled(reservationId, args.reason)
   return result
@@ -518,7 +518,7 @@ export async function checkInGuest(reservationId: string, actorUserId?: string |
     }
 
     return reservation
-  })
+  }, TX_OPTS)
 }
 
 export async function checkOutGuest(
@@ -593,7 +593,7 @@ export async function checkOutGuest(
     }
 
     return reservation
-  })
+  }, TX_OPTS)
 }
 
 /** Arrivals, departures and stay-overs for a given day. The desk's morning view. */

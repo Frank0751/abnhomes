@@ -9,7 +9,7 @@
  */
 
 import type { Currency, TicketCategory, TicketPriority } from '@prisma/client'
-import { db } from '@/lib/db'
+import { db, TX_OPTS } from '@/lib/db'
 import { ticketCode } from '@/lib/core/ids'
 import { postCharge, postExpense } from '@/lib/core/ledger'
 import { propertyWhere, type Actor } from '@/lib/rbac'
@@ -181,7 +181,7 @@ export async function resolveTicket(
     })
 
     return updated
-  })
+  }, TX_OPTS)
 }
 
 export async function addTicketComment(

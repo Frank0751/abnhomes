@@ -19,7 +19,7 @@
  */
 
 import type { Currency, StatementStatus } from '@prisma/client'
-import { db } from '@/lib/db'
+import { db, TX_OPTS } from '@/lib/db'
 import { baseCurrency, postEntry } from '@/lib/core/ledger'
 import { statementCode } from '@/lib/core/ids'
 import { dateOnly, formatDate } from '@/lib/core/dates'
@@ -268,7 +268,7 @@ export async function issueStatement(args: {
     }
 
     return statement
-  })
+  }, TX_OPTS)
 }
 
 export async function markStatementPaid(statementId: string, actorUserId?: string | null) {
@@ -295,7 +295,7 @@ export async function markStatementPaid(statementId: string, actorUserId?: strin
     )
 
     return statement
-  })
+  }, TX_OPTS)
 }
 
 /** Every property that should have a statement for a period but does not yet. */

@@ -30,7 +30,7 @@ import {
   type Currency,
   type LedgerKind,
 } from '@prisma/client'
-import { db } from '@/lib/db'
+import { db, TX_OPTS } from '@/lib/db'
 import { newLedgerId, sequentialCode } from './ids'
 import { dateOnly } from './dates'
 
@@ -164,7 +164,7 @@ export async function postCharge(input: PostChargeInput, tx?: Tx) {
     return { charge, entry, created: true as const }
   }
 
-  return tx ? run(tx) : db.$transaction(run)
+  return tx ? run(tx) : db.$transaction(run, TX_OPTS)
 }
 
 // ---------------------------------------------------------------------------
@@ -282,7 +282,7 @@ export async function recordPayment(input: RecordPaymentInput, tx?: Tx) {
     return { payment, entry, allocations, created: true as const }
   }
 
-  return tx ? run(tx) : db.$transaction(run)
+  return tx ? run(tx) : db.$transaction(run, TX_OPTS)
 }
 
 function humanChannel(channel: string): string {
@@ -461,7 +461,7 @@ export async function reverseEntry(
     return reversal
   }
 
-  return tx ? run(tx) : db.$transaction(run)
+  return tx ? run(tx) : db.$transaction(run, TX_OPTS)
 }
 
 /** Reduce what a party owes without money changing hands: a waiver or goodwill. */
@@ -511,7 +511,7 @@ export async function postCreditNote(
     return entry
   }
 
-  return tx ? run(tx) : db.$transaction(run)
+  return tx ? run(tx) : db.$transaction(run, TX_OPTS)
 }
 
 /**
@@ -558,7 +558,7 @@ export async function postExpense(
     })
   }
 
-  return tx ? run(tx) : db.$transaction(run)
+  return tx ? run(tx) : db.$transaction(run, TX_OPTS)
 }
 
 /**
@@ -612,7 +612,7 @@ export async function postEntry(
     })
   }
 
-  return tx ? run(tx) : db.$transaction(run)
+  return tx ? run(tx) : db.$transaction(run, TX_OPTS)
 }
 
 // ---------------------------------------------------------------------------
