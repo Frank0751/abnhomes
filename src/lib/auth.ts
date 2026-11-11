@@ -60,7 +60,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email },
           include: { propertyAccess: true },
         })
-        if (!user?.passwordHash || !user.active) return null
+        if (!user?.passwordHash || !user.active || user.suspendedAt) return null
 
         const valid = await bcrypt.compare(password, user.passwordHash)
         if (!valid) return null
@@ -124,7 +124,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { phone: { in: phoneVariants(phone) } },
           include: { propertyAccess: true },
         })
-        if (!user || !user.active) return null
+        if (!user || !user.active || user.suspendedAt) return null
 
         await db.user.update({
           where: { id: user.id },
@@ -184,7 +184,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { partyId: guest.id },
           include: { propertyAccess: true },
         })
-        if (!user || !user.active) return null
+        if (!user || !user.active || user.suspendedAt) return null
 
         await db.user.update({
           where: { id: user.id },
