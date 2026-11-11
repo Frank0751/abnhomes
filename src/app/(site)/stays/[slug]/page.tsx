@@ -579,7 +579,7 @@ export default async function StayPage({
                 href={bookUrl}
                 className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0d9488] px-4 py-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-[#0f8578]"
               >
-                {unit.instantBook ? 'Book instantly' : 'Request to book'}
+                {hasDates ? (unit.instantBook ? 'Book instantly' : 'Request to book') : 'Choose dates & book'}
                 <ArrowRight className="size-4" />
               </Link>
 
