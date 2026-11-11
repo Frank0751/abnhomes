@@ -3,6 +3,7 @@ import { PageHero } from "@/components/site/page-hero";
 import { Properties } from "@/components/site/properties";
 import { FeaturedSpotlight } from "@/components/site/featured-spotlight";
 import { Calculator } from "@/components/site/calculator-section";
+import { LiveHomes } from "@/components/site/live-homes";
 import { COMPANY } from "@/lib/abn-data";
 
 export const metadata: Metadata = {
@@ -10,6 +11,8 @@ export const metadata: Metadata = {
   description:
     "Explore ABN Homes residences across Accra: 2 bedroom penthouse at Tantra Hill with 75-inch Smart TVs and rooftop bar, 4 bedroom ensuite at Achimota Petroleum Estate, and furnished 1 bedroom apartments. From USD $50 per night.",
 };
+
+export const dynamic = "force-dynamic";
 
 export default function ResidencesPage() {
   return (
@@ -21,6 +24,7 @@ export default function ResidencesPage() {
         breadcrumb="Residences"
       />
 
+      <LiveHomes />
       <Properties />
       <FeaturedSpotlight />
       <Calculator />
