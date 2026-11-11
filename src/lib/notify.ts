@@ -303,6 +303,7 @@ export function emailHtml(opts: { heading: string; lines: string[]; cta?: { labe
 // ---------------------------------------------------------------------------
 
 const APP_URL = process.env.AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://abnhomes.vercel.app'
+export { APP_URL }
 
 type ReservationLike = Pick<
   Reservation,
@@ -607,6 +608,47 @@ export async function notifyReviewRequest(reservationId: string): Promise<void> 
     })
   }
   await db.reservation.update({ where: { id: reservation.id }, data: { reviewRequestedAt: new Date() } })
+}
+
+/** Refund accepted by the gateway — tell the guest when it will land. */
+export async function notifyRefundProcessed(args: {
+  partyId: string
+  amountMinor: number
+  currency: string
+  receiptNumber: string | null
+  reference: string
+}): Promise<void> {
+  const guest = await guestContact(args.partyId)
+  const amount = formatMinor(args.amountMinor, args.currency as never)
+  if (guest.email) {
+    await queueMessage({
+      channel: 'EMAIL',
+      to: guest.email,
+      template: 'refund_processed',
+      entityType: 'Payment',
+      entityId: args.reference,
+      dedupe: true,
+      subject: `Refund of ${amount} on its way`,
+      body: emailHtml({
+        heading: 'Your refund is being processed',
+        lines: [
+          `We have refunded <b>${amount}</b> to your original payment method (receipt ${args.receiptNumber ?? args.reference}).`,
+          'Depending on your bank or mobile money provider, it takes 5–10 working days to appear. Your reference is ' + args.reference + '.',
+        ],
+      }),
+    })
+  }
+  if (guest.phone) {
+    await queueMessage({
+      channel: 'SMS',
+      to: guest.phone,
+      template: 'refund_processed',
+      entityType: 'Payment',
+      entityId: args.reference,
+      dedupe: true,
+      body: `Hello ${splitName(guest.name)}, your refund of ${amount} (receipt ${args.receiptNumber ?? args.reference}) is being processed and should reach you in 5-10 working days. ABN Homes.`,
+    })
+  }
 }
 
 /** Welcome / onboarding message when a guest account is created. */

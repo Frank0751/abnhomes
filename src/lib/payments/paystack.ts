@@ -226,6 +226,32 @@ export function verifyWebhookSignature(rawBody: string, signature: string | null
   return crypto.timingSafeEqual(a, b)
 }
 
+/**
+ * Ask Paystack to refund a transaction (full or partial, in minor units).
+ * The refund itself is asynchronous on Paystack's side; the ledger reversal
+ * is recorded by the caller once this call is accepted.
+ */
+export async function refundPayment(
+  reference: string,
+  amountMinor?: number,
+  currency?: Currency
+): Promise<{ simulated: boolean; refundRef: string }> {
+  if (isSimulated()) {
+    console.info(`[paystack:simulated] refund ${reference}${amountMinor ? ` for ${amountMinor} minor` : ' in full'}`)
+    return { simulated: true, refundRef: `sim_rfd_${reference}` }
+  }
+
+  const result = await call<{ id: number; status: string }>('/refund', {
+    method: 'POST',
+    body: {
+      transaction: reference,
+      ...(amountMinor ? { amount: amountMinor, ...(currency ? { currency } : {}) } : {}),
+      customer_note: 'Refund — ABN Homes',
+    },
+  })
+  return { simulated: false, refundRef: String(result.data.id) }
+}
+
 /** Map Paystack's channel back onto ours, so the receipt says the right thing. */
 export function channelFromPaystack(
   paystackChannel: string,

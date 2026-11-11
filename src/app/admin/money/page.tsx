@@ -27,6 +27,7 @@ import {
   humanise,
 } from '@/components/admin/ui'
 import { ConfirmPaymentButton } from './confirm-button'
+import { RefundPaymentButton } from './refund-button'
 import { gatewayIsSimulated } from '@/lib/payments/gateway'
 
 export default async function MoneyPage() {
@@ -77,6 +78,7 @@ export default async function MoneyPage() {
   ])
 
   const canReconcile = can(actor, 'money:reconcile')
+  const canAdjust = can(actor, 'money:adjust')
 
   return (
     <>
@@ -218,6 +220,9 @@ export default async function MoneyPage() {
                           <div className="flex items-center gap-1.5">
                             <StatusPill status={payment.status} />
                             <SyncBadge state={payment.syncState} />
+                            {canAdjust && payment.status === 'CONFIRMED' && (
+                              <RefundPaymentButton paymentId={payment.id} />
+                            )}
                           </div>
                         </td>
                       </tr>

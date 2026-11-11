@@ -13,7 +13,6 @@ import { z } from 'zod'
 import { db } from '@/lib/db'
 import { createReservation } from '@/lib/short-stay/reservations'
 import { AvailabilityError } from '@/lib/short-stay/availability'
-import { startPayment } from '@/lib/payments/gateway'
 import { notifyBookingRequested } from '@/lib/notify'
 import { normalisePhone } from '@/lib/core/phone'
 import { logAudit } from '@/lib/audit'
@@ -95,28 +94,9 @@ export async function requestBookingAction(
       console.error('[booking] notification failed', notifyError)
     }
 
-    // Offer payment straight away. If the gateway is not configured this
-    // returns null and the guest is simply asked to expect a call.
-    let payUrl: string | null = null
-    try {
-      const payment = await startPayment({
-        propertyId: unit.propertyId,
-        partyId: reservation.guestPartyId,
-        amountMinor: reservation.totalMinor,
-        currency: reservation.currency,
-        channel: 'CARD',
-        phone,
-        email: input.email || null,
-        metadata: { purpose: `Booking ${reservation.code}`, reservationId: reservation.id },
-      })
-      payUrl = payment.simulated ? null : payment.redirectUrl
-    } catch {
-      // A gateway problem must not lose the booking — the office can take
-      // payment another way.
-      payUrl = null
-    }
-
-    return { ok: true, code: reservation.code, reservationId: reservation.id, payUrl }
+    // The guest pays on their own page — channel of their choice, deposit or
+    // full amount — so we always hand back the payment link.
+    return { ok: true, code: reservation.code, reservationId: reservation.id, payUrl: `/pay/${reservation.code}` }
   } catch (error) {
     if (error instanceof AvailabilityError) {
       return {

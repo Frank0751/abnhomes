@@ -10,9 +10,10 @@
 
 import type { Currency, PaymentChannel } from '@prisma/client'
 import { db } from '@/lib/db'
-import { recordPayment } from '@/lib/core/ledger'
+import { recordPayment, reverseEntry } from '@/lib/core/ledger'
 import { shortCode } from '@/lib/core/ids'
 import { afterPaymentRecorded } from './after-payment'
+import { notifyRefundProcessed, APP_URL } from '@/lib/notify'
 import * as paystack from './paystack'
 
 export type SupportedChannel = {
@@ -108,6 +109,34 @@ export type StartPaymentResult = {
   simulated: boolean
 }
 
+export type PaymentIntent = {
+  propertyId: string
+  partyId: string
+  amountMinor: number
+  currency: Currency
+  channel: PaymentChannel
+  reservationId?: string
+  email?: string | null
+}
+
+/**
+ * Persist everything a callback, webhook or simulated checkout needs to
+ * settle this reference later. IdempotencyRecord is a key→JSON store we
+ * already trust for webhook dedupe; a payment intent belongs there too.
+ */
+async function storeIntent(reference: string, intent: PaymentIntent): Promise<void> {
+  await db.idempotencyRecord.upsert({
+    where: { key: `payint:${reference}` },
+    create: { key: `payint:${reference}`, endpoint: 'payment.intent', statusCode: 0, response: intent },
+    update: { response: intent },
+  })
+}
+
+export async function loadIntent(reference: string): Promise<PaymentIntent | null> {
+  const row = await db.idempotencyRecord.findUnique({ where: { key: `payint:${reference}` } })
+  return (row?.response as PaymentIntent) ?? null
+}
+
 /**
  * Begin an online payment. Nothing is written to the ledger here — money is
  * only recorded once the provider confirms it, in `settleFromProvider`.
@@ -127,6 +156,34 @@ export async function startPayment(args: StartPaymentArgs): Promise<StartPayment
   const party = await db.party.findUniqueOrThrow({ where: { id: args.partyId } })
   const email = args.email ?? party.email ?? `${party.id}@guests.abnhomes.com.gh`
 
+  await storeIntent(reference, {
+    propertyId: args.propertyId,
+    partyId: args.partyId,
+    amountMinor: args.amountMinor,
+    currency: args.currency,
+    channel: args.channel,
+    reservationId: (args.metadata?.reservationId as string | undefined) ?? undefined,
+    email,
+  })
+
+  const callbackUrl = args.callbackUrl ?? `${APP_URL}/payments/callback?reference=${encodeURIComponent(reference)}`
+
+  // Simulation mode: our own test checkout page carries the full context, so
+  // the demo flow settles exactly like the real one will.
+  if (paystack.isSimulated()) {
+    const params = new URLSearchParams({
+      reference,
+      amount: String(args.amountMinor),
+      currency: args.currency,
+      channel: args.channel,
+    })
+    return {
+      reference,
+      redirectUrl: `/payments/simulate?${params.toString()}`,
+      simulated: true,
+    }
+  }
+
   const result = await paystack.initialisePayment({
     amountMinor: args.amountMinor,
     currency: args.currency,
@@ -134,7 +191,7 @@ export async function startPayment(args: StartPaymentArgs): Promise<StartPayment
     channel: args.channel,
     reference,
     phone: args.phone ?? party.phone,
-    callbackUrl: args.callbackUrl,
+    callbackUrl,
     metadata: {
       ...args.metadata,
       propertyId: args.propertyId,
@@ -145,7 +202,7 @@ export async function startPayment(args: StartPaymentArgs): Promise<StartPayment
   return {
     reference: result.reference,
     redirectUrl: result.authorizationUrl,
-    simulated: result.simulated,
+    simulated: false,
   }
 }
 
@@ -200,3 +257,55 @@ export async function settleFromProvider(args: {
 
 export const verifyWebhookSignature = paystack.verifyWebhookSignature
 export const gatewayIsSimulated = paystack.isSimulated
+
+/**
+ * Refund a recorded payment through the original rail and reverse it in the
+ * ledger. Idempotent: a ledger entry can only be reversed once.
+ */
+export async function refundPayment(args: {
+  paymentId: string
+  amountMinor?: number
+  reason: string
+  actorUserId?: string | null
+}): Promise<{ ok: boolean; error?: string }> {
+  const payment = await db.payment.findUnique({
+    where: { id: args.paymentId },
+    include: { ledgerEntries: true },
+  })
+  if (!payment) return { ok: false, error: 'Payment not found.' }
+  if (payment.status !== 'CONFIRMED') {
+    return { ok: false, error: 'Only confirmed payments can be refunded.' }
+  }
+
+  const amountMinor = Math.min(args.amountMinor ?? payment.amountMinor, payment.amountMinor)
+
+  if (payment.providerRef && !payment.providerRef.startsWith('sim_')) {
+    try {
+      await paystack.refundPayment(payment.providerRef, amountMinor, payment.currency)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      return { ok: false, error: `The gateway refused the refund: ${message}` }
+    }
+  } else {
+    console.info(`[refund:simulated] ${payment.reference} — ${amountMinor} minor`)
+  }
+
+  const creditEntry = payment.ledgerEntries.find(
+    (e) => e.kind === 'PAYMENT' && e.direction === 'CREDIT' && !e.reversesId
+  )
+  if (creditEntry) {
+    await reverseEntry(creditEntry.id, { reason: args.reason, actorUserId: args.actorUserId })
+  }
+
+  await db.payment.update({ where: { id: payment.id }, data: { status: 'REVERSED' } })
+
+  await notifyRefundProcessed({
+    partyId: payment.partyId,
+    amountMinor,
+    currency: payment.currency,
+    receiptNumber: payment.receiptNumber,
+    reference: payment.reference ?? payment.id,
+  })
+
+  return { ok: true }
+}
