@@ -266,12 +266,15 @@ export async function createReservation(input: CreateReservationInput) {
     }
 
     if (couponId) {
-      await recordRedemption({
-        couponId,
-        reservationId: reservation.id,
-        guestPartyId,
-        amountMinor: couponDiscount,
-      })
+      await recordRedemption(
+        {
+          couponId,
+          reservationId: reservation.id,
+          guestPartyId,
+          amountMinor: couponDiscount,
+        },
+        tx
+      )
     }
 
     // The changeover clean, due at checkout.

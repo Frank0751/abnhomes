@@ -6,7 +6,7 @@
  * browser. Redemption records are created only when a booking is made.
  */
 
-import type { Coupon, Currency } from '@prisma/client'
+import type { Coupon, Currency, Prisma } from '@prisma/client'
 import { db } from '@/lib/db'
 import { allocateEvenly } from '@/lib/core/money'
 
@@ -90,13 +90,17 @@ export function describeCoupon(coupon: Coupon): string {
 }
 
 /** Record that a coupon was used by a booking. Called inside booking creation. */
-export async function recordRedemption(args: {
-  couponId: string
-  reservationId: string
-  guestPartyId: string
-  amountMinor: number
-}): Promise<void> {
-  await db.couponRedemption.upsert({
+export async function recordRedemption(
+  args: {
+    couponId: string
+    reservationId: string
+    guestPartyId: string
+    amountMinor: number
+  },
+  tx?: Prisma.TransactionClient
+): Promise<void> {
+  const client = tx ?? db
+  await client.couponRedemption.upsert({
     where: { couponId_reservationId: { couponId: args.couponId, reservationId: args.reservationId } },
     create: {
       couponId: args.couponId,

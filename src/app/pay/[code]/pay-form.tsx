@@ -31,8 +31,10 @@ export function PayForm({
 }) {
   const [state, formAction, pending] = useActionState<PayResult, FormData>(startReservationPaymentAction, undefined)
   const [channel, setChannel] = useState('MOMO_MTN')
+  const [mode, setMode] = useState<'FULL' | 'DEPOSIT'>('FULL')
   const isMomo = channel.startsWith('MOMO')
   const showDeposit = depositMinor > 0
+  const payingMinor = mode === 'DEPOSIT' && showDeposit ? depositMinor : balanceMinor
 
   return (
     <form action={formAction} className="px-6 py-5">
@@ -90,14 +92,28 @@ export function PayForm({
           </legend>
           <div className="grid grid-cols-2 gap-2">
             <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-black/10 px-3.5 py-3 has-checked:border-[#0d9488] has-checked:bg-[#0d9488]/[0.06] has-checked:ring-1 has-checked:ring-[#0d9488]">
-              <input type="radio" name="mode" value="FULL" defaultChecked className="mt-0.5 accent-[#0d9488]" />
+              <input
+                type="radio"
+                name="mode"
+                value="FULL"
+                checked={mode === 'FULL'}
+                onChange={() => setMode('FULL')}
+                className="mt-0.5 accent-[#0d9488]"
+              />
               <span>
                 <span className="block text-sm font-medium">Pay in full</span>
                 <span className="block text-xs text-[#8a93a5]">{formatMinor(balanceMinor, currency)}</span>
               </span>
             </label>
             <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-black/10 px-3.5 py-3 has-checked:border-[#0d9488] has-checked:bg-[#0d9488]/[0.06] has-checked:ring-1 has-checked:ring-[#0d9488]">
-              <input type="radio" name="mode" value="DEPOSIT" className="mt-0.5 accent-[#0d9488]" />
+              <input
+                type="radio"
+                name="mode"
+                value="DEPOSIT"
+                checked={mode === 'DEPOSIT'}
+                onChange={() => setMode('DEPOSIT')}
+                className="mt-0.5 accent-[#0d9488]"
+              />
               <span>
                 <span className="block text-sm font-medium">Deposit only</span>
                 <span className="block text-xs text-[#8a93a5]">{formatMinor(depositMinor, currency)} — balance on arrival</span>
@@ -119,7 +135,7 @@ export function PayForm({
         className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0d9488] px-4 py-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-[#0f8578] disabled:opacity-60"
       >
         <Lock className="size-4" />
-        {pending ? 'Starting secure checkout…' : `Pay ${formatMinor(balanceMinor, currency)} securely`}
+        {pending ? 'Starting secure checkout…' : `Pay ${formatMinor(payingMinor, currency)} securely`}
       </button>
       <p className="mt-3 text-center text-[11px] leading-relaxed text-[#8a93a5]">
         You will be taken to Paystack's secure checkout. Card details never touch our servers.
