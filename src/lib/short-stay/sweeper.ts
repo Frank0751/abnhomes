@@ -13,6 +13,10 @@
 import { db } from '@/lib/db'
 import { cancelReservation } from './reservations'
 import { notifyCheckInReminder, notifyReviewRequest } from '@/lib/notify'
+import { createTicket } from '@/lib/operations/tickets'
+import type { TicketCategory, TicketPriority } from '@prisma/client'
+
+/** Ask guests whose stay ended in the last day or two to review it. */
 
 export async function expirePendingReservations(): Promise<string[]> {
   const stale = await db.reservation.findMany({
@@ -93,4 +97,54 @@ export async function sendReviewRequests(): Promise<number> {
     }
   }
   return ended.length
+}
+
+/**
+ * Preventive maintenance: raise a work order N days before each schedule is
+ * due, then roll the schedule forward. Idempotent per due date, so a cron
+ * replay can never double-order a generator service.
+ */
+export async function generatePreventiveTickets(): Promise<string[]> {
+  const due = await db.preventiveMaintenance.findMany({
+    where: {
+      active: true,
+      nextDueAt: { not: null, lte: new Date(Date.now() + 14 * 24 * 3600_000) },
+    },
+    include: { property: { select: { id: true, name: true } }, unit: { select: { name: true } } },
+    take: 40,
+  })
+
+  const raised: string[] = []
+  for (const schedule of due) {
+    if (!schedule.nextDueAt) continue
+    const leadMs = schedule.leadDays * 24 * 3600_000
+    if (new Date(schedule.nextDueAt.getTime() - leadMs) > new Date()) continue
+
+    const dueKey = schedule.nextDueAt.toISOString().slice(0, 10)
+    try {
+      await createTicket({
+        propertyId: schedule.propertyId,
+        unitId: schedule.unitId,
+        title: `${schedule.name} — scheduled servicing`,
+        description:
+          schedule.description ??
+          `Recurring ${schedule.name.toLowerCase()} (every ${schedule.intervalDays} days), raised ahead of the due date.`,
+        category: schedule.category as TicketCategory,
+        priority: schedule.priority as TicketPriority,
+        actorUserId: null,
+        idempotencyKey: `pm:${schedule.id}:${dueKey}`,
+      })
+      await db.preventiveMaintenance.update({
+        where: { id: schedule.id },
+        data: {
+          lastCompletedAt: null,
+          nextDueAt: new Date(schedule.nextDueAt.getTime() + schedule.intervalDays * 24 * 3600_000),
+        },
+      })
+      raised.push(schedule.name)
+    } catch (error) {
+      console.error(`[sweeper] preventive ticket failed for ${schedule.name}`, error)
+    }
+  }
+  return raised
 }
