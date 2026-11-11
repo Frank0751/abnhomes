@@ -100,6 +100,25 @@ export async function markStatementPaidAction(statementId: string): Promise<Acti
 
     const updated = await markStatementPaid(statementId, actor.id)
 
+    // The payout record makes the transfer visible in the owner's own portal,
+    // not just in the ledger.
+    await db.payout.create({
+      data: {
+        code: `PYT-${Date.now().toString(36).toUpperCase()}`,
+        ownerPartyId: statement.ownerPartyId,
+        propertyId: statement.propertyId,
+        statementId: statement.id,
+        periodStart: statement.periodStart,
+        periodEnd: statement.periodEnd,
+        amountMinor: statement.netPayableMinor,
+        currency: statement.currency,
+        method: 'BANK_TRANSFER',
+        status: 'PAID',
+        paidAt: updated.paidAt ?? new Date(),
+        notes: `Settled against statement ${statement.code}`,
+      },
+    })
+
     await logAudit({
       actor,
       action: 'statement.paid',
@@ -109,7 +128,8 @@ export async function markStatementPaidAction(statementId: string): Promise<Acti
     })
 
     revalidatePath('/admin/owners')
-    return { ok: true, message: `${statement.code} marked paid.` }
+    revalidatePath('/portal/owner')
+    return { ok: true, message: `${statement.code} marked paid and logged as a payout.` }
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : 'Could not update it.' }
   }
