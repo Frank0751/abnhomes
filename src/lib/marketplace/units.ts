@@ -141,19 +141,27 @@ export type ListingUnit = Prisma.UnitGetPayload<{
 }>
 
 export async function getListingBySlug(slug: string): Promise<ListingUnit | null> {
-  return db.unit.findFirst({
-    where: {
-      OR: [{ slug }, { code: slug }],
-      published: true,
-      property: { published: true, active: true },
+  const include = {
+    property: {
+      include: { owner: { select: { name: true } } },
     },
-    include: {
-      property: {
-        include: { owner: { select: { name: true } } },
-      },
-      ratePlans: { where: { active: true } },
-    },
+    ratePlans: { where: { active: true } },
+  }
+  const published = { published: true, property: { published: true, active: true } }
+
+  const exact = await db.unit.findFirst({
+    where: { OR: [{ slug }, { code: slug }], ...published },
+    include,
   })
+  if (exact) return exact
+
+  // Cards compute a unit's URL as `${property.slug}-${code}` even before the
+  // slug is stored, so accept that shape too: its tail is the unit code.
+  // Exact slugs always win; this only rescues units that predate theirs.
+  const derivedCode = slug.split('-').pop()?.toUpperCase()
+  if (!derivedCode) return null
+
+  return db.unit.findFirst({ where: { code: derivedCode, ...published }, include })
 }
 
 export type PublishedReview = Prisma.ReviewGetPayload<{
