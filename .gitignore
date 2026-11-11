@@ -71,3 +71,6 @@ worklog.md
 # embedded local postgres (dev only)
 /pgdata
 /spec-extracted.md
+
+# stray sandbox artifact — this project installs with npm
+bun.lock
