@@ -19,6 +19,7 @@ import {
   Menu,
   MessageSquare,
   Package,
+  ReceiptText,
   ScrollText,
   Settings,
   Sparkles,
@@ -76,6 +77,7 @@ const NAV: Array<{ group: string; items: NavItem[] }> = [
     group: 'Money',
     items: [
       { href: '/admin/money', label: 'Payments', icon: Coins, permission: 'money:read' },
+      { href: '/admin/expenses', label: 'Expenses', icon: ReceiptText, permission: 'money:record' },
       { href: '/admin/owners', label: 'Owner statements', icon: ClipboardList, permission: 'owners:read' },
       { href: '/admin/reports', label: 'Reports', icon: BarChart3, permission: 'reports:read' },
     ],
