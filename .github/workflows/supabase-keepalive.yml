@@ -7,6 +7,8 @@
 name: Supabase keep-alive
 
 on:
+  push:
+    branches: [main] # also runs whenever a deploy goes out
   schedule:
     - cron: '23 3,15 * * *' # twice daily, off the hour
   workflow_dispatch: # lets us trigger it by hand from the Actions tab
