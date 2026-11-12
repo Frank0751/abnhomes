@@ -304,3 +304,11 @@ html {
 .animate-pulse-ring {
   animation: pulse-ring 2.5s cubic-bezier(0.66, 0, 0, 1) infinite;
 }
+
+/* Print: an admin page prints as a clean document — shell stripped, shadow off. */
+@media print {
+  body { background: #fff !important; }
+  main { padding: 0 !important; }
+  .shadow-soft { box-shadow: none !important; }
+  .rounded-xl { break-inside: avoid; }
+}

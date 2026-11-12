@@ -32,6 +32,7 @@ import {
   Users,
   Wrench,
   X,
+  ExternalLink,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROLE_LABELS, type Permission } from '@/lib/rbac'
@@ -133,7 +134,7 @@ export function AdminShell({
   return (
     <div className="min-h-dvh bg-[#f7f5f0] text-foreground">
       {/* Mobile bar. Staff on site are on a phone, not a laptop. */}
-      <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between border-b border-black/8 bg-[#faf8f3]/95 px-4 py-3 backdrop-blur">
+      <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between border-b border-black/8 bg-[#faf8f3]/95 px-4 py-3 backdrop-blur print:hidden">
         <Link href="/admin" className="flex items-center gap-2">
           <Image src="/images/logo/abn-badge.png" alt="" width={26} height={26} />
           <span className="font-serif text-sm">ABN Operations</span>
@@ -148,10 +149,10 @@ export function AdminShell({
         </button>
       </div>
 
-      <div className="lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
+      <div className="lg:grid lg:grid-cols-[248px_minmax(0,1fr)] print:block">
         <aside
           className={cn(
-            'border-r border-black/8 bg-[#faf8f3] lg:sticky lg:top-0 lg:h-dvh lg:overflow-y-auto',
+            'border-r border-black/8 bg-[#faf8f3] lg:sticky lg:top-0 lg:h-dvh lg:overflow-y-auto print:hidden',
             open ? 'block' : 'hidden lg:block'
           )}
         >
@@ -219,7 +220,21 @@ export function AdminShell({
         </aside>
 
         <div className="min-w-0">
-          <header className="sticky top-0 z-30 flex items-center justify-end border-b border-black/8 bg-[#f7f5f0]/85 px-4 py-2 backdrop-blur sm:px-8">
+          <header className="sticky top-0 z-30 flex items-center justify-between border-b border-black/8 bg-[#f7f5f0]/85 px-4 py-2 backdrop-blur sm:px-8 print:hidden">
+            <div className="flex items-center gap-4">
+              <span className="hidden text-[11px] uppercase tracking-[0.14em] text-muted-foreground sm:block">
+                Operations console
+              </span>
+              <a
+                href="/"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#0f766e] hover:underline"
+              >
+                <ExternalLink className="size-3.5" />
+                View site
+              </a>
+            </div>
             <NotificationBell />
           </header>
           <main className="min-w-0 px-4 py-6 sm:px-8 sm:py-10">{children}</main>

@@ -157,7 +157,7 @@ def main() -> None:
         page.goto(f"{BASE}/admin/analytics", wait_until="networkidle")
         page.wait_for_timeout(2000)  # let the charts finish drawing
         body = body_text().lower()
-        check("analytics: page renders", "collected this month" in body)
+        check("analytics: page renders", "collected · last" in body)
         check("analytics: funnels present", "renting funnel" in body and "ownership funnel" in body)
         svg_count = page.locator("svg.recharts-surface").count()
         check("analytics: charts drew", svg_count >= 3, f"{svg_count} recharts svgs")

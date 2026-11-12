@@ -6,7 +6,7 @@
 
 import { cn } from '@/lib/utils'
 import { formatMinor } from '@/lib/core/money'
-import { Inbox } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, Inbox } from 'lucide-react'
 import type { Currency, SyncState } from '@prisma/client'
 
 export function PageHeader({
@@ -38,11 +38,13 @@ export function StatCard({
   value,
   sublabel,
   tone = 'default',
+  delta,
 }: {
   label: string
   value: string
   sublabel?: string
   tone?: 'default' | 'positive' | 'warning' | 'critical'
+  delta?: React.ReactNode
 }) {
   return (
     <div className="rounded-xl border border-black/[0.08] bg-white px-5 py-4 shadow-soft">
@@ -59,14 +61,62 @@ export function StatCard({
       >
         {value}
       </p>
-      {sublabel && <p className="mt-0.5 text-xs text-muted-foreground">{sublabel}</p>}
+      <div className="mt-0.5 flex items-center gap-2">
+        {delta}
+        {sublabel && <p className="text-xs text-muted-foreground">{sublabel}</p>}
+      </div>
     </div>
   )
 }
 
-export function StatGrid({ children }: { children: React.ReactNode }) {
+/**
+ * Period-over-period movement. `good` decides the colour — an arrears rise is
+ * red at +40%, a booking rise is green at the same number.
+ */
+export function Delta({
+  current,
+  previous,
+  good = 'up',
+  suffix = '',
+  label,
+}: {
+  current: number
+  previous: number
+  good?: 'up' | 'down'
+  suffix?: string
+  label?: string
+}) {
+  if (previous === 0 && current === 0) return null
+  let pct: number | null = null
+  if (previous === 0) pct = 100 // appeared from nothing
+  else if (current === 0) pct = -100
+  else pct = ((current - previous) / previous) * 100
+
+  const flat = pct === 0
+  const up = pct > 0
+  const isGood = flat ? null : good === 'up' ? up : !up
+  const Icon = up ? ArrowUpRight : ArrowDownRight
+
   return (
-    <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-medium tabular-nums',
+        isGood === null && 'bg-black/5 text-muted-foreground',
+        isGood === true && 'bg-emerald-50 text-emerald-700',
+        isGood === false && 'bg-red-50 text-red-700'
+      )}
+      title={label ?? 'Compared with the previous period of the same length'}
+    >
+      {!flat && <Icon className="size-3" />}
+      {flat ? 'flat' : `${Math.abs(pct) >= 99.5 ? Math.round(pct) : pct.toFixed(0)}%${suffix}`}
+      <span className="font-normal text-muted-foreground">{label}</span>
+    </span>
+  )
+}
+
+export function StatGrid({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn('grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]', className)}>
       {children}
     </div>
   )

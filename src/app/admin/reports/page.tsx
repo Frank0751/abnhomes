@@ -2,10 +2,11 @@ import { Download } from 'lucide-react'
 import Link from 'next/link'
 import { db } from '@/lib/db'
 import { requirePermission } from '@/lib/session'
-import { portfolioReport } from '@/lib/reporting/analytics'
+import { portfolioReport, type PeriodReport } from '@/lib/reporting/analytics'
 import { formatMinor } from '@/lib/core/money'
-import { formatDate, toISODate, addDays, today } from '@/lib/core/dates'
+import { dateOnly, formatDate, toISODate, addDays, today } from '@/lib/core/dates'
 import { PageHeader, Panel, StatGrid, StatCard, TableScroll, Pill } from '@/components/admin/ui'
+import { PrintButton } from '@/components/admin/print-button'
 import type { Currency } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
@@ -28,6 +29,16 @@ export default async function ReportsPage({
   ])
 
   const currency: Currency = 'USD'
+
+  // The same length of time immediately before — the baseline the narrative
+  // compares against. One definition, one code path (same engine, shifted).
+  const windowDays = Math.max(1, Math.round((dateOnly(to).getTime() - dateOnly(from).getTime()) / 86_400_000))
+  const prevFrom = addDays(dateOnly(from), -windowDays)
+  const prevReport = await portfolioReport({ from: prevFrom, to: dateOnly(from), propertyId })
+  const narrative = buildNarrative(report, prevReport, currency)
+
+  const propertyName = propertyId ? properties.find((p) => p.id === propertyId)?.name : undefined
+
   const exportUrl = `/api/reports/export?from=${toISODate(from)}&to=${toISODate(to)}${propertyId ? `&propertyId=${propertyId}` : ''}`
   const maxSource = Math.max(1, ...report.sourceMix.map((s) => s.count))
 
@@ -35,17 +46,29 @@ export default async function ReportsPage({
     <div>
       <PageHeader
         title="Reports"
-        description="Occupancy, rate and demand for the whole portfolio or a single building. The same engine feeds the owner statements."
+        description="Occupancy, rate and demand for the whole portfolio or a single building — with the period written up in plain words. The same engine feeds the owner statements."
         actions={
-          <Link
-            href={exportUrl}
-            className="inline-flex items-center gap-2 rounded-lg border border-black/10 bg-white px-3.5 py-2 text-sm font-medium transition hover:bg-black/5"
-          >
-            <Download className="size-4" />
-            Export CSV
-          </Link>
+          <div className="flex flex-wrap gap-2 print:hidden">
+            <PrintButton label="Print report" />
+            <Link
+              href={exportUrl}
+              className="inline-flex items-center gap-2 rounded-lg border border-black/10 bg-white px-3.5 py-2 text-sm font-medium transition hover:bg-black/5"
+            >
+              <Download className="size-4" />
+              Export CSV
+            </Link>
+          </div>
         }
       />
+
+      {/* Print-only masthead — the screen keeps its normal chrome. */}
+      <div className="hidden print:block">
+        <p className="font-serif text-xl tracking-tight">ABN Homes — Portfolio report</p>
+        <p className="mt-1 text-sm text-black/60">
+          {propertyName ?? 'Whole portfolio'} · {formatDate(report.from)} → {formatDate(report.to)} ·
+          prepared {formatDate(today())}
+        </p>
+      </div>
 
       <form method="GET" className="mb-6 flex flex-wrap items-end gap-3 rounded-xl border border-black/10 bg-white p-4 shadow-soft">
         <label className="block">
@@ -84,6 +107,24 @@ export default async function ReportsPage({
           sublabel="created → arrival"
         />
       </StatGrid>
+
+      {/* The period, written up — generated from the same figures above. */}
+      <Panel
+        title="The period in plain words"
+        description="Written from the same figures as the tables below. Print it and it reads like a report."
+        className="mt-6"
+      >
+        <div className="space-y-3 px-5 py-4">
+          {narrative.map((p) => (
+            <div key={p.heading}>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                {p.heading}
+              </p>
+              <p className="mt-1 max-w-3xl text-sm leading-relaxed text-balance">{p.body}</p>
+            </div>
+          ))}
+        </div>
+      </Panel>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Panel title="Where bookings come from" description="Bookings created in the period, by channel.">
@@ -173,4 +214,90 @@ export default async function ReportsPage({
       </p>
     </div>
   )
+}
+
+const pct = (share: number) => `${(share * 100).toFixed(0)}%`
+
+const movement = (cur: number, prev: number) => {
+  if (prev === 0 && cur === 0) return 'unchanged'
+  if (prev === 0) return 'up from nothing'
+  const change = Math.round(((cur - prev) / prev) * 100)
+  if (change === 0) return 'unchanged'
+  return `${change > 0 ? 'up' : 'down'} ${Math.abs(change)}%`
+}
+
+/**
+ * The management write-up. Every sentence is grounded in a number that is
+ * already on the page — if a claim can't be traced to a figure, it doesn't
+ * belong here.
+ */
+function buildNarrative(
+  cur: PeriodReport,
+  prev: PeriodReport,
+  currency: Currency
+): { heading: string; body: string }[] {
+  const paragraphs: { heading: string; body: string }[] = []
+
+  const revenueMove = movement(cur.revenueMinor, prev.revenueMinor)
+  paragraphs.push({
+    heading: 'The headline',
+    body:
+      `The portfolio ran at ${pct(cur.occupancy)} occupancy between ${formatDate(cur.from)} and ${formatDate(cur.to)} — ` +
+      `${cur.nightsSold} nights sold of ${cur.nightsAvailable} available. Revenue came to ` +
+      `${formatMinor(cur.revenueMinor, currency)} at an average daily rate of ${formatMinor(cur.adr, currency)} ` +
+      `and ${formatMinor(cur.revPAR, currency)} per available night` +
+      (prev.nightsSold > 0 || prev.revenueMinor > 0
+        ? `, ${revenueMove} on the previous ${Math.round((cur.to.getTime() - cur.from.getTime()) / 86_400_000)} days.`
+        : '. There is no comparable prior period — treat this window as the baseline going forward.'),
+  })
+
+  const leader = cur.sourceMix[0]
+  const demandBits: string[] = []
+  demandBits.push(
+    `${cur.bookings} booking${cur.bookings === 1 ? '' : 's'} were created in the window` +
+      (cur.cancellations > 0
+        ? `, with ${cur.cancellations} cancellation${cur.cancellations === 1 ? '' : 's'} (${pct(cur.cancellationRate)} of everything created).`
+        : ' and none of them cancelled.')
+  )
+  if (leader) {
+    demandBits.push(
+      `Most demand came through ${leader.source.replace(/_/g, ' ').toLowerCase()} ` +
+        `(${leader.count} of ${cur.bookings}).`
+    )
+  }
+  if (cur.averageLeadDays !== null) {
+    demandBits.push(
+      prev.averageLeadDays !== null && prev.averageLeadDays > 0
+        ? `Guests booked on average ${cur.averageLeadDays} days ahead, against ${prev.averageLeadDays} in the previous window.`
+        : `Guests booked on average ${cur.averageLeadDays} days ahead of arrival.`
+    )
+  }
+  paragraphs.push({ heading: 'Demand', body: demandBits.join(' ') })
+
+  const earners = cur.byUnit.filter((u) => u.revenueMinor > 0).sort((a, b) => b.revenueMinor - a.revenueMinor)
+  if (earners.length > 0) {
+    const best = earners[0]
+    const thin = earners.filter((u) => u.occupancy < 0.3)
+    paragraphs.push({
+      heading: 'The homes',
+      body:
+        `${best.unitName} (${best.propertyName}) carried the period — ${pct(best.occupancy)} occupancy ` +
+        `and ${formatMinor(best.revenueMinor, currency)} in revenue.` +
+        (thin.length > 0
+          ? ` ${thin.map((u) => u.unitName).join(', ')} ${thin.length === 1 ? 'ran' : 'ran'} under 30% occupancy and ${thin.length === 1 ? 'is' : 'are'} where a pricing look would pay first.`
+          : ' Every home that turned a night ran above 30% occupancy.'),
+    })
+  }
+
+  const extrasShare = cur.revenueMinor > 0 ? cur.extrasMinor / cur.revenueMinor : 0
+  paragraphs.push({
+    heading: 'The shape of the money',
+    body:
+      `Accommodation made up ${pct(1 - extrasShare)} of revenue; extras (cleaning and add-ons) added ` +
+      `${formatMinor(cur.extrasMinor, currency)} (${pct(extrasShare)}). ` +
+      `ADR ${movement(cur.adr, prev.adr)} and RevPAR ${movement(cur.revPAR, prev.revPAR)} against the previous window ` +
+      `— RevPAR is the honest one, because it folds occupancy and rate into a single number.`,
+  })
+
+  return paragraphs
 }

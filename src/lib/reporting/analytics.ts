@@ -104,8 +104,13 @@ export async function portfolioReport(args: {
     agg.revenueMinor += revenue
     perUnit.set(r.unitId, agg)
     if (r.checkIn >= from && r.checkIn < to) {
-      leadTotal += Math.round((r.checkIn.getTime() - r.createdAt.getTime()) / 86_400_000)
-      leadCount++
+      // Only genuine leads count: a booking created after arrival (walk-in,
+      // or a back-dated fixture) has no "booked ahead" meaning at all.
+      const lead = Math.round((r.checkIn.getTime() - r.createdAt.getTime()) / 86_400_000)
+      if (lead >= 0) {
+        leadTotal += lead
+        leadCount++
+      }
     }
   }
 
