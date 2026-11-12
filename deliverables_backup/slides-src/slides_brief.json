@@ -1,0 +1,129 @@
+{
+  "design": {
+    "title": "ABN Homes — How the Platform Works",
+    "style_name": "Brand navy/cream editorial with serif display headings",
+    "palette": { "background": "#faf8f3", "primary": "#1a1f2e", "accent": "#0d9488" },
+    "typography": { "heading": "Playfair Display", "body": "Inter", "numeric": "Inter" },
+    "reference": "Warm hospitality brand deck — dark navy section breaks, cream content pages, teal accents, real product screenshots"
+  },
+  "global_css_path": "/home/z/my-project/download/slides/global.css",
+  "slides_dir": "/home/z/my-project/download/slides",
+  "language": "en",
+  "speaker_notes": "short",
+  "slides": [
+    {
+      "title": "Cover",
+      "layout": "cover",
+      "output_path": "/home/z/my-project/download/slides/slide_01.html",
+      "task_brief": "Dark cover (.slide-dark). Kicker: 'PRODUCT WALKTHROUGH'. Title: 'ABN Homes' with subtitle 'How the platform works — from first visit to owner payout'. Meta line: 'abnhomes.vercel.app · live production · November 2026'. Include three small pill badges: 'Guest journey', 'Staff console', 'Owner & tenant portals'. Right side: a rounded screenshot card using local image 'site_home.png' (relative path, same folder) cropped to roughly 460x300, subtle sand border. No footer."
+    },
+    {
+      "title": "What ABN Homes is",
+      "layout": "key message + audience grid",
+      "output_path": "/home/z/my-project/download/slides/slide_02.html",
+      "task_brief": "Cream content page. Kicker 'ONE PLATFORM'. Headline: 'Four audiences, one source of truth'. Left column short paragraph: 'ABN Homes runs short-stay apartments and long-let leases in Accra. The platform replaces spreadsheets and WhatsApp threads: inventory, bookings, money, operations and reporting live in one accountable system with a double-entry ledger the database itself protects.' Then a 2x2 grid of audience cards (title + one line each): 'Guests — browse, book, pay, check in'; 'Staff — 22-page console for daily operations'; 'Owners — statements, expenses, payouts'; 'Tenants — lease, rent account, requests'. Bottom strip of 4 stats: '42 database tables', '22 admin pages', '15 screenshots flows verified', '37 tests passing'."
+    },
+    {
+      "title": "Section 01 — The Guest Experience",
+      "layout": "section header",
+      "output_path": "/home/z/my-project/download/slides/slide_03.html",
+      "task_brief": "Dark section header (.slide-dark). Chapter number '01 / 03'. Title: 'The Guest Experience'. Tagline: 'Marketing site, marketplace, booking, payment — the public-facing loop, all server-validated.' No body bullets, no images."
+    },
+    {
+      "title": "Public site",
+      "layout": "split text+image",
+      "output_path": "/home/z/my-project/download/slides/slide_04.html",
+      "task_brief": "Cream page. Kicker 'GUEST EXPERIENCE'. Headline: 'The brochure is the booking funnel'. Left text block, three short paragraphs: 'Every page is server-rendered with per-page metadata, sitemap and robots — the site reads live inventory, so a unit published in the console appears immediately.' 'Bilingual-ready: English first with an i18n scaffold; amenities, locations, gallery, mortgage calculator and contact channels included.' 'Same design language as this deck: warm cream, deep navy, teal accents.' Right: large screenshot card with local image 'site_home.png' plus a smaller overlapping card 'site_homes.png'. Caption under shots: 'Live homepage and current-homes grid'."
+    },
+    {
+      "title": "Marketplace",
+      "layout": "image showcase + facts rail",
+      "output_path": "/home/z/my-project/download/slides/slide_05.html",
+      "task_brief": "Cream page. Kicker 'GUEST EXPERIENCE'. Headline: 'Marketplace: honest listings, live quotes'. Left: screenshot card 'market_residences.png' (about 560px wide) with caption 'Residences grid with filters'; below it a second card 'stay_detail.png' with caption 'Stay page: gallery, quote, availability, reviews'. Right rail with 5 fact rows (icon + bold lead + one line): 'Live pricing — nightly quotes from active rate plans, never stale'; 'Search — dates, guests, bedrooms, amenities, price'; 'Reviews — moderated, with per-category sub-scores'; 'Wishlist — saved stays for signed-in users'; 'Resilient URLs — slugs backfilled and lookup hardened (fixed 11 Nov)'."
+    },
+    {
+      "title": "Booking engine",
+      "layout": "split text+image with guard rails",
+      "output_path": "/home/z/my-project/download/slides/slide_06.html",
+      "task_brief": "Cream page. Kicker 'GUEST EXPERIENCE'. Headline: 'Booking: the only public write, the most guarded'. Left: screenshot 'book_form_filled.png' with caption 'Ninety-second request form with all-inclusive quote'. Right: paragraph 'Nothing the browser sends is trusted — price is recomputed, availability re-checked, the unit must be published.' Then 4 guard-rail cards: '48h hold — dates reserved, booking code issued'; 'Exclusion constraint — double bookings impossible at the database'; 'In-transaction validation — coupons and add-ons cannot double-apply'; 'Portal code — guest gets a trip page without an account'."
+    },
+    {
+      "title": "Payments",
+      "layout": "image + channel matrix",
+      "output_path": "/home/z/my-project/download/slides/slide_07.html",
+      "task_brief": "Cream page. Kicker 'GUEST EXPERIENCE'. Headline: 'Payments: one code path, two rails'. Left: screenshot 'pay_page.png' caption 'Checkout: channel, amount, promo code'; below it 'payment_success.png' caption 'Settled: booking auto-confirmed'. Right rail: paragraph 'A gateway abstraction hides Paystack behind an interface. Today the simulation rail runs — same ledger writes, same receipts — so go-live is an env-var change, not a code change.' Channel pills row: 'MTN MoMo', 'Telecel Cash', 'AirtelTigo', 'Visa / Mastercard', 'Bank transfer'. Two small facts: 'Webhook signature-verified — unsigned calls get 401' and 'Refunds post reversing entries, payment marked REVERSED'."
+    },
+    {
+      "title": "Guest journey",
+      "layout": "timeline steps",
+      "output_path": "/home/z/my-project/download/slides/slide_08.html",
+      "task_brief": "Dark page (.slide-dark) for rhythm. Kicker 'THE WHOLE LOOP'. Headline: 'One booking, end to end'. Six numbered step cards in two rows of three (numbers in teal, bold title, one line): '1 Discover — marketplace and stay pages with live quotes'; '2 Hold — 48h reservation, booking code, outbox messages queued'; '3 Pay — simulated MoMo checkout settles into the ledger'; '4 Confirm — auto-confirmed, receipts + staff alerts fire'; '5 Stay — trip page with access notes, Wi-Fi, house rules'; '6 Review — moderated review lands back on the listing'. Footnote line: 'Verified on production 11 Nov: 13/13 assertions passed, including refund reversal.'"
+    },
+    {
+      "title": "Section 02 — Running the Business",
+      "layout": "section header",
+      "output_path": "/home/z/my-project/download/slides/slide_09.html",
+      "task_brief": "Dark section header. Chapter '02 / 03'. Title: 'Running the Business'. Tagline: 'The admin console, the ledger, operations, communications and the portals staff and stakeholders live in.'"
+    },
+    {
+      "title": "Admin console",
+      "layout": "stats + image pair",
+      "output_path": "/home/z/my-project/download/slides/slide_10.html",
+      "task_brief": "Cream page. Kicker 'RUNNING THE BUSINESS'. Headline: '22 pages of operations, one login'. Top stat band: '22 pages', '6 roles from SUPER_ADMIN to VENDOR', 'Every write audited', 'Role-gated middleware'. Two screenshots side by side: 'admin_dashboard.png' caption 'Operational snapshot with alerts' and 'admin_bookings.png' caption 'Bookings with balances and status'. One paragraph: 'A housekeeper signs in to housekeeping powers only; finance sees money; SUPER_ADMIN sees all — including user suspension and the audit trail.'"
+    },
+    {
+      "title": "Money & ledger",
+      "layout": "split text+image",
+      "output_path": "/home/z/my-project/download/slides/slide_11.html",
+      "task_brief": "Cream page. Kicker 'RUNNING THE BUSINESS'. Headline: 'Every cedi moves through a double-entry ledger'. Left: screenshot 'admin_money.png' caption 'Ledger, payments, expenses and payouts'. Right: paragraph 'A payment is a balanced ledger pair allocated across charges — not a status flag. Statements are queries, not reconstructions.' Then 4 mini rows: 'Append-only — ledger edits are blocked by database triggers'; 'Reversals — refunds post reversing entries, never edits'; 'Allocations — payments settle charges oldest-first'; 'Statements & payouts — owner balances always live'."
+    },
+    {
+      "title": "Operations",
+      "layout": "image pair + facts",
+      "output_path": "/home/z/my-project/download/slides/slide_12.html",
+      "task_brief": "Cream page. Kicker 'RUNNING THE BUSINESS'. Headline: 'Turnover, maintenance, assets — the daily grind, systematised'. Screenshots: 'admin_calendar.png' caption 'Occupancy calendar' and 'admin_housekeeping.png' caption 'Housekeeping board'. Right or below, 4 fact rows: 'Check-out creates the turnover task automatically'; 'Preventive schedules — generators, AC servicing, pest control'; 'Asset registry ties equipment to units with service history'; 'Costs captured as expenses flow into owner statements'."
+    },
+    {
+      "title": "Messaging & notifications",
+      "layout": "split text+image",
+      "output_path": "/home/z/my-project/download/slides/slide_13.html",
+      "task_brief": "Cream page. Kicker 'RUNNING THE BUSINESS'. Headline: 'An outbox, not a prayer'. Left text: 'Every outbound message is queued in the database with channel, status and attempt counter; a cron sweeper drains it. No provider configured yet? Simulation mode records full content and marks sent — the communication design is testable before any sender account exists.' Channel pills: 'Email', 'SMS', 'WhatsApp'. Separate card: 'Staff bell — in-app notifications with unread counts for booking requests, payments, task assignments, linked to records.' Screenshot right: 'admin_messages.png' caption 'Message log with per-channel status'."
+    },
+    {
+      "title": "Portals",
+      "layout": "image pair comparison",
+      "output_path": "/home/z/my-project/download/slides/slide_14.html",
+      "task_brief": "Cream page. Kicker 'RUNNING THE BUSINESS'. Headline: 'Owners and tenants serve themselves'. Two screenshot cards side by side: 'owner_portal.png' caption 'Owner portal: performance, statements, payouts' and 'tenant_portal.png' caption 'Tenant portal: lease, rent account, requests'. Under each, three bullets: Owner — 'Occupancy and revenue per property'; 'Expenses charged against their units'; 'Payout batches with approval states'. Tenant — 'Lease and rent account with arrears position'; 'Maintenance request desk with replies'; 'Payment history and documents'. Footnote: 'Same phone-OTP identity as guests — one system, role-scoped views.' Use a plain teal dot (●) before the footnote, NOT a material icon ligature."
+    },
+    {
+      "title": "Section 03 — Platform & Roadmap",
+      "layout": "section header",
+      "output_path": "/home/z/my-project/download/slides/slide_15.html",
+      "task_brief": "Dark section header. Chapter '03 / 03'. Title: 'Platform & Roadmap'. Tagline: 'What it is built on, what runs unattended, and what stands between the prototype and commercial launch.'"
+    },
+    {
+      "title": "Architecture & security",
+      "layout": "bento grid",
+      "output_path": "/home/z/my-project/download/slides/slide_16.html",
+      "task_brief": "Cream page. Kicker 'PLATFORM'. Headline: 'Boring technology, strict guarantees'. Bento grid of 6 cards (title + one line): 'Next.js 16 + TypeScript — one app for site, console and portals'; 'PostgreSQL 17 on Supabase + Prisma 6 — 42-table schema, pooled'; 'NextAuth v5 — staff password + phone OTP, role matrix'; 'Database guards — exclusion constraint (no double bookings), append-only ledger triggers'; 'Idempotency — double-submitted payments and bookings are harmless'; '20s transactions — TX_OPTS raised from 5s after a real production timeout (fixed 11 Nov)'."
+    },
+    {
+      "title": "Automation",
+      "layout": "schedule table",
+      "output_path": "/home/z/my-project/download/slides/slide_17.html",
+      "task_brief": "Cream page. Kicker 'PLATFORM'. Headline: 'Five jobs run the business overnight'. A clean table (5 rows, columns: Job / Schedule / What it does): 'Sweeper / daily + 15-min / expires unpaid holds, drains the outbox'; 'Outbox drain / with sweeper / sends SMS, email, WhatsApp with retries'; 'Rent run / daily 06:00 UTC / invoices every active long-let lease'; 'iCal sync / daily 06:17 UTC / pulls OTA calendars, blocks booked dates'; 'Keep-alive / every 6h / stops Supabase free tier pausing'. Bottom note: 'Cron routes are bearer-secret guarded — verified 401 on unauthenticated calls.'"
+    },
+    {
+      "title": "What's next",
+      "layout": "two-column comparison",
+      "output_path": "/home/z/my-project/download/slides/slide_18.html",
+      "task_brief": "Cream page. Kicker 'ROADMAP'. Headline: 'Four switches to launch, then growth'. Left column card 'Go-live switches (env vars, no code)': 'Paystack live keys — real MoMo and card settlement'; 'SMS sender (Arkesel/Hubtel) — real OTPs and guest messages'; 'Email sender — receipts and confirmations'; 'Credential hygiene — rotate DB password, change seeded staff password, sync CRON_SECRET'. Right column card 'Then, in order of value': 'WhatsApp Business API for trip updates'; 'Outbound iCal to Airbnb / Booking.com'; 'Referral rewards activation'; 'Photo uploads on tasks; trend dashboards; image pipeline'."
+    },
+    {
+      "title": "Closing",
+      "layout": "closing",
+      "output_path": "/home/z/my-project/download/slides/slide_19.html",
+      "task_brief": "Dark closing (.slide-dark). Big serif headline: 'Built. Tested. Live.' Three evidence lines: 'Full platform verification passed 11 Nov 2026 — every page, every flow'; 'Production E2E: hold, payment, confirmation, notifications, refund — 13/13'; 'Companion deliverables: build documentation (docx), this deck, narrated demo video'. Footer line: 'abnhomes.vercel.app · ABN Homes — Accra, Ghana'."
+    }
+  ]
+}
