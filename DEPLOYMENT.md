@@ -70,6 +70,26 @@ In the Vercel dashboard, go to Settings > Environment Variables and add:
   ```
   Or use the Vercel Postgres CLI to run migrations.
 
+## Schema Updates on Supabase (after any deploy that changes models)
+
+Vercel's build (`prisma generate && next build`) only regenerates the Prisma
+Client — it never alters the database. When a deploy adds models or columns
+(e.g. `Purchase`, `TenancyApplication`, `Unit.forSale`), apply the schema to
+the production database **in the same pass**, otherwise every page that
+queries those tables returns HTTP 500 ("column does not exist").
+
+- [ ] Generate the delta SQL locally:
+  ```bash
+  npx prisma migrate diff \
+    --from-schema-datamodel <previous-schema.prisma> \
+    --to-schema-datamodel prisma/schema.prisma \
+    --script
+  ```
+- [ ] Supabase Dashboard → SQL Editor → paste the SQL → Run.
+  (The Nov 2026 sales/applications migration is saved as
+  `abn_sales_migration.sql` — purely additive, safe for existing data.)
+- [ ] Verify: `/residences`, `/book`, `/own`, `/rent` should all return 200.
+
 ## Post-Deployment Verification
 
 - [ ] Visit your Vercel URL (e.g., `https://abn-homes-website.vercel.app`)
@@ -127,6 +147,13 @@ curl -H "Authorization: Bearer YOUR_ABN_ADMIN_TOKEN" \
 - Check that the database is connected (see DATABASE_URL above)
 - Verify the `Enquiry` model exists in the database (`npx prisma db push`)
 - Check Vercel function logs for the specific error
+
+### Data-driven pages return 500 after a deploy
+- Symptom: only pages that list units or read the new tables fail
+  (Residences, Book, Own a Home, Rent, admin lists) while static pages load.
+- Cause: production database schema is behind the deployed code.
+- Fix: run the pending migration SQL in Supabase (see "Schema Updates on
+  Supabase" above).
 
 ## Need Help?
 
