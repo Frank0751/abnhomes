@@ -10,7 +10,9 @@ import re
 import sys
 from collections import Counter
 
-ROLLOUT = "/home/z/.zcode/cli/rollout/model-io-sess_ac5ff1d8-8c8c-488e-9580-c2876425cfc9.jsonl"
+import glob
+
+ROLLOUT_GLOB = "/home/z/.zcode/cli/rollout/*.jsonl"
 OUT = "/home/z/my-project/.env"
 
 KEYS = [
@@ -30,22 +32,26 @@ KEYS = [
 
 candidates = {k: Counter() for k in KEYS}
 
-with open(ROLLOUT, "r", encoding="utf-8", errors="replace") as f:
-    for line in f:
-        if len(line) > 5_000_000:
-            continue
-        for key in KEYS:
-            # KEY=VALUE  (VALUE runs until whitespace / quote / backslash / close-bracket)
-            for m in re.finditer(key + r'\s*=\s*([^\s"\',\\)<>]+)', line):
-                val = m.group(1).strip().rstrip("\\")
-                if len(val) < 3:
-                    continue
-                candidates[key][val] += 1
-            # JSON-escaped key: KEY\n = ... unlikely; also handle \"KEY\":\"VALUE\"
-            for m in re.finditer(key + r'\\"\s*:\s*\\"([^"\\]+)\\"', line):
-                val = m.group(1)
-                if len(val) >= 3:
+ROLLOUTS = sorted(glob.glob(ROLLOUT_GLOB))
+print(f"Scanning {len(ROLLOUTS)} rollout logs")
+
+for rollout in ROLLOUTS:
+    with open(rollout, "r", encoding="utf-8", errors="replace") as f:
+        for line in f:
+            if len(line) > 5_000_000:
+                continue
+            for key in KEYS:
+                # KEY=VALUE  (VALUE runs until whitespace / quote / backslash / close-bracket)
+                for m in re.finditer(key + r'\s*=\s*([^\s"\',\\)<>]+)', line):
+                    val = m.group(1).strip().rstrip("\\")
+                    if len(val) < 3:
+                        continue
                     candidates[key][val] += 1
+                # JSON-escaped key: KEY\n = ... unlikely; also handle \"KEY\":\"VALUE\"
+                for m in re.finditer(key + r'\\"\s*:\s*\\"([^"\\]+)\\"', line):
+                    val = m.group(1)
+                    if len(val) >= 3:
+                        candidates[key][val] += 1
 
 
 def pick(counter: Counter) -> str | None:
