@@ -13,6 +13,8 @@ const navItems = [
   { label: "About", href: "/about" },
   { label: "Residences", href: "/residences" },
   { label: "Book", href: "/book" },
+  { label: "Own a Home", href: "/own" },
+  { label: "Rent", href: "/rent" },
   { label: "Amenities", href: "/amenities" },
   { label: "Gallery", href: "/gallery" },
   { label: "Locations", href: "/locations" },

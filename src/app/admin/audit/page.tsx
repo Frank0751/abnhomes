@@ -1,7 +1,7 @@
-import { ScrollText } from 'lucide-react'
+import { ScrollText, ShieldCheck, Users, Activity } from 'lucide-react'
 import { db } from '@/lib/db'
 import { requirePermission } from '@/lib/session'
-import { PageHeader, Panel, TableScroll, EmptyState } from '@/components/admin/ui'
+import { PageHeader, Panel, TableScroll, EmptyState, StatGrid, StatCard } from '@/components/admin/ui'
 import { formatDate } from '@/lib/core/dates'
 
 export const dynamic = 'force-dynamic'
@@ -15,31 +15,84 @@ function compact(value: unknown): string {
 export default async function AuditPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; entity?: string }>
+  searchParams: Promise<{ q?: string; entity?: string; actor?: string; days?: string }>
 }) {
   await requirePermission('audit:read')
-  const { q, entity } = await searchParams
+  const { q, entity, actor, days } = await searchParams
+
+  const daysN = days ? Math.min(90, Math.max(1, Number(days) || 30)) : 30
+  const since = new Date(Date.now() - daysN * 86400_000)
+
+  const where = {
+    ...(q ? { action: { contains: q, mode: 'insensitive' as never } } : {}),
+    ...(entity ? { entityType: entity } : {}),
+    ...(actor ? { actorUserId: actor } : {}),
+    at: { gte: since },
+  }
 
   const events = await db.auditEvent.findMany({
-    where: {
-      ...(q ? { action: { contains: q, mode: 'insensitive' as never } } : {}),
-      ...(entity ? { entityType: entity } : {}),
-    },
-    include: { actor: { select: { name: true } } },
+    where,
+    include: { actor: { select: { name: true, role: true } } },
     orderBy: { at: 'desc' },
     take: 150,
   })
 
+  // Oversight band: who is acting, how much, and how recently.
+  const [todayCount, actors24h, perActor] = await Promise.all([
+    db.auditEvent.count({ where: { at: { gte: new Date(Date.now() - 86400_000) } } }),
+    db.auditEvent.groupBy({
+      by: ['actorUserId'],
+      where: { at: { gte: new Date(Date.now() - 86400_000) }, actorUserId: { not: null } },
+      _count: { id: true },
+    }),
+    db.auditEvent.groupBy({
+      by: ['actorUserId'],
+      where,
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+      take: 1,
+    }),
+  ])
+
+  const actorIds = [...new Set(events.map((e) => e.actorUserId).filter((v): v is string => !!v))]
+  const actorRows = actorIds.length
+    ? await db.user.findMany({
+        where: { id: { in: [...actorIds, ...perActor.map((p) => p.actorUserId).filter((v): v is string => !!v)] } },
+        select: { id: true, name: true, role: true },
+      })
+    : []
+
+  const actorById = new Map(actorRows.map((a) => [a.id, a]))
+  const topRow = perActor[0]
+  const topActor = topRow
+    ? {
+        name: actorById.get(topRow.actorUserId ?? '')?.name ?? 'system',
+        count: topRow._count.id,
+      }
+    : null
+
   const entityTypes = [...new Set(events.map((e) => e.entityType))].sort()
+  const filterActors = [...new Map(events.filter((e) => e.actor).map((e) => [e.actorUserId, e.actor])).entries()]
 
   return (
     <div>
       <PageHeader
         title="Audit log"
-        description="Every staff action worth answering for later — immutable, with the actor, the before and the after."
+        description="Every staff action worth answering for later — immutable, with the actor, the before and the after. Super-admin oversight starts here: who did what, when, and how often."
       />
 
-      <form method="GET" className="mb-5 flex flex-wrap items-end gap-3">
+      <StatGrid>
+        <StatCard label="Events, last 24h" value={String(todayCount)} sublabel="across the whole platform" />
+        <StatCard label="Staff active, last 24h" value={String(actors24h.length)} sublabel="distinct actors writing" />
+        <StatCard
+          label="Most active (in filter)"
+          value={topActor ? topActor.name : '—'}
+          sublabel={topActor ? `${topActor.count} events in the selected window` : 'no events match the filter'}
+        />
+        <StatCard label="Shown" value={String(events.length)} sublabel={`latest events within ${daysN} days`} />
+      </StatGrid>
+
+      <form method="GET" className="mb-5 mt-6 flex flex-wrap items-end gap-3">
         <label className="block">
           <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             Action contains
@@ -64,6 +117,31 @@ export default async function AuditPage({
             ))}
           </select>
         </label>
+        <label className="block">
+          <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Actor
+          </span>
+          <select name="actor" defaultValue={actor ?? ''} className="rounded-lg border border-black/12 bg-white px-2.5 py-2 text-sm">
+            <option value="">Everyone</option>
+            {filterActors.map(([id, u]) => (
+              <option key={id} value={id ?? ''}>
+                {u?.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Window
+          </span>
+          <select name="days" defaultValue={String(daysN)} className="rounded-lg border border-black/12 bg-white px-2.5 py-2 text-sm">
+            {[1, 7, 30, 90].map((d) => (
+              <option key={d} value={d}>
+                Last {d} day{d === 1 ? '' : 's'}
+              </option>
+            ))}
+          </select>
+        </label>
         <button className="rounded-lg bg-[#0a0e1a] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
           Filter
         </button>
@@ -71,7 +149,7 @@ export default async function AuditPage({
 
       <Panel title={`Latest ${events.length} events`}>
         {events.length === 0 ? (
-          <EmptyState title="No matching events" description="Try a different filter." />
+          <EmptyState title="No matching events" description="Try a wider window or drop a filter." />
         ) : (
           <TableScroll>
             <table className="w-full min-w-[760px] text-sm">
@@ -81,7 +159,7 @@ export default async function AuditPage({
                   <th className="px-3 py-2.5 font-medium">Actor</th>
                   <th className="px-3 py-2.5 font-medium">Action</th>
                   <th className="px-3 py-2.5 font-medium">Entity</th>
-                  <th className="px-3 py-2.5 font-medium">Detail</th>
+                  <th className="px-5 py-2.5 font-medium">Detail</th>
                 </tr>
               </thead>
               <tbody>
@@ -91,7 +169,20 @@ export default async function AuditPage({
                       {formatDate(e.at)}{' '}
                       {new Date(e.at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                     </td>
-                    <td className="px-3 py-2.5 text-[13px]">{e.actor?.name ?? e.actorLabel ?? 'system'}</td>
+                    <td className="px-3 py-2.5 text-[13px]">
+                      {e.actor ? (
+                        <span className="inline-flex items-center gap-1.5">
+                          <Users className="size-3 text-[#5b6472]" />
+                          {e.actor.name}
+                          <span className="text-[10px] uppercase tracking-wide opacity-60">{e.actor.role}</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                          <Activity className="size-3" />
+                          {e.actorLabel ?? 'system'}
+                        </span>
+                      )}
+                    </td>
                     <td className="px-3 py-2.5">
                       <span className="inline-flex items-center gap-1.5 font-mono text-xs">
                         <ScrollText className="size-3 text-[#5b6472]" />
@@ -113,6 +204,12 @@ export default async function AuditPage({
           </TableScroll>
         )}
       </Panel>
+
+      <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <ShieldCheck className="size-3.5 text-[#0d9488]" />
+        Events are written by the platform itself on every mutation — they cannot be edited or removed from any
+        interface, including this one.
+      </p>
     </div>
   )
 }

@@ -13,6 +13,7 @@ import {
   ClipboardList,
   Coins,
   FileText,
+  KeyRound,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -25,7 +26,9 @@ import {
   Sparkles,
   Star,
   Tag,
+  TrendingUp,
   TriangleAlert,
+  UserPlus,
   Users,
   Wrench,
   X,
@@ -49,6 +52,7 @@ const NAV: Array<{ group: string; items: NavItem[] }> = [
     group: 'Today',
     items: [
       { href: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
+      { href: '/admin/analytics', label: 'Analytics', icon: TrendingUp, permission: 'reports:read' },
       { href: '/admin/calendar', label: 'Calendar', icon: CalendarDays, permission: 'bookings:read' },
       { href: '/admin/bookings', label: 'Bookings', icon: BedDouble, permission: 'bookings:read' },
       {
@@ -69,8 +73,15 @@ const NAV: Array<{ group: string; items: NavItem[] }> = [
   {
     group: 'Tenancies',
     items: [
+      { href: '/admin/applications', label: 'Applications', icon: UserPlus, permission: 'applications:read' },
       { href: '/admin/leases', label: 'Leases', icon: FileText, permission: 'leases:read' },
       { href: '/admin/arrears', label: 'Arrears', icon: TriangleAlert, permission: 'money:read' },
+    ],
+  },
+  {
+    group: 'Sales',
+    items: [
+      { href: '/admin/sales', label: 'Property sales', icon: KeyRound, permission: 'sales:read' },
     ],
   },
   {

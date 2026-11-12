@@ -58,6 +58,8 @@ enum UnitStatus {
   OCCUPIED
   RESERVED
   MAINTENANCE
+  /// Sold through the Own-with-ABN journey. Withdrawn from every listing.
+  SOLD
   OFF_MARKET
 }
 
@@ -243,6 +245,7 @@ enum DocumentType {
   INSPECTION
   PHOTO
   MANAGEMENT_AGREEMENT
+  SALE_AGREEMENT
   OTHER
 }
 
@@ -376,6 +379,8 @@ model User {
   tasksAssigned     HousekeepingTask[]   @relation("TaskAssignee")
   documents         Document[]           @relation("DocumentUploader")
   managedProperties Property[]           @relation("PropertyManager")
+  purchasesReviewed  Purchase[]           @relation("PurchaseReviewer")
+  applicationsReviewed TenancyApplication[] @relation("TenancyApplicationReviewer")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -465,6 +470,8 @@ model Party {
   ticketsReported Ticket[]              @relation("TicketReporter")
   ticketsAssigned Ticket[]              @relation("TicketVendor")
   statements      OwnerStatement[]
+  purchases       Purchase[]            @relation("PurchaseBuyer")
+  tenancyApplications TenancyApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -520,6 +527,8 @@ model Property {
   expenses      Expense[]
   preventive    PreventiveMaintenance[]
   payouts       Payout[]
+  purchases          Purchase[]
+  tenancyApplications TenancyApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -611,6 +620,15 @@ model Unit {
   baseRentMinor    Int?
   currency         Currency @default(USD)
 
+  // --- Own-with-ABN (sales) ---
+  /// Listed for sale on the public /own journey.
+  forSale        Boolean  @default(false)
+  /// Asking price, minor units. Applied offers are recorded on Purchase rows.
+  salePriceMinor Int?
+  saleCurrency   Currency @default(GHS)
+  /// One-line sales pitch for the Own page card, e.g. "Corner unit, dual aspect".
+  saleBlurb      String?
+
   ratePlans     RatePlan[]
   reservations  Reservation[]
   blocks        CalendarBlock[]
@@ -626,6 +644,8 @@ model Unit {
   wishlistItems WishlistItem[]
   preventive    PreventiveMaintenance[]
   expenses      Expense[]
+  purchases          Purchase[]
+  tenancyApplications TenancyApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -831,6 +851,9 @@ model Lease {
   endedAt    DateTime?
   endReason  String?
 
+  /// The application this lease was created from, if it came through /rent.
+  application TenancyApplication? @relation("TenancyApplicationLease")
+
   recurringCharges RecurringCharge[]
   charges          Charge[]
   ledgerEntries    LedgerEntry[]
@@ -864,6 +887,117 @@ model RecurringCharge {
 }
 
 // ===========================================================================
+// SALES & APPLICATIONS — how the public becomes an owner or a tenant
+// ===========================================================================
+
+/// A buyer's journey on a for-sale unit: application → approval → contract →
+/// installments → handover. The applicant tracks progress with the code alone.
+enum PurchaseStatus {
+  APPLICATION
+  APPROVED
+  CONTRACTED
+  COMPLETED
+  CANCELLED
+  DECLINED
+}
+
+model Purchase {
+  id     String @id @default(cuid())
+  /// Human-facing code, e.g. OWN-8K3M2V. Doubles as the buyer's tracking code.
+  code   String @unique
+  unitId String
+  unit   Unit   @relation(fields: [unitId], references: [id])
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  buyerPartyId String
+  buyer        Party  @relation("PurchaseBuyer", fields: [buyerPartyId], references: [id])
+
+  status   PurchaseStatus @default(APPLICATION)
+  currency Currency       @default(GHS)
+  /// Agreed price in minor units. Equals the asking price until staff negotiate.
+  offerMinor   Int
+  depositMinor Int      @default(0)
+  /// Frozen installment schedule: [{ label, amountMinor, dueDate }], set at contracting.
+  plan Json?
+
+  /// Applicant details as submitted on /own. The Party row is created from these.
+  buyerName  String
+  buyerPhone String
+  buyerEmail String?
+  buyerNotes String?
+
+  reviewedById String?
+  reviewedBy   User?   @relation("PurchaseReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  decisionNote String?
+
+  contractedAt DateTime?
+  completedAt  DateTime?
+  cancelledAt  DateTime?
+  cancelReason String?
+
+  charges Charge[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([unitId])
+  @@index([propertyId])
+  @@index([buyerPartyId])
+}
+
+enum TenancyApplicationStatus {
+  NEW
+  SCREENING
+  APPROVED
+  REJECTED
+  CONVERTED
+  WITHDRAWN
+}
+
+model TenancyApplication {
+  id         String @id @default(cuid())
+  /// Human-facing code, e.g. RNT-8K3M2V. Doubles as the applicant's tracking code.
+  code       String @unique
+  unitId     String
+  unit       Unit   @relation(fields: [unitId], references: [id])
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  /// Party row created at screening; null until staff link or create it.
+  applicantPartyId String?
+  applicantParty   Party? @relation(fields: [applicantPartyId], references: [id])
+
+  applicantName  String
+  applicantPhone String
+  applicantEmail String?
+  ghanaCard      String?
+  /// Employer or income source, for staff screening.
+  employer       String?
+  moveInDate  DateTime
+  leaseMonths Int @default(12)
+  notes       String?
+
+  status       TenancyApplicationStatus @default(NEW)
+  reviewedById String?
+  reviewedBy   User?   @relation("TenancyApplicationReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  decisionNote String?
+  /// Set when staff convert the approved application into a Lease.
+  leaseId String? @unique
+  lease   Lease?  @relation("TenancyApplicationLease", fields: [leaseId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([unitId])
+  @@index([propertyId])
+}
+
+// ===========================================================================
 // MONEY
 // ===========================================================================
 
@@ -892,6 +1026,9 @@ model Charge {
   lease         Lease?       @relation(fields: [leaseId], references: [id])
   reservationId String?
   reservation   Reservation? @relation(fields: [reservationId], references: [id])
+  /// Installment owed under a property purchase.
+  purchaseId    String?
+  purchase      Purchase?    @relation(fields: [purchaseId], references: [id])
 
   /// Prevents the rent run from double-charging a period on re-run.
   runKey String? @unique

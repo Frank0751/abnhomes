@@ -94,6 +94,8 @@ export type PostChargeInput = {
   periodEnd?: Date | null
   leaseId?: string | null
   reservationId?: string | null
+  /** Set for purchase installments, so the sale's schedule owns its charges. */
+  purchaseId?: string | null
   /** Set by the rent run so a re-run cannot bill the same period twice. */
   runKey?: string | null
   occurredAt?: Date
@@ -135,6 +137,7 @@ export async function postCharge(input: PostChargeInput, tx?: Tx) {
         periodEnd: input.periodEnd ? dateOnly(input.periodEnd) : null,
         leaseId: input.leaseId ?? null,
         reservationId: input.reservationId ?? null,
+        purchaseId: input.purchaseId ?? null,
         runKey: input.runKey ?? null,
         status: 'OPEN',
       },

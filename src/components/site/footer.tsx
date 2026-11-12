@@ -15,6 +15,8 @@ const footerNav = {
   Company: [
     { label: "Our Story", href: "/about" },
     { label: "Residences", href: "/residences" },
+    { label: "Own a Home", href: "/own" },
+    { label: "Rent a Home", href: "/rent" },
     { label: "Gallery", href: "/gallery" },
     { label: "Locations", href: "/locations" },
   ],

@@ -30,6 +30,11 @@ export type Permission =
   | 'leases:read'
   | 'leases:write'
   | 'rentrun:execute'
+  // Sales (Own-with-ABN) and public applications
+  | 'sales:read'
+  | 'sales:write'
+  | 'applications:read'
+  | 'applications:write'
   // Money
   | 'money:read'
   | 'money:record'
@@ -60,6 +65,7 @@ const ALL: Permission[] = [
   'units:read', 'units:write', 'parties:read', 'parties:write',
   'bookings:read', 'bookings:write', 'calendar:manage', 'rates:write',
   'leases:read', 'leases:write', 'rentrun:execute',
+  'sales:read', 'sales:write', 'applications:read', 'applications:write',
   'money:read', 'money:record', 'money:adjust', 'money:reconcile',
   'maintenance:read', 'maintenance:report', 'maintenance:manage',
   'housekeeping:read', 'housekeeping:complete',
@@ -76,6 +82,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'units:read', 'units:write', 'parties:read', 'parties:write',
     'bookings:read', 'bookings:write', 'calendar:manage', 'rates:write',
     'leases:read', 'leases:write',
+    'sales:read', 'sales:write', 'applications:read', 'applications:write',
     'money:read', 'money:record',
     'maintenance:read', 'maintenance:report', 'maintenance:manage',
     'housekeeping:read', 'housekeeping:complete',
@@ -87,6 +94,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   FRONT_DESK: [
     'units:read', 'parties:read', 'parties:write',
     'bookings:read', 'bookings:write', 'calendar:manage',
+    'sales:read', 'applications:read', 'applications:write',
     'money:read', 'money:record',
     'maintenance:report',
     'housekeeping:read',
@@ -97,6 +105,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   FINANCE: [
     'units:read', 'parties:read',
     'bookings:read', 'leases:read', 'rentrun:execute',
+    'sales:read', 'applications:read',
     'money:read', 'money:record', 'money:adjust', 'money:reconcile',
     'maintenance:read',
     'reports:read', 'owners:read', 'owners:manage',

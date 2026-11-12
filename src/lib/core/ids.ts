@@ -35,6 +35,10 @@ export const reservationCode = () => `ABN-${shortCode(6)}`
 export const ticketCode = () => `TKT-${shortCode(6)}`
 export const leaseCode = () => `LSE-${shortCode(6)}`
 export const statementCode = () => `STM-${shortCode(6)}`
+/** Property purchase application, e.g. OWN-8K3M2V. Doubles as the buyer's tracking code. */
+export const purchaseCode = () => `OWN-${shortCode(6)}`
+/** Tenancy application from /rent, e.g. RNT-8K3M2V. Doubles as the applicant's tracking code. */
+export const tenancyApplicationCode = () => `RNT-${shortCode(6)}`
 
 /** Portal access code, e.g. PIN-8K3M2V. Issued when a booking is confirmed. */
 export const portalAccessCode = () => `PIN-${shortCode(6)}`
