@@ -85,7 +85,7 @@ def run() -> None:
 
         # ---------- 2. guest booking journey ----------
         confirm_qs = None
-        for offset in (45, 55, 65, 75):
+        for offset in (85, 95, 105, 115):  # 45/55/65/75 hold confirmed demo bookings
             qs = (
                 f"unitId={UNIT_ID}"
                 f"&checkIn={date.today() + timedelta(days=offset)}"
