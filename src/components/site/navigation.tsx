@@ -26,12 +26,9 @@ export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  // Arabic reads right-to-left: the drawer anchors to the inline end via CSS
-  // (end-0 mirrors automatically), only the slide direction needs flipping.
-  const rtl = lang === "ar";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -40,10 +37,10 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // While the drawer is open the page behind must not scroll.
+  // Dropdown behavior: Escape closes and hands focus back to the 3-lines
+  // button. No scroll lock — the page stays visible behind the panel.
   useEffect(() => {
     if (!menuOpen) return;
-    document.body.style.overflow = "hidden";
     panelRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -52,10 +49,7 @@ export function Navigation() {
       }
     };
     document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      document.removeEventListener("keydown", onKey);
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [menuOpen]);
 
   // On non-home pages, the nav should always be dark (since hero isn't full screen)
@@ -79,17 +73,34 @@ export function Navigation() {
             : "bg-transparent py-5"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-5 lg:px-10 flex items-center justify-between gap-6">
-          <Link href="/" className="flex items-center gap-3 group shrink-0" aria-label="ABN Homes home">
-            <img
-              src="/images/logo/abn-homes-logo-real.png"
-              alt="ABN Homes Company Limited"
-              className="h-9 md:h-10 w-auto transition-transform duration-300 group-hover:scale-[1.03] rounded"
-            />
-          </Link>
+        {/* relative: the dropdown panel anchors to this container, so it always
+            opens flush under the header row — directly beneath the button. */}
+        <div className="relative max-w-[1400px] mx-auto px-5 lg:px-10 flex items-center justify-between gap-6">
+          <div className="flex items-center gap-3 shrink-0">
+            {/* The 3-lines button lives at the far left, before the logo, and
+                the menu drops straight down from it. Hidden at xl+ where the
+                inline nav takes over. */}
+            <button
+              ref={toggleRef}
+              className="xl:hidden text-white p-2.5 transition-colors hover:text-[#14b8a6]"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              aria-controls="site-menu"
+            >
+              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+            <Link href="/" className="flex items-center gap-3 group" aria-label="ABN Homes home">
+              <img
+                src="/images/logo/abn-homes-logo-real.png"
+                alt="ABN Homes Company Limited"
+                className="h-9 md:h-10 w-auto transition-transform duration-300 group-hover:scale-[1.03] rounded"
+              />
+            </Link>
+          </div>
 
           {/* Desktop: inline primary nav. Ten top-level destinations belong in
-              view, not behind a hamburger — the toggle only exists below xl. */}
+              view, not behind a hamburger. */}
           <nav aria-label="Primary" className="hidden xl:flex items-center justify-center gap-x-5 2xl:gap-x-7 min-w-0 flex-1">
             {navItems.map((item) => {
               const active = pathname === item.href;
@@ -117,110 +128,86 @@ export function Navigation() {
             >
               {t("cta.bookStay")}
             </Link>
-
-            <button
-              ref={toggleRef}
-              className="xl:hidden text-white p-2.5 -mr-2.5 transition-colors hover:text-[#14b8a6]"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={menuOpen}
-              aria-controls="site-menu"
-            >
-              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
           </div>
+
+          <AnimatePresence>
+            {menuOpen && (
+              <>
+                {/* Click-away layer: any click outside the panel closes it. */}
+                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} aria-hidden="true" />
+                {/* The menu drops from the button's edge (start-0 mirrors for
+                    RTL). Vertical fade-slide reads the same in both directions. */}
+                <motion.div
+                  key="panel"
+                  id="site-menu"
+                  ref={panelRef}
+                  tabIndex={-1}
+                  aria-label="Site menu"
+                  initial={{ opacity: 0, y: -12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute top-full start-0 z-20 mt-2 w-[min(28rem,calc(100vw-2.5rem))] max-h-[calc(100dvh-5rem)] overflow-y-auto bg-[#0a0e1a] border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.6)] outline-none"
+                >
+                  <nav aria-label="Mobile" className="px-7 pt-5 pb-2">
+                    {navItems.map((item, i) => {
+                      const active = pathname === item.href;
+                      return (
+                        <motion.div
+                          key={item.key}
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.04 + i * 0.035, duration: 0.25 }}
+                        >
+                          <Link
+                            href={item.href}
+                            onClick={() => setMenuOpen(false)}
+                            aria-current={active ? "page" : undefined}
+                            className={`flex items-baseline gap-4 py-3 border-b border-white/5 transition-colors ${
+                              active ? "text-[#14b8a6]" : "text-white/90 hover:text-[#14b8a6]"
+                            }`}
+                          >
+                            <span className={`text-[10px] font-mono tracking-widest ${active ? "text-[#14b8a6]/70" : "text-white/30"}`} aria-hidden="true">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <span className="text-2xl font-serif">{t(item.key)}</span>
+                          </Link>
+                        </motion.div>
+                      );
+                    })}
+                  </nav>
+
+                  {/* Contact + CTA at the foot of the panel, always reachable. */}
+                  <div className="px-7 py-5 border-t border-white/10 bg-white/[0.02]">
+                    <div className="flex flex-col gap-3">
+                      <a href={`tel:${COMPANY.phoneIntl}`} className="flex items-center gap-3 text-white/80 hover:text-[#14b8a6] transition-colors">
+                        <Phone className="h-4.5 w-4.5 text-[#0d9488]" />
+                        <span className="font-medium">{COMPANY.phone}</span>
+                      </a>
+                      <a
+                        href={COMPANY.whatsapp}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 text-white/80 hover:text-[#14b8a6] transition-colors"
+                      >
+                        <MessageCircle className="h-4.5 w-4.5 text-[#0d9488]" />
+                        <span className="font-medium">WhatsApp</span>
+                      </a>
+                      <Link
+                        href="/book"
+                        onClick={() => setMenuOpen(false)}
+                        className="mt-2 px-6 py-3.5 bg-[#0d9488] hover:bg-[#14b8a6] text-white font-semibold tracking-wide text-center transition-colors"
+                      >
+                        {t("cta.bookStay")}
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </motion.header>
-
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            {/* Dimmed page behind; clicking anywhere outside the drawer closes it. */}
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
-              onClick={() => setMenuOpen(false)}
-              aria-hidden="true"
-            />
-            {/* Full-height drawer on the inline end — a bounded panel that owns
-                its own chrome, not links floating in an empty overlay. */}
-            <motion.div
-              key="panel"
-              id="site-menu"
-              ref={panelRef}
-              tabIndex={-1}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Site menu"
-              initial={{ x: rtl ? "-100%" : "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: rtl ? "-100%" : "100%" }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-y-0 end-0 z-[55] w-full max-w-md bg-[#0a0e1a] border-s border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.6)] flex flex-col outline-none"
-            >
-              <div className="flex-1 overflow-y-auto px-8 pt-24 pb-6">
-                <nav aria-label="Mobile" className="flex flex-col">
-                  {navItems.map((item, i) => {
-                    const active = pathname === item.href;
-                    return (
-                      <motion.div
-                        key={item.key}
-                        initial={{ opacity: 0, x: rtl ? -16 : 16 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.08 + i * 0.04, duration: 0.3 }}
-                      >
-                        <Link
-                          href={item.href}
-                          onClick={() => setMenuOpen(false)}
-                          aria-current={active ? "page" : undefined}
-                          className={`group flex items-baseline gap-4 py-3.5 border-b border-white/5 transition-colors ${
-                            active ? "text-[#14b8a6]" : "text-white/90 hover:text-[#14b8a6]"
-                          }`}
-                        >
-                          <span className={`text-[10px] font-mono tracking-widest ${active ? "text-[#14b8a6]/70" : "text-white/30"}`} aria-hidden="true">
-                            {String(i + 1).padStart(2, "0")}
-                          </span>
-                          <span className="text-2xl font-serif">{t(item.key)}</span>
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
-                </nav>
-              </div>
-
-              {/* Contact + CTA pinned to the drawer foot, always reachable. */}
-              <div className="px-8 py-6 border-t border-white/10 bg-white/[0.02]">
-                <div className="flex flex-col gap-3">
-                  <a href={`tel:${COMPANY.phoneIntl}`} className="flex items-center gap-3 text-white/80 hover:text-[#14b8a6] transition-colors">
-                    <Phone className="h-4.5 w-4.5 text-[#0d9488]" />
-                    <span className="font-medium">{COMPANY.phone}</span>
-                  </a>
-                  <a
-                    href={COMPANY.whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-white/80 hover:text-[#14b8a6] transition-colors"
-                  >
-                    <MessageCircle className="h-4.5 w-4.5 text-[#0d9488]" />
-                    <span className="font-medium">WhatsApp</span>
-                  </a>
-                  <Link
-                    href="/book"
-                    onClick={() => setMenuOpen(false)}
-                    className="mt-2 px-6 py-3.5 bg-[#0d9488] hover:bg-[#14b8a6] text-white font-semibold tracking-wide text-center transition-colors"
-                  >
-                    {t("cta.bookStay")}
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 }
