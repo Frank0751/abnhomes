@@ -15,8 +15,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     <I18nProvider>
       <ScrollProgress />
       <Navigation />
-      {/* Single main landmark: everything a visitor reads lives in here. */}
-      <main>{children}</main>
+      {/* Each page owns its own <main> landmark (styled per-route); the layout
+          must not add a second one or every page fails landmark-one-main. */}
+      {children}
       <Footer />
       <FloatingActions />
     </I18nProvider>
