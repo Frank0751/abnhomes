@@ -3,23 +3,36 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { useI18n } from "./i18n";
 
 /**
  * Shared full-height hero header for inner pages (About, Residences, etc.).
  * Full-bleed image with a Ken Burns drift, editorial bottom-aligned title
  * and a breadcrumb.
+ *
+ * title/subtitle may be passed directly (English strings) or as dictionary
+ * keys via titleKey/subtitleKey — when a key is given it wins, so inner
+ * pages get translated banners without changing the call shape.
  */
 export function PageHero({
   title,
   subtitle,
+  titleKey,
+  subtitleKey,
   bgImage,
   breadcrumb,
 }: {
   title: string;
   subtitle?: string;
+  titleKey?: string;
+  subtitleKey?: string;
   bgImage: string;
   breadcrumb: string;
 }) {
+  const { t } = useI18n();
+  const resolvedTitle = titleKey ? t(titleKey) : title;
+  const resolvedSubtitle = subtitleKey ? t(subtitleKey) : subtitle;
+
   return (
     <section className="relative flex h-[100svh] min-h-[560px] w-full flex-col overflow-hidden bg-[#0a0e1a]">
       {/* Background image with slow Ken Burns drift */}
@@ -41,9 +54,9 @@ export function PageHero({
           className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/55"
         >
           <Link href="/" className="transition-colors hover:text-[#0d9488]">
-            Home
+            {t("pagehero.home")}
           </Link>
-          <ChevronRight className="h-3 w-3" />
+          <ChevronRight className="h-3 w-3 rtl:rotate-180" />
           <span className="text-[#0d9488]">{breadcrumb}</span>
         </motion.nav>
 
@@ -53,11 +66,11 @@ export function PageHero({
           transition={{ duration: 0.8, delay: 0.15 }}
         >
           <h1 className="max-w-4xl font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-white md:text-5xl lg:text-7xl">
-            {title}
+            {resolvedTitle}
           </h1>
-          {subtitle && (
+          {resolvedSubtitle && (
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
-              {subtitle}
+              {resolvedSubtitle}
             </p>
           )}
         </motion.div>

@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { MapPin } from "lucide-react";
+import { useI18n } from "./i18n";
 
 /**
  * Cinematic Hero with Google Flow style animated "ABN HOMES" text reveal.
@@ -13,6 +14,7 @@ import { MapPin } from "lucide-react";
  */
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
+  const { t } = useI18n();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -66,6 +68,7 @@ export function Hero() {
         <h1
           className="relative font-serif text-white text-[15vw] md:text-[12vw] lg:text-[9rem] xl:text-[11rem] leading-[0.95] tracking-[-0.04em] font-bold whitespace-nowrap"
           style={{ perspective: "800px" }}
+          dir="ltr"
           aria-label="ABN HOMES"
         >
           <span className="inline-flex flex-wrap justify-center">
@@ -122,7 +125,7 @@ export function Hero() {
           transition={{ delay: 2.2, duration: 0.9 }}
           className="mt-7 font-display text-xl md:text-2xl lg:text-3xl text-white/90 tracking-wide max-w-2xl"
         >
-          Building Dreams in Every Home.
+          {t("hero.tagline")}
         </motion.p>
 
         {/* Subline */}
@@ -132,9 +135,7 @@ export function Hero() {
           transition={{ delay: 2.6, duration: 0.9 }}
           className="mt-4 text-sm md:text-base text-white/65 max-w-xl leading-relaxed font-sans"
         >
-          Thoughtfully designed luxury apartments and homes across Accra,
-          Ghana. From Tantra Hill to Achimota Petroleum Estate, every residence
-          is crafted for those who expect more from where they live.
+          {t("hero.subline")}
         </motion.p>
 
         {/* CTAs */}
@@ -148,17 +149,17 @@ export function Hero() {
             onClick={() => document.querySelector("#residences")?.scrollIntoView({ behavior: "smooth" })}
             className="group relative px-8 py-4 bg-[#0d9488] text-[#0a0e1a] font-semibold tracking-wide text-sm uppercase overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_-15px_rgba(13,148,136,0.8)]"
           >
-            <span className="relative z-10">Explore Residences</span>
+            <span className="relative z-10">{t("cta.exploreResidences")}</span>
             <span className="absolute inset-0 bg-[#14b8a6] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             <span className="absolute inset-0 flex items-center justify-center text-[#0a0e1a] font-semibold tracking-wide text-sm uppercase translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-              Explore Residences
+              {t("cta.exploreResidences")}
             </span>
           </button>
           <button
             onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
             className="px-8 py-4 border border-white/30 text-white font-medium tracking-wide text-sm uppercase hover:bg-white/10 hover:border-white/60 transition-all duration-300"
           >
-            Schedule a Visit
+            {t("cta.scheduleVisit")}
           </button>
         </motion.div>
 
@@ -185,22 +186,22 @@ export function Hero() {
           {Array.from({ length: 2 }).map((_, set) => (
             <div key={set} className="flex items-center gap-10 px-5 shrink-0">
               {[
-                "Furnished Apartments",
-                "Tantra Hill",
-                "Free WiFi",
-                "Private Parking",
-                "Achimota Petroleum Estate",
-                "Fully Equipped Kitchens",
-                "Air Conditioned",
-                "Balcony Views",
-                "75-inch Smart TVs",
-                "Long Stay Friendly",
-                "Open Rooftop Bar",
-                "24/7 Security",
+                "marquee.furnished",
+                "marquee.tantra",
+                "marquee.wifi",
+                "marquee.parking",
+                "marquee.achimota",
+                "marquee.kitchens",
+                "marquee.ac",
+                "marquee.balcony",
+                "marquee.tvs",
+                "marquee.longStay",
+                "marquee.rooftop",
+                "marquee.security",
               ].map((item, i) => (
                 <span key={`${set}-${i}`} className="flex items-center gap-3 text-xs tracking-[0.2em] text-white/55 uppercase">
                   <span className="w-1 h-1 rounded-full bg-[#0d9488]" />
-                  {item}
+                  {t(item)}
                 </span>
               ))}
             </div>

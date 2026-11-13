@@ -6,25 +6,27 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone } from "lucide-react";
 import { LanguageSwitcher } from "./language-switcher";
+import { useI18n } from "./i18n";
 import { COMPANY } from "@/lib/abn-data";
 
 const navItems = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Residences", href: "/residences" },
-  { label: "Book", href: "/book" },
-  { label: "Own a Home", href: "/own" },
-  { label: "Rent", href: "/rent" },
-  { label: "Amenities", href: "/amenities" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Locations", href: "/locations" },
-  { label: "Contact", href: "/contact" },
+  { key: "nav.home", href: "/" },
+  { key: "nav.about", href: "/about" },
+  { key: "nav.residences", href: "/residences" },
+  { key: "nav.book", href: "/book" },
+  { key: "nav.own", href: "/own" },
+  { key: "nav.rent", href: "/rent" },
+  { key: "nav.amenities", href: "/amenities" },
+  { key: "nav.gallery", href: "/gallery" },
+  { key: "nav.locations", href: "/locations" },
+  { key: "nav.contact", href: "/contact" },
 ];
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useI18n();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -71,7 +73,7 @@ export function Navigation() {
               href="/book"
               className="hidden md:inline-flex items-center px-5 py-2.5 bg-[#0d9488] hover:bg-[#14b8a6] text-white text-sm font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_10px_30px_-10px_rgba(13,148,136,0.7)]"
             >
-              Book a Stay
+              {t("cta.bookStay")}
             </Link>
 
             <button
@@ -98,7 +100,7 @@ export function Navigation() {
               <nav className="flex flex-col gap-2 lg:max-w-2xl">
                 {navItems.map((item, i) => (
                   <motion.div
-                    key={item.label}
+                    key={item.key}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.06 }}
@@ -110,7 +112,7 @@ export function Navigation() {
                         pathname === item.href ? "text-[#0d9488]" : "text-white/90 hover:text-[#0d9488]"
                       }`}
                     >
-                      {item.label}
+                      {t(item.key)}
                     </Link>
                   </motion.div>
                 ))}
@@ -128,7 +130,7 @@ export function Navigation() {
                   onClick={() => setMenuOpen(false)}
                   className="mt-2 px-6 py-3.5 bg-[#0d9488] text-white font-semibold tracking-wide text-center"
                 >
-                  Book a Stay
+                  {t("cta.bookStay")}
                 </Link>
               </div>
             </div>

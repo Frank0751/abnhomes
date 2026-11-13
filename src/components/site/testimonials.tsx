@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Quote, Star } from "lucide-react";
+import { useI18n } from "./i18n";
 
 const testimonials = [
   {
@@ -35,6 +36,7 @@ const testimonials = [
 ];
 
 export function Testimonials() {
+  const { t } = useI18n();
   return (
     <section className="relative py-24 lg:py-32 bg-[#faf8f3] overflow-hidden">
       <div className="absolute top-1/3 left-0 w-72 h-72 rounded-full bg-[#0d9488]/8 blur-3xl pointer-events-none" />
@@ -49,7 +51,7 @@ export function Testimonials() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em]">
-              The people who call ABN home.
+              {t("testimonials.heading")}
             </h2>
           </motion.div>
         </div>
@@ -99,14 +101,14 @@ export function Testimonials() {
           className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#e8e3d8] border border-[#e8e3d8]"
         >
           {[
-            { label: "Average owner rating", value: "4.9 / 5" },
-            { label: "Referrals among owners", value: "82%" },
-            { label: "Repeat ABN buyers", value: "1 in 4" },
-            { label: "Avg. response time", value: "< 2 hrs" },
+            { label: "testimonials.trust1", value: "4.9 / 5" },
+            { label: "testimonials.trust2", value: "82%" },
+            { label: "testimonials.trust3", value: "1 in 4" },
+            { label: "testimonials.trust4", value: "< 2 hrs" },
           ].map((s, i) => (
             <div key={i} className="bg-[#faf8f3] p-7 text-center">
               <div className="font-serif text-3xl lg:text-4xl text-[#0a0e1a] mb-1">{s.value}</div>
-              <div className="text-[10px] tracking-[0.25em] uppercase text-[#6b6253]">{s.label}</div>
+              <div className="text-[10px] tracking-[0.25em] uppercase text-[#6b6253]">{t(s.label)}</div>
             </div>
           ))}
         </motion.div>

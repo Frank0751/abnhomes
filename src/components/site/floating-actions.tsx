@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp, X } from "lucide-react";
+import { useI18n } from "./i18n";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -13,6 +14,7 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 export function FloatingActions() {
   const [showTop, setShowTop] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 800);
@@ -46,17 +48,17 @@ export function FloatingActions() {
                     <WhatsAppIcon className="h-5 w-5 text-[#0a0e1a]" />
                   </div>
                   <div>
-                    <div className="font-serif text-lg leading-tight">ABN Homes Team</div>
+                    <div className="font-serif text-lg leading-tight">{t("chat.teamName")}</div>
                     <div className="text-xs text-[#0d9488] flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                      Typically replies in minutes
+                      {t("chat.repliesFast")}
                     </div>
                   </div>
                 </div>
               </div>
               <div className="p-5">
                 <div className="bg-[#faf8f3] p-4 mb-4 text-sm text-[#3a3530] leading-relaxed">
-                  Hello and welcome to ABN Homes. How can we help you find your next home in Accra today?
+                  {t("chat.welcome")}
                 </div>
                 <a
                   href="https://wa.me/233541704048?text=Hello%20ABN%20Homes%2C%20I%20would%20like%20to%20learn%20more%20about%20your%20residences."
@@ -65,14 +67,14 @@ export function FloatingActions() {
                   className="flex items-center justify-center gap-2 w-full px-5 py-3.5 bg-[#25D366] hover:bg-[#1da851] text-white font-semibold tracking-wide text-sm transition-colors"
                 >
                   <WhatsAppIcon className="h-4 w-4" />
-                  Start WhatsApp Chat
+                  {t("chat.start")}
                 </a>
                 <div className="mt-3 text-center">
                   <a
                     href="tel:+233541704048"
                     className="text-xs tracking-[0.2em] uppercase text-[#6b6253] hover:text-[#0d9488] transition-colors"
                   >
-                    or call 054 170 4048
+                    {t("chat.orCall")}
                   </a>
                 </div>
               </div>

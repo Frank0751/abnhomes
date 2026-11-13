@@ -3,12 +3,13 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { Building2, Award, Handshake, ShieldCheck } from "lucide-react";
+import { useI18n } from "./i18n";
 
 const stats = [
-  { value: 3, suffix: "", label: "Homes Available Now" },
-  { value: 7, suffix: "", label: "Services In House" },
-  { value: 24, suffix: "/7", label: "On Site Security" },
-  { value: 100, suffix: "%", label: "Vertically Integrated" },
+  { value: 3, suffix: "", label: "about.statHomes" },
+  { value: 7, suffix: "", label: "about.statServices" },
+  { value: 24, suffix: "/7", label: "about.statSecurity" },
+  { value: 100, suffix: "%", label: "about.statIntegrated" },
 ];
 
 const values = [
@@ -35,6 +36,7 @@ const values = [
 ];
 
 export function About() {
+  const { t } = useI18n();
   return (
     <section id="about" className="relative py-24 lg:py-32 bg-[#faf8f3] overflow-hidden">
       {/* Subtle decorative texture */}
@@ -51,7 +53,7 @@ export function About() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em]">
-              A Ghanaian home, built with a world of intention.
+              {t("about.heading")}
             </h2>
           </motion.div>
 
@@ -139,6 +141,7 @@ function StatCard({
   label: string;
   delay: number;
 }) {
+  const { t } = useI18n();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
   // Seed with the final value so the correct number is always in the HTML
@@ -181,7 +184,7 @@ function StatCard({
         <span className="text-[#0d9488]">{suffix}</span>
       </div>
       <div className="mt-3 text-xs tracking-[0.25em] text-[#6b6253] uppercase font-medium">
-        {label}
+        {t(label)}
       </div>
     </motion.div>
   );

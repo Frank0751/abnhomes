@@ -3,11 +3,13 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Phone, Mail, MapPin, Clock, Send, MessageCircle, Check, Loader2 } from "lucide-react";
+import { useI18n } from "./i18n";
 
 export function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useI18n();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -37,7 +39,7 @@ export function Contact() {
         setForm({ name: "", email: "", phone: "", interest: "Tantra Hill", message: "", honeypot: "" });
       }, 6000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please call 054 170 4048.");
+      setError(err instanceof Error ? err.message : t("form.errorFallback"));
     } finally {
       setSubmitting(false);
     }
@@ -56,10 +58,10 @@ export function Contact() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em] mb-6">
-              Book a tour, ask a question, or simply say hello.
+              {t("contact.title")}
             </h2>
             <p className="text-[#3a3530] text-base md:text-lg leading-relaxed">
-              Whether you are ready to move this month or just starting to explore Accra, our advisors are here to help. Reach us by phone, WhatsApp, email or the form below, we typically respond within two hours during business days.
+              {t("contact.intro")}
             </p>
           </motion.div>
         </div>
@@ -73,47 +75,47 @@ export function Contact() {
             className="bg-[#0a0e1a] text-white p-8 lg:p-12 relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-[#0d9488]/10 blur-3xl pointer-events-none" />
-            <h3 className="font-serif text-3xl mb-2 relative">Get in touch</h3>
+            <h3 className="font-serif text-3xl mb-2 relative">{t("contact.getInTouch")}</h3>
             <div className="w-12 h-px bg-[#0d9488] mb-8 relative" />
 
             <div className="space-y-7 relative">
               <ContactItem
                 icon={Phone}
-                label="Call us"
+                label={t("contact.callUs")}
                 value="054 170 4048"
                 href="tel:+233541704048"
               />
               <ContactItem
                 icon={MessageCircle}
-                label="WhatsApp"
+                label={t("contact.whatsapp")}
                 value="+233 54 170 4048"
                 href="https://wa.me/233541704048"
               />
               <ContactItem
                 icon={Mail}
-                label="Email"
+                label={t("contact.email")}
                 value="hello@abnhomes.com.gh"
                 href="mailto:hello@abnhomes.com.gh"
               />
               <ContactItem
                 icon={MapPin}
-                label="Head office"
+                label={t("contact.headOffice")}
                 value="8 Asiko Street, Tantra Hill, Accra, Ghana"
               />
               <ContactItem
                 icon={Clock}
-                label="Office hours"
-                value="Mon to Sat, 8:00 AM to 6:00 PM GMT"
+                label={t("contact.officeHours")}
+                value={t("contact.officeHoursValue")}
               />
             </div>
 
             <div className="mt-10 pt-8 border-t border-white/10 relative">
               <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d9488] mb-3">
-                Other offices
+                {t("contact.otherOffices")}
               </div>
               <ul className="space-y-1.5 text-sm text-white/65">
                 <li>Achimota Petroleum Estate, Accra</li>
-                <li>Available across Greater Accra</li>
+                <li>{t("contact.officesNote")}</li>
               </ul>
             </div>
           </motion.div>
@@ -136,10 +138,10 @@ export function Contact() {
                   <Check className="h-8 w-8 text-[#0a0e1a]" strokeWidth={2.5} />
                 </motion.div>
                 <h3 className="font-serif text-3xl text-[#0a0e1a] mb-3">
-                  Message received.
+                  {t("form.successTitle")}
                 </h3>
                 <p className="text-[#6b6253] max-w-md">
-                  Thank you for reaching out to ABN Homes. One of our advisors will contact you within two business hours. For urgent matters, please call 054 170 4048.
+                  {t("form.successBody")}
                 </p>
               </div>
             ) : (
@@ -157,7 +159,7 @@ export function Contact() {
                 />
                 <div className="grid md:grid-cols-2 gap-5">
                   <Field
-                    label="Full name"
+                    label={t("form.fullName")}
                     type="text"
                     required
                     value={form.name}
@@ -165,7 +167,7 @@ export function Contact() {
                     placeholder="e.g. Ama Owusu"
                   />
                   <Field
-                    label="Email"
+                    label={t("form.email")}
                     type="email"
                     required
                     value={form.email}
@@ -175,7 +177,7 @@ export function Contact() {
                 </div>
                 <div className="grid md:grid-cols-2 gap-5">
                   <Field
-                    label="Phone"
+                    label={t("form.phone")}
                     type="tel"
                     value={form.phone}
                     onChange={(v) => setForm({ ...form, phone: v })}
@@ -183,7 +185,7 @@ export function Contact() {
                   />
                   <div>
                     <label className="block text-[11px] tracking-[0.2em] uppercase text-[#6b6253] mb-2 font-medium">
-                      I am interested in
+                      {t("form.interestedIn")}
                     </label>
                     <select
                       value={form.interest}
@@ -192,22 +194,22 @@ export function Contact() {
                     >
                       <option>Tantra Hill</option>
                       <option>Achimota Petroleum Estate</option>
-                      <option>Furnished 1 Bedroom</option>
-                      <option>Custom build</option>
-                      <option>Investment opportunity</option>
+                      <option>{t("interest.furnished1br")}</option>
+                      <option>{t("interest.customBuild")}</option>
+                      <option>{t("interest.investment")}</option>
                     </select>
                   </div>
                 </div>
                 <div>
                   <label className="block text-[11px] tracking-[0.2em] uppercase text-[#6b6253] mb-2 font-medium">
-                    Your message
+                    {t("form.message")}
                   </label>
                   <textarea
                     required
                     rows={5}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    placeholder="Tell us what you are looking for, your timeline and any questions you have."
+                    placeholder={t("form.messagePlaceholder")}
                     className="w-full px-4 py-3.5 bg-[#faf8f3] border border-[#e8e3d8] text-[#0a0e1a] focus:border-[#0d9488] focus:outline-none transition-colors font-sans text-sm resize-none"
                   />
                 </div>
@@ -226,17 +228,17 @@ export function Contact() {
                   {submitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Sending...
+                      {t("cta.sending")}
                     </>
                   ) : (
                     <>
-                      Send Message
+                      {t("cta.sendMessage")}
                       <Send className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
                 </button>
                 <p className="text-xs text-[#6b6253] text-center">
-                  By submitting, you agree to be contacted by ABN Homes about your enquiry. We respect your privacy and never share your details.
+                  {t("form.privacyNote")}
                 </p>
               </form>
             )}

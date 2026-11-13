@@ -15,71 +15,73 @@ import {
   Sun,
   Sparkles,
 } from "lucide-react";
+import { useI18n } from "./i18n";
 
 const amenities = [
   {
     icon: Wind,
-    title: "Air Conditioning",
+    titleKey: "amenity.ac",
     body: "Climate controlled living spaces with inverter units in every bedroom and the main lounge.",
   },
   {
     icon: Car,
-    title: "Private Parking",
+    titleKey: "amenity.parking",
     body: "Dedicated secure parking on site for residents and complimentary guest bays for visitors.",
   },
   {
     icon: TreePalm,
-    title: "Balcony and Terrace",
+    titleKey: "amenity.balcony",
     body: "Every residence opens onto a private balcony or terrace, calibrated for Accra's golden hour.",
   },
   {
     icon: Wifi,
-    title: "High Speed Internet",
+    titleKey: "amenity.internet",
     body: "Fibre ready infrastructure with complimentary WiFi throughout common areas and residences.",
   },
   {
     icon: UtensilsCrossed,
-    title: "Fully Equipped Kitchen",
+    titleKey: "amenity.kitchen",
     body: "Engineered stone counters, premium cabinetry, full appliance package and thoughtful storage.",
   },
   {
     icon: Wine,
-    title: "On Site Bar and Lounge",
+    titleKey: "amenity.bar",
     body: "A residents only bar and lounge at Tantra Hill, perfect for unwinding or hosting friends.",
   },
   {
     icon: Tv,
-    title: "Entertainment Ready",
+    titleKey: "amenity.entertainment",
     body: "Flat screen TV mounting, media wiring and ambient lighting pre configured in every living room.",
   },
   {
     icon: ShieldCheck,
-    title: "24/7 Security",
+    titleKey: "amenity.security",
     body: "Controlled access, on site personnel and monitored perimeter at every ABN community.",
   },
   {
     icon: Flame,
-    title: "Backup Power",
+    titleKey: "amenity.power",
     body: "Automatic transfer to backup generators ensures you never miss a moment during grid outages.",
   },
   {
     icon: Droplets,
-    title: "Borehole Water",
+    titleKey: "amenity.water",
     body: "Independent borehole supply with treatment and storage keeps every residence running year round.",
   },
   {
     icon: Sun,
-    title: "Solar Assisted",
+    titleKey: "amenity.solar",
     body: "Selected residences integrate solar to reduce running costs and lighten environmental impact.",
   },
   {
     icon: Sparkles,
-    title: "Housekeeping Available",
+    titleKey: "amenity.housekeeping",
     body: "Optional weekly housekeeping, laundry and concierge services for residents who want more time.",
   },
 ];
 
 export function Amenities() {
+  const { t } = useI18n();
   return (
     <section id="amenities" className="relative py-24 lg:py-32 bg-[#faf8f3] overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10">
@@ -92,7 +94,7 @@ export function Amenities() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em]">
-              Considered details, included as standard.
+              {t("amenities.heading")}
             </h2>
           </motion.div>
 
@@ -103,11 +105,7 @@ export function Amenities() {
             transition={{ duration: 0.8, delay: 0.15 }}
             className="text-[#3a3530] text-base md:text-lg leading-relaxed"
           >
-            We do not believe in upgrade lists. From climate control to backup
-            power, every ABN residence arrives with the amenities that turn a
-            beautiful space into a true home. Below is a snapshot of what is
-            included across our communities, with selected residences offering
-            even more.
+            {t("amenities.sub")}
           </motion.p>
         </div>
 
@@ -115,7 +113,7 @@ export function Amenities() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-[#e8e3d8] border border-[#e8e3d8]">
           {amenities.map((amenity, i) => (
             <motion.div
-              key={amenity.title}
+              key={amenity.titleKey}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, margin: "-50px" }}
@@ -129,7 +127,7 @@ export function Amenities() {
                 />
               </div>
               <h3 className="font-serif text-xl text-[#0a0e1a] mb-2.5">
-                {amenity.title}
+                {t(amenity.titleKey)}
               </h3>
               <p className="text-sm text-[#6b6253] leading-relaxed">
                 {amenity.body}

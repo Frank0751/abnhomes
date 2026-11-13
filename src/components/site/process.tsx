@@ -2,35 +2,37 @@
 
 import { motion } from "framer-motion";
 import { PhoneCall, Calendar, KeyRound, HandHeart } from "lucide-react";
+import { useI18n } from "./i18n";
 
 const steps = [
   {
     icon: PhoneCall,
     step: "01",
-    title: "Reach Out",
+    titleKey: "process.step1",
     body: "Call 054 170 4048 or send us a message. Tell us what you are looking for, your timeline and your budget. An ABN advisor will respond within two hours and schedule a conversation at your convenience.",
   },
   {
     icon: Calendar,
     step: "02",
-    title: "Tour in Person or Virtually",
+    titleKey: "process.step2",
     body: "Visit Tantra Hill, Sakumono or Nii Ayi Mensah, or take a guided video tour if you are abroad. We walk you through the residence, the neighbourhood and the ownership or rental terms in plain language.",
   },
   {
     icon: KeyRound,
     step: "03",
-    title: "Reserve and Finalise",
+    titleKey: "process.step3",
     body: "Once you have selected your residence, we issue a transparent reservation agreement and walk you through every clause. Our legal team handles the documentation, title verification and any transfer logistics.",
   },
   {
     icon: HandHeart,
     step: "04",
-    title: "Move In and Settle",
+    titleKey: "process.step4",
     body: "Collect your keys, complete your snag list with our site team, and let ABN Group handle furniture, utilities and concierge if you wish. We stay in touch long after handover to keep your home running smoothly.",
   },
 ];
 
 export function Process() {
+  const { t } = useI18n();
   return (
     <section className="relative py-24 lg:py-32 bg-[#0a0e1a] text-white overflow-hidden">
       {/* Decorative dotted pattern */}
@@ -46,7 +48,7 @@ export function Process() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.02em]">
-              From first call to front door, four considered steps.
+              {t("process.heading")}
             </h2>
           </motion.div>
           <motion.p
@@ -56,10 +58,7 @@ export function Process() {
             transition={{ duration: 0.8, delay: 0.15 }}
             className="text-white/65 text-base md:text-lg leading-relaxed"
           >
-            Buying or renting a home in Accra should feel structured and
-            transparent. Our four step process keeps you informed at every
-            stage, with a single point of contact from your first enquiry to
-            the day you collect your keys.
+            {t("process.sub")}
           </motion.p>
         </div>
 
@@ -89,7 +88,7 @@ export function Process() {
               </div>
 
               <h3 className="font-serif text-2xl text-white mb-3">
-                {step.title}
+                {t(step.titleKey)}
               </h3>
               <p className="text-sm text-white/65 leading-relaxed">
                 {step.body}

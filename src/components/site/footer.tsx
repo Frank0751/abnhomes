@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Instagram, Facebook, Phone, Mail, MapPin, ArrowUp } from "lucide-react";
 import { COMPANY } from "@/lib/abn-data";
+import { useI18n } from "./i18n";
 
 const tiktokIcon = (className: string) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -13,35 +14,36 @@ const tiktokIcon = (className: string) => (
 
 const footerNav = {
   Company: [
-    { label: "Our Story", href: "/about" },
-    { label: "Residences", href: "/residences" },
-    { label: "Own a Home", href: "/own" },
-    { label: "Rent a Home", href: "/rent" },
-    { label: "Gallery", href: "/gallery" },
-    { label: "Locations", href: "/locations" },
+    { key: "link.ourStory", href: "/about" },
+    { key: "link.residences", href: "/residences" },
+    { key: "link.ownAHome", href: "/own" },
+    { key: "link.rentAHome", href: "/rent" },
+    { key: "link.gallery", href: "/gallery" },
+    { key: "link.locations", href: "/locations" },
   ],
   Residences: [
-    { label: "Tantra Hill Penthouse", href: "/residences" },
-    { label: "Achimota Estate", href: "/residences" },
-    { label: "Furnished 1BR", href: "/residences" },
-    { label: "Book a Tour", href: "/contact" },
+    { key: "link.tantraPenthouse", href: "/residences" },
+    { key: "link.achimotaEstate", href: "/residences" },
+    { key: "link.furnished1br", href: "/residences" },
+    { key: "link.bookATour", href: "/contact" },
   ],
   Services: [
-    { label: "Amenities", href: "/amenities" },
-    { label: "Construction", href: "/amenities" },
-    { label: "Land Sales", href: "/amenities" },
-    { label: "Renovations", href: "/amenities" },
+    { key: "link.amenities", href: "/amenities" },
+    { key: "link.construction", href: "/amenities" },
+    { key: "link.landSales", href: "/amenities" },
+    { key: "link.renovations", href: "/amenities" },
   ],
   Connect: [
-    { label: "Instagram", href: COMPANY.instagram, external: true },
-    { label: "TikTok", href: COMPANY.tiktok, external: true },
-    { label: "Facebook", href: COMPANY.facebook, external: true },
-    { label: "WhatsApp", href: COMPANY.whatsapp, external: true },
+    { key: "Instagram", href: COMPANY.instagram, external: true },
+    { key: "TikTok", href: COMPANY.tiktok, external: true },
+    { key: "Facebook", href: COMPANY.facebook, external: true },
+    { key: "WhatsApp", href: COMPANY.whatsapp, external: true },
   ],
 };
 
 export function Footer() {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const { t } = useI18n();
 
   return (
     <footer className="relative bg-[#0a0e1a] text-white overflow-hidden">
@@ -63,7 +65,7 @@ export function Footer() {
               className="h-12 lg:h-14 w-auto mb-6 rounded"
             />
             <p className="font-serif text-2xl lg:text-3xl leading-tight max-w-2xl">
-              Build your next chapter with a Ghanaian partner who treats your home as if it were their own.
+              {t("footer.tagline")}
             </p>
           </div>
           <div className="flex flex-col gap-3 lg:items-end lg:justify-end">
@@ -71,7 +73,7 @@ export function Footer() {
               href="/contact"
               className="inline-flex items-center justify-center gap-3 px-7 py-4 bg-[#0d9488] hover:bg-[#14b8a6] text-white font-semibold tracking-[0.2em] uppercase text-sm transition-colors"
             >
-              Book a Tour Today
+              {t("cta.bookTourToday")}
             </Link>
             <a
               href={`tel:${COMPANY.phoneIntl}`}
@@ -101,7 +103,7 @@ export function Footer() {
               </div>
             </div>
             <p className="text-sm text-white/65 leading-relaxed mb-6 max-w-sm">
-              {COMPANY.fullName} is a Ghanaian real estate and construction company. We build and sell affordable houses, buy and sell lands, handle constructions, project management, architectural drawings, project supervising and renovations across Accra, Ghana.
+              {t("footer.blurb")}
             </p>
             <div className="space-y-2 text-sm text-white/65">
               <div className="flex items-start gap-2.5">
@@ -136,11 +138,11 @@ export function Footer() {
           {Object.entries(footerNav).map(([title, items]) => (
             <div key={title}>
               <h4 className="text-[11px] tracking-[0.3em] uppercase text-[#0d9488] mb-5">
-                {title}
+                {t(`footer.col${title}`)}
               </h4>
               <ul className="space-y-3">
                 {items.map((item) => (
-                  <li key={item.label}>
+                  <li key={item.key}>
                     {item.external ? (
                       <a
                         href={item.href}
@@ -149,7 +151,7 @@ export function Footer() {
                         className="text-sm text-white/70 hover:text-white transition-colors inline-flex items-center group"
                       >
                         <span className="w-0 h-px bg-[#0d9488] mr-0 group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
-                        {item.label}
+                        {item.key}
                       </a>
                     ) : (
                       <Link
@@ -157,7 +159,7 @@ export function Footer() {
                         className="text-sm text-white/70 hover:text-white transition-colors inline-flex items-center group"
                       >
                         <span className="w-0 h-px bg-[#0d9488] mr-0 group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
-                        {item.label}
+                        {t(item.key)}
                       </Link>
                     )}
                   </li>
@@ -170,16 +172,16 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-xs text-white/45 text-center md:text-left">
-            (c) {new Date().getFullYear()} {COMPANY.fullName}, a member of the ABN Group of Companies. All rights reserved.
+            (c) {new Date().getFullYear()} {COMPANY.fullName}, {t("footer.rights")}
           </div>
           <div className="flex items-center gap-6 text-xs text-white/45">
-            <a href="#" className="hover:text-[#0d9488] transition-colors">Privacy</a>
-            <a href="#" className="hover:text-[#0d9488] transition-colors">Terms</a>
+            <a href="#" className="hover:text-[#0d9488] transition-colors">{t("footer.privacy")}</a>
+            <a href="#" className="hover:text-[#0d9488] transition-colors">{t("footer.terms")}</a>
             <button
               onClick={scrollTop}
               className="flex items-center gap-2 hover:text-[#0d9488] transition-colors"
             >
-              Back to top
+              {t("cta.backToTop")}
               <ArrowUp className="h-3 w-3" />
             </button>
           </div>

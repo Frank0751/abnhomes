@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { BedDouble, Bath, Maximize, MapPin, ArrowUpRight, Eye } from "lucide-react";
 import { PropertyDetailModal } from "./property-detail-modal";
+import { useI18n } from "./i18n";
 
 type Property = {
   id: string;
@@ -58,6 +59,7 @@ const properties: Property[] = [
 
 export function Properties() {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const { t } = useI18n();
 
   return (
     <section id="residences" className="relative py-24 lg:py-32 bg-[#0a0e1a] text-white overflow-hidden">
@@ -73,7 +75,7 @@ export function Properties() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.02em] max-w-2xl">
-              Fully furnished apartments, ready when you are.
+              {t("properties.heading")}
             </h2>
           </motion.div>
 
@@ -84,7 +86,7 @@ export function Properties() {
             transition={{ duration: 0.8, delay: 0.15 }}
             className="text-white/65 text-base lg:text-lg leading-relaxed max-w-md"
           >
-            Beyond the homes for sale above, ABN runs a collection of fully furnished apartments for short and long stays. Book a night, a month or a whole season. Click any stay to explore the full detail.
+            {t("properties.sub")}
           </motion.p>
         </div>
 
@@ -103,17 +105,17 @@ export function Properties() {
         >
           <div>
             <h3 className="font-serif text-2xl md:text-3xl mb-2">
-              Looking for something tailored?
+              {t("properties.tailoredTitle")}
             </h3>
             <p className="text-white/65 max-w-xl">
-              Our team can walk you through custom builds, off market opportunities and flexible rent to own plans across Accra.
+              {t("properties.tailoredBody")}
             </p>
           </div>
           <button
             onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
             className="shrink-0 inline-flex items-center gap-2 px-7 py-4 bg-[#0d9488] text-[#0a0e1a] font-semibold tracking-wide text-sm uppercase hover:bg-[#14b8a6] transition-colors"
           >
-            Speak to an Advisor
+            {t("cta.speakToAdvisor")}
             <ArrowUpRight className="h-4 w-4" />
           </button>
         </motion.div>
@@ -123,6 +125,12 @@ export function Properties() {
     </section>
   );
 }
+
+const STATUS_KEYS: Record<Property["status"], string> = {
+  Available: "status.available",
+  "Selling Fast": "status.sellingFast",
+  "New Release": "status.newRelease",
+};
 
 function PropertyCard({
   property,
@@ -135,6 +143,7 @@ function PropertyCard({
   reverse: boolean;
   onView: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <motion.article
       initial={{ opacity: 0, y: 50 }}
@@ -151,12 +160,12 @@ function PropertyCard({
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/80 via-transparent to-transparent" />
         <div className="absolute top-5 left-5 flex items-center gap-3">
           <span className="px-3 py-1.5 text-[10px] tracking-[0.3em] uppercase font-medium bg-[#0d9488] text-[#0a0e1a]">
-            {property.status}
+            {t(STATUS_KEYS[property.status])}
           </span>
         </div>
         <div className="absolute top-5 right-5 flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-white/70 bg-[#0a0e1a]/60 backdrop-blur-sm px-3 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
           <Eye className="h-3 w-3 text-[#0d9488]" />
-          View Detail
+          {t("cta.viewDetail")}
         </div>
         <div className="absolute bottom-5 left-5 right-5 flex items-center gap-2 text-white/85 text-xs tracking-[0.2em] uppercase">
           <MapPin className="h-3.5 w-3.5 text-[#0d9488]" />
@@ -173,9 +182,9 @@ function PropertyCard({
         </p>
 
         <div className="grid grid-cols-3 gap-px bg-white/10 border border-white/10 mb-7">
-          <Spec icon={BedDouble} value={property.specs.beds} label="Bedrooms" />
-          <Spec icon={Bath} value={property.specs.baths} label="Bathrooms" />
-          <Spec icon={Maximize} value={property.specs.size} label="Floor Area" isText />
+          <Spec icon={BedDouble} value={property.specs.beds} label={t("properties.bedrooms")} />
+          <Spec icon={Bath} value={property.specs.baths} label={t("properties.bathrooms")} />
+          <Spec icon={Maximize} value={property.specs.size} label={t("properties.floorArea")} isText />
         </div>
 
         <div className="flex flex-wrap gap-2 mb-7">
@@ -192,7 +201,7 @@ function PropertyCard({
         <div className="flex items-center justify-between pt-6 border-t border-white/10">
           <div>
             <div className="text-[10px] tracking-[0.3em] text-white/50 uppercase mb-1">
-              Pricing
+              {t("properties.pricing")}
             </div>
             <div className="font-serif text-xl text-[#0d9488]">{property.price}</div>
           </div>
@@ -200,7 +209,7 @@ function PropertyCard({
             onClick={onView}
             className="inline-flex items-center gap-2 px-6 py-3 border border-white/30 hover:border-[#0d9488] hover:bg-[#0d9488] hover:text-[#0a0e1a] text-white font-medium text-sm tracking-wide transition-all duration-300"
           >
-            View Detail
+            {t("cta.viewDetail")}
             <ArrowUpRight className="h-4 w-4" />
           </button>
         </div>

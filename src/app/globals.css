@@ -312,3 +312,12 @@ html {
   .shadow-soft { box-shadow: none !important; }
   .rounded-xl { break-inside: avoid; }
 }
+
+/* i18n: Satoshi and Playfair carry no Arabic or CJK glyphs — these stacks
+   give Arabic and Chinese visitors a proper face without shipping fonts. */
+html[lang="ar"] body {
+  font-family: "Segoe UI", "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", Tahoma, sans-serif;
+}
+html[lang="zh"] body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}

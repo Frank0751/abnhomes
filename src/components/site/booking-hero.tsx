@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, MapPin, Search, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { COMPANY } from "@/lib/abn-data";
+import { useI18n } from "./i18n";
 
 /**
  * Booking-first hero.
@@ -31,6 +32,7 @@ function addDays(date: Date, days: number) {
 export function BookingHero() {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { t } = useI18n();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -49,7 +51,7 @@ export function BookingHero() {
     const a = new Date(ci);
     const b = new Date(co);
     if (!ci || !co || b <= a) {
-      setError("Your departure date needs to be after your arrival date.");
+      setError(t("booking.errorDates"));
       return;
     }
     setError(null);
@@ -99,6 +101,7 @@ export function BookingHero() {
         <h1
           className="relative font-serif text-white text-[13vw] md:text-[10vw] lg:text-[6.5rem] xl:text-[8rem] leading-[0.95] tracking-[-0.04em] font-bold whitespace-nowrap"
           style={{ perspective: "800px" }}
+          dir="ltr"
           aria-label="ABN HOMES"
         >
           <span className="inline-flex flex-wrap justify-center">
@@ -154,7 +157,7 @@ export function BookingHero() {
           transition={{ delay: 1.0, duration: 0.8 }}
           className="mt-4 font-display text-lg md:text-2xl text-white/90 tracking-wide"
         >
-          Serviced apartments in Accra. Book direct, in under a minute.
+          {t("booking.promise")}
         </motion.p>
 
         {/* The booking card */}
@@ -173,13 +176,13 @@ export function BookingHero() {
           >
             <p className="mb-3 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#0a0e1a]/70">
               <CalendarDays className="size-3.5 text-[#0d9488]" />
-              Check live availability
+              {t("booking.checkAvailability")}
             </p>
 
             <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
               <div className="space-y-1">
                 <label htmlFor="hero-check-in" className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0a0e1a]/60">
-                  Arrive
+                  {t("booking.arrive")}
                 </label>
                 <input
                   id="hero-check-in"
@@ -193,7 +196,7 @@ export function BookingHero() {
 
               <div className="space-y-1">
                 <label htmlFor="hero-check-out" className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0a0e1a]/60">
-                  Leave
+                  {t("booking.leave")}
                 </label>
                 <input
                   id="hero-check-out"
@@ -207,7 +210,7 @@ export function BookingHero() {
 
               <div className="space-y-1">
                 <label htmlFor="hero-guests" className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0a0e1a]/60">
-                  Guests
+                  {t("booking.guests")}
                 </label>
                 <select
                   id="hero-guests"
@@ -217,7 +220,7 @@ export function BookingHero() {
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                     <option key={n} value={n}>
-                      {n} {n === 1 ? "guest" : "guests"}
+                      {n} {n === 1 ? t("booking.guestWord") : t("booking.guestsWord")}
                     </option>
                   ))}
                 </select>
@@ -229,7 +232,7 @@ export function BookingHero() {
               >
                 <span className="relative z-10 inline-flex items-center gap-2">
                   <Search className="size-4" />
-                  Check
+                  {t("cta.check")}
                 </span>
                 <span className="absolute inset-0 bg-[#14b8a6] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </button>
@@ -245,15 +248,15 @@ export function BookingHero() {
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-[#0a0e1a]/50">
                 <Sparkles className="size-3 text-[#0d9488]" />
-                Quick stay
+                {t("booking.quickStay")}
               </span>
               {[
-                { label: "2 nights", ci: now, co: addDays(now, 2) },
-                { label: "This weekend", ci: upcomingSaturday(now), co: upcomingMonday(now) },
-                { label: "A week", ci: now, co: addDays(now, 7) },
+                { key: "booking.chip2Nights", ci: now, co: addDays(now, 2) },
+                { key: "booking.chipWeekend", ci: upcomingSaturday(now), co: upcomingMonday(now) },
+                { key: "booking.chipWeek", ci: now, co: addDays(now, 7) },
               ].map((chip) => (
                 <button
-                  key={chip.label}
+                  key={chip.key}
                   type="button"
                   onClick={() => {
                     setCheckIn(iso(chip.ci));
@@ -262,7 +265,7 @@ export function BookingHero() {
                   }}
                   className="rounded-full border border-black/12 bg-white px-3 py-1 text-xs text-[#0a0e1a]/75 transition-colors hover:border-[#0d9488] hover:text-[#0d9488]"
                 >
-                  {chip.label}
+                  {t(chip.key)}
                 </button>
               ))}
             </div>
@@ -275,15 +278,15 @@ export function BookingHero() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#14b8a6] opacity-75" />
                 <span className="relative inline-flex size-1.5 rounded-full bg-[#14b8a6]" />
               </span>
-              Live availability
+              {t("booking.liveAvailability")}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Wallet className="size-3.5 text-[#0d9488]" />
-              No platform fee
+              {t("booking.noPlatformFee")}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <ShieldCheck className="size-3.5 text-[#0d9488]" />
-              Confirmed by our team
+              {t("booking.confirmedByTeam")}
             </span>
           </div>
         </motion.div>
@@ -306,7 +309,7 @@ export function BookingHero() {
           transition={{ delay: 1.8, duration: 0.8 }}
           className="mt-3 text-xs text-white/45"
         >
-          Yearly tenancy or to buy?{" "}
+          {t("booking.yearlyOrBuy")}{" "}
           <a
             href={`${COMPANY.whatsapp}?text=${encodeURIComponent(
               "Hello ABN Homes, I am interested in a yearly tenancy or buying a property.",
@@ -315,7 +318,7 @@ export function BookingHero() {
             rel="noopener noreferrer"
             className="underline underline-offset-4 decoration-[#0d9488]/60 hover:text-white/70 transition-colors"
           >
-            WhatsApp us
+            {t("booking.whatsappUs")}
           </a>
         </motion.div>
       </div>
@@ -331,22 +334,22 @@ export function BookingHero() {
           {Array.from({ length: 2 }).map((_, set) => (
             <div key={set} className="flex items-center gap-10 px-5 shrink-0">
               {[
-                "Furnished Apartments",
-                "Tantra Hill",
-                "Free WiFi",
-                "Private Parking",
-                "Achimota Petroleum Estate",
-                "Fully Equipped Kitchens",
-                "Air Conditioned",
-                "Balcony Views",
-                "75-inch Smart TVs",
-                "Long Stay Friendly",
-                "Open Rooftop Bar",
-                "24/7 Security",
+                "marquee.furnished",
+                "marquee.tantra",
+                "marquee.wifi",
+                "marquee.parking",
+                "marquee.achimota",
+                "marquee.kitchens",
+                "marquee.ac",
+                "marquee.balcony",
+                "marquee.tvs",
+                "marquee.longStay",
+                "marquee.rooftop",
+                "marquee.security",
               ].map((item, i) => (
                 <span key={`${set}-${i}`} className="flex items-center gap-3 text-xs tracking-[0.2em] text-white/55 uppercase">
                   <span className="w-1 h-1 rounded-full bg-[#0d9488]" />
-                  {item}
+                  {t(item)}
                 </span>
               ))}
             </div>
