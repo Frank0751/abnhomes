@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, MessageCircle } from "lucide-react";
+import { Phone, MessageCircle } from "lucide-react";
 import { LanguageSwitcher } from "./language-switcher";
 import { useI18n } from "./i18n";
 import { COMPANY } from "@/lib/abn-data";
@@ -21,6 +21,22 @@ const navItems = [
   { key: "nav.locations", href: "/locations" },
   { key: "nav.contact", href: "/contact" },
 ];
+
+/**
+ * Three bars that morph into an X. Pure CSS transforms on spans — smoother
+ * than swapping two lucide icons, and the hover color follows `bg-current`.
+ */
+function BurgerIcon({ open }: { open: boolean }) {
+  const bar =
+    "absolute left-0.5 h-0.5 w-5 bg-current transition-all duration-300 ease-out";
+  return (
+    <span aria-hidden="true" className="relative block h-6 w-6">
+      <span className={`${bar} top-[4px] ${open ? "top-[11px] rotate-45" : ""}`} />
+      <span className={`${bar} top-[11px] ${open ? "opacity-0 -translate-x-2" : ""}`} />
+      <span className={`${bar} top-[18px] ${open ? "top-[11px] -rotate-45" : ""}`} />
+    </span>
+  );
+}
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -56,11 +72,6 @@ export function Navigation() {
   const isHome = pathname === "/";
   const forceDark = !isHome || scrolled;
 
-  const linkCls = (active: boolean) =>
-    `whitespace-nowrap text-[13px] xl:text-sm font-medium tracking-wide transition-colors ${
-      active ? "text-[#14b8a6]" : "text-white/85 hover:text-white"
-    }`;
-
   return (
     <>
       <motion.header
@@ -77,18 +88,18 @@ export function Navigation() {
             opens flush under the header row — directly beneath the button. */}
         <div className="relative max-w-[1400px] mx-auto px-5 lg:px-10 flex items-center justify-between gap-6">
           <div className="flex items-center gap-3 shrink-0">
-            {/* The 3-lines button lives at the far left, before the logo, and
-                the menu drops straight down from it. Hidden at xl+ where the
-                inline nav takes over. */}
+            {/* The hamburger is the site's one navigation control on every
+                viewport: far left, 44px tap target, bars morph into an X. The
+                menu drops straight down from its edge. */}
             <button
               ref={toggleRef}
-              className="xl:hidden text-white p-2.5 transition-colors hover:text-[#14b8a6]"
+              className="flex h-11 w-11 items-center justify-center border border-white/20 text-white transition-colors hover:border-[#14b8a6]/60 hover:text-[#14b8a6] focus-visible:ring-1 focus-visible:ring-[#14b8a6]"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
               aria-controls="site-menu"
             >
-              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <BurgerIcon open={menuOpen} />
             </button>
             <Link href="/" className="flex items-center gap-3 group" aria-label="ABN Homes home">
               <img
@@ -99,25 +110,11 @@ export function Navigation() {
             </Link>
           </div>
 
-          {/* Desktop: inline primary nav. Ten top-level destinations belong in
-              view, not behind a hamburger. */}
-          <nav aria-label="Primary" className="hidden xl:flex items-center justify-center gap-x-5 2xl:gap-x-7 min-w-0 flex-1">
-            {navItems.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <Link key={item.key} href={item.href} className={`relative py-2 ${linkCls(active)}`} aria-current={active ? "page" : undefined}>
-                  {t(item.key)}
-                  {active && <span className="absolute inset-x-0 bottom-0 h-px bg-[#14b8a6]" aria-hidden="true" />}
-                </Link>
-              );
-            })}
-          </nav>
-
           <div className="flex items-center gap-3 shrink-0">
             <LanguageSwitcher />
             <a
               href={`tel:${COMPANY.phoneIntl}`}
-              className="hidden xl:flex items-center gap-2 text-sm text-white/80 hover:text-[#0d9488] transition-colors"
+              className="hidden md:flex items-center gap-2 text-sm text-white/80 hover:text-[#0d9488] transition-colors"
             >
               <Phone className="h-4 w-4" />
               <span className="font-medium">{COMPANY.phone}</span>
@@ -147,9 +144,10 @@ export function Navigation() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute top-full start-0 z-20 mt-2 w-[min(28rem,calc(100vw-2.5rem))] max-h-[calc(100dvh-5rem)] overflow-y-auto bg-[#0a0e1a] border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.6)] outline-none"
+                  className="absolute top-full start-0 z-20 mt-2 w-[min(28rem,calc(100vw-2.5rem))] max-h-[calc(100dvh-5rem)] overflow-y-auto bg-[#0a0e1a]/95 backdrop-blur-xl border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.6)] outline-none"
                 >
-                  <nav aria-label="Mobile" className="px-7 pt-5 pb-2">
+                  {/* This dropdown is the primary nav on every viewport. */}
+                  <nav aria-label="Primary" className="px-7 pt-5 pb-2">
                     {navItems.map((item, i) => {
                       const active = pathname === item.href;
                       return (
