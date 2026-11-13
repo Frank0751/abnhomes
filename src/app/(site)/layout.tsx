@@ -15,7 +15,8 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     <I18nProvider>
       <ScrollProgress />
       <Navigation />
-      {children}
+      {/* Single main landmark: everything a visitor reads lives in here. */}
+      <main>{children}</main>
       <Footer />
       <FloatingActions />
     </I18nProvider>

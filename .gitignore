@@ -74,3 +74,4 @@ worklog.md
 
 # stray sandbox artifact — this project installs with npm
 bun.lock
+scripts/shots/
