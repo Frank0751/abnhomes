@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone, MessageCircle } from "lucide-react";
 import { LanguageSwitcher } from "./language-switcher";
 import { useI18n } from "./i18n";
 import { COMPANY } from "@/lib/abn-data";
@@ -26,7 +26,12 @@ export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // Arabic reads right-to-left: the drawer anchors to the inline end via CSS
+  // (end-0 mirrors automatically), only the slide direction needs flipping.
+  const rtl = lang === "ar";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -35,9 +40,32 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // While the drawer is open the page behind must not scroll.
+  useEffect(() => {
+    if (!menuOpen) return;
+    document.body.style.overflow = "hidden";
+    panelRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
   // On non-home pages, the nav should always be dark (since hero isn't full screen)
   const isHome = pathname === "/";
   const forceDark = !isHome || scrolled;
+
+  const linkCls = (active: boolean) =>
+    `whitespace-nowrap text-[13px] xl:text-sm font-medium tracking-wide transition-colors ${
+      active ? "text-[#14b8a6]" : "text-white/85 hover:text-white"
+    }`;
 
   return (
     <>
@@ -45,14 +73,14 @@ export function Navigation() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-500 ${
           forceDark
             ? "glass-dark py-3 shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
             : "bg-transparent py-5"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-5 lg:px-10 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group" aria-label="ABN Homes home">
+        <div className="max-w-[1400px] mx-auto px-5 lg:px-10 flex items-center justify-between gap-6">
+          <Link href="/" className="flex items-center gap-3 group shrink-0" aria-label="ABN Homes home">
             <img
               src="/images/logo/abn-homes-logo-real.png"
               alt="ABN Homes Company Limited"
@@ -60,11 +88,25 @@ export function Navigation() {
             />
           </Link>
 
-          <div className="flex items-center gap-3">
+          {/* Desktop: inline primary nav. Ten top-level destinations belong in
+              view, not behind a hamburger — the toggle only exists below xl. */}
+          <nav aria-label="Primary" className="hidden xl:flex items-center justify-center gap-x-5 2xl:gap-x-7 min-w-0 flex-1">
+            {navItems.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link key={item.key} href={item.href} className={`relative py-2 ${linkCls(active)}`} aria-current={active ? "page" : undefined}>
+                  {t(item.key)}
+                  {active && <span className="absolute inset-x-0 bottom-0 h-px bg-[#14b8a6]" aria-hidden="true" />}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-3 shrink-0">
             <LanguageSwitcher />
             <a
               href={`tel:${COMPANY.phoneIntl}`}
-              className="hidden md:flex items-center gap-2 text-sm text-white/80 hover:text-[#0d9488] transition-colors"
+              className="hidden xl:flex items-center gap-2 text-sm text-white/80 hover:text-[#0d9488] transition-colors"
             >
               <Phone className="h-4 w-4" />
               <span className="font-medium">{COMPANY.phone}</span>
@@ -77,10 +119,12 @@ export function Navigation() {
             </Link>
 
             <button
-              className="text-white p-2 -mr-2"
+              ref={toggleRef}
+              className="xl:hidden text-white p-2.5 -mr-2.5 transition-colors hover:text-[#14b8a6]"
               onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle menu"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
+              aria-controls="site-menu"
             >
               {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -90,51 +134,91 @@ export function Navigation() {
 
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-[#0a0e1a]/95 backdrop-blur-xl pt-24 px-6 overflow-y-auto"
-          >
-            <div className="max-w-[1400px] mx-auto">
-              <nav className="flex flex-col gap-2 lg:max-w-2xl">
-                {navItems.map((item, i) => (
-                  <motion.div
-                    key={item.key}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.06 }}
-                  >
-                    <Link
-                      href={item.href}
-                      onClick={() => setMenuOpen(false)}
-                      className={`block text-2xl font-serif py-3 border-b border-white/10 transition-colors ${
-                        pathname === item.href ? "text-[#0d9488]" : "text-white/90 hover:text-[#0d9488]"
-                      }`}
-                    >
-                      {t(item.key)}
-                    </Link>
-                  </motion.div>
-                ))}
-              </nav>
-              <div className="mt-8 flex flex-col gap-3 lg:max-w-2xl">
-                <a
-                  href={`tel:${COMPANY.phoneIntl}`}
-                  className="flex items-center gap-3 text-white/80"
-                >
-                  <Phone className="h-5 w-5 text-[#0d9488]" />
-                  <span className="text-lg font-medium">{COMPANY.phone}</span>
-                </a>
-                <Link
-                  href="/book"
-                  onClick={() => setMenuOpen(false)}
-                  className="mt-2 px-6 py-3.5 bg-[#0d9488] text-white font-semibold tracking-wide text-center"
-                >
-                  {t("cta.bookStay")}
-                </Link>
+          <>
+            {/* Dimmed page behind; clicking anywhere outside the drawer closes it. */}
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+              onClick={() => setMenuOpen(false)}
+              aria-hidden="true"
+            />
+            {/* Full-height drawer on the inline end — a bounded panel that owns
+                its own chrome, not links floating in an empty overlay. */}
+            <motion.div
+              key="panel"
+              id="site-menu"
+              ref={panelRef}
+              tabIndex={-1}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Site menu"
+              initial={{ x: rtl ? "-100%" : "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: rtl ? "-100%" : "100%" }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed inset-y-0 end-0 z-[55] w-full max-w-md bg-[#0a0e1a] border-s border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.6)] flex flex-col outline-none"
+            >
+              <div className="flex-1 overflow-y-auto px-8 pt-24 pb-6">
+                <nav aria-label="Mobile" className="flex flex-col">
+                  {navItems.map((item, i) => {
+                    const active = pathname === item.href;
+                    return (
+                      <motion.div
+                        key={item.key}
+                        initial={{ opacity: 0, x: rtl ? -16 : 16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.08 + i * 0.04, duration: 0.3 }}
+                      >
+                        <Link
+                          href={item.href}
+                          onClick={() => setMenuOpen(false)}
+                          aria-current={active ? "page" : undefined}
+                          className={`group flex items-baseline gap-4 py-3.5 border-b border-white/5 transition-colors ${
+                            active ? "text-[#14b8a6]" : "text-white/90 hover:text-[#14b8a6]"
+                          }`}
+                        >
+                          <span className={`text-[10px] font-mono tracking-widest ${active ? "text-[#14b8a6]/70" : "text-white/30"}`} aria-hidden="true">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <span className="text-2xl font-serif">{t(item.key)}</span>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </nav>
               </div>
-            </div>
-          </motion.div>
+
+              {/* Contact + CTA pinned to the drawer foot, always reachable. */}
+              <div className="px-8 py-6 border-t border-white/10 bg-white/[0.02]">
+                <div className="flex flex-col gap-3">
+                  <a href={`tel:${COMPANY.phoneIntl}`} className="flex items-center gap-3 text-white/80 hover:text-[#14b8a6] transition-colors">
+                    <Phone className="h-4.5 w-4.5 text-[#0d9488]" />
+                    <span className="font-medium">{COMPANY.phone}</span>
+                  </a>
+                  <a
+                    href={COMPANY.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-white/80 hover:text-[#14b8a6] transition-colors"
+                  >
+                    <MessageCircle className="h-4.5 w-4.5 text-[#0d9488]" />
+                    <span className="font-medium">WhatsApp</span>
+                  </a>
+                  <Link
+                    href="/book"
+                    onClick={() => setMenuOpen(false)}
+                    className="mt-2 px-6 py-3.5 bg-[#0d9488] hover:bg-[#14b8a6] text-white font-semibold tracking-wide text-center transition-colors"
+                  >
+                    {t("cta.bookStay")}
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
