@@ -33,9 +33,9 @@ export function FloatingActions() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.9 }}
               transition={{ duration: 0.3 }}
-              className="bg-white border border-[#e8e3d8] shadow-2xl w-80 max-w-[calc(100vw-3rem)]"
+              className="bg-white border border-[#dce5e0] shadow-2xl w-80 max-w-[calc(100vw-3rem)]"
             >
-              <div className="bg-[#0a0e1a] p-5 text-white relative">
+              <div className="bg-[#0c1a16] p-5 text-white relative">
                 <button
                   onClick={() => setChatOpen(false)}
                   className="absolute top-4 right-4 text-white/60 hover:text-white"
@@ -44,12 +44,12 @@ export function FloatingActions() {
                   <X className="h-4 w-4" />
                 </button>
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-full bg-[#0d9488] flex items-center justify-center">
-                    <WhatsAppIcon className="h-5 w-5 text-[#0a0e1a]" />
+                  <div className="w-10 h-10 rounded-full bg-[#00a878] flex items-center justify-center">
+                    <WhatsAppIcon className="h-5 w-5 text-[#0c1a16]" />
                   </div>
                   <div>
                     <div className="font-serif text-lg leading-tight">{t("chat.teamName")}</div>
-                    <div className="text-xs text-[#0d9488] flex items-center gap-1.5">
+                    <div className="text-xs text-[#00a878] flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                       {t("chat.repliesFast")}
                     </div>
@@ -57,7 +57,7 @@ export function FloatingActions() {
                 </div>
               </div>
               <div className="p-5">
-                <div className="bg-[#faf8f3] p-4 mb-4 text-sm text-[#3a3530] leading-relaxed">
+                <div className="bg-[#f5f7f5] p-4 mb-4 text-sm text-[#2d433b] leading-relaxed">
                   {t("chat.welcome")}
                 </div>
                 <a
@@ -72,7 +72,7 @@ export function FloatingActions() {
                 <div className="mt-3 text-center">
                   <a
                     href="tel:+233541704048"
-                    className="text-xs tracking-[0.2em] uppercase text-[#6b6253] hover:text-[#0d9488] transition-colors"
+                    className="text-xs tracking-[0.2em] uppercase text-[#5a6b64] hover:text-[#00a878] transition-colors"
                   >
                     {t("chat.orCall")}
                   </a>
@@ -90,7 +90,7 @@ export function FloatingActions() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0 }}
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="w-12 h-12 bg-[#0a0e1a] text-white hover:bg-[#1a1f2e] flex items-center justify-center shadow-lg transition-colors"
+                className="w-12 h-12 bg-[#0c1a16] text-white hover:bg-[#16271f] flex items-center justify-center shadow-lg transition-colors"
                 aria-label="Back to top"
               >
                 <ArrowUp className="h-5 w-5" />

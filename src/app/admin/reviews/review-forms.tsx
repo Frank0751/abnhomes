@@ -52,7 +52,7 @@ export function RespondForm({ reviewId, action }: { reviewId: string; action: Ac
         <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-md border border-black/10 px-2 py-1.5 text-xs">
           Cancel
         </button>
-        <button type="submit" disabled={pending} className="flex flex-1 items-center justify-center gap-1 rounded-md bg-[#0a0e1a] px-2 py-1.5 text-xs font-medium text-white disabled:opacity-50">
+        <button type="submit" disabled={pending} className="flex flex-1 items-center justify-center gap-1 rounded-md bg-[#0c1a16] px-2 py-1.5 text-xs font-medium text-white disabled:opacity-50">
           {pending && <Loader2 className="size-3 animate-spin" />}
           Reply
         </button>
@@ -84,7 +84,7 @@ export function HostReviewForm({ reservationId, action }: { reservationId: strin
       <span className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((n) => (
           <button key={n} type="button" onClick={() => setRating(n)} aria-label={`${n} stars`}>
-            <Star className={`size-4 ${n <= rating ? 'fill-[#0d9488] text-[#0d9488]' : 'text-black/15'}`} />
+            <Star className={`size-4 ${n <= rating ? 'fill-[#00a878] text-[#00a878]' : 'text-black/15'}`} />
           </button>
         ))}
       </span>
@@ -97,7 +97,7 @@ export function HostReviewForm({ reservationId, action }: { reservationId: strin
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-[#0a0e1a] px-2.5 py-1.5 text-xs font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-[#0c1a16] px-2.5 py-1.5 text-xs font-medium text-white disabled:opacity-50"
       >
         {pending ? '…' : 'Save'}
       </button>

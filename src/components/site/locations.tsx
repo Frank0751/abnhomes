@@ -56,8 +56,8 @@ const locations: Location[] = [
 
 export function Locations() {
   return (
-    <section id="locations" className="relative py-24 lg:py-32 bg-[#faf8f3] overflow-hidden">
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[#0d9488]/5 blur-3xl pointer-events-none" />
+    <section id="locations" className="relative py-24 lg:py-32 bg-[#f5f7f5] overflow-hidden">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[#00a878]/5 blur-3xl pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10 relative">
         {/* Header */}
@@ -68,10 +68,10 @@ export function Locations() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em] mb-6">
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0c1a16] leading-[1.05] tracking-[-0.02em] mb-6">
               Three Accra neighbourhoods, one address you will love.
             </h2>
-            <p className="text-[#3a3530] text-base md:text-lg leading-relaxed">
+            <p className="text-[#2d433b] text-base md:text-lg leading-relaxed">
               We choose our locations carefully, prioritising neighbourhoods
               with strong infrastructure, growing demand and a clear sense of
               community. Each ABN address is positioned to make everyday Accra
@@ -89,7 +89,7 @@ export function Locations() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.8, delay: i * 0.1 }}
-              className="group relative bg-white border border-[#e8e3d8] overflow-hidden hover:border-[#0d9488]/50 transition-colors duration-500"
+              className="group relative bg-white border border-[#dce5e0] overflow-hidden hover:border-[#00a878]/50 transition-colors duration-500"
             >
               {/* Image */}
               <div className="relative h-72 overflow-hidden">
@@ -97,12 +97,12 @@ export function Locations() {
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-[1500ms] ease-out group-hover:scale-110"
                   style={{ backgroundImage: `url(${location.image})` }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/90 via-[#0a0e1a]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a16]/90 via-[#0c1a16]/30 to-transparent" />
                 <div className="absolute top-5 left-5 right-5 flex items-start justify-between">
-                  <span className="text-[10px] tracking-[0.3em] uppercase text-white/80 bg-[#0a0e1a]/40 backdrop-blur-sm px-3 py-1.5">
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-white/80 bg-[#0c1a16]/40 backdrop-blur-sm px-3 py-1.5">
                     {location.area}
                   </span>
-                  <span className="font-serif text-2xl text-[#0d9488]">
+                  <span className="font-serif text-2xl text-[#00a878]">
                     0{i + 1}
                   </span>
                 </div>
@@ -111,7 +111,7 @@ export function Locations() {
                     {location.name}
                   </h3>
                   <div className="flex items-center gap-2 text-white/70 text-xs tracking-[0.2em] uppercase mt-1">
-                    <MapPin className="h-3.5 w-3.5 text-[#0d9488]" />
+                    <MapPin className="h-3.5 w-3.5 text-[#00a878]" />
                     {location.distance}
                   </div>
                 </div>
@@ -119,13 +119,13 @@ export function Locations() {
 
               {/* Content */}
               <div className="p-7 lg:p-8">
-                <p className="text-[#3a3530] leading-relaxed mb-6 text-sm">
+                <p className="text-[#2d433b] leading-relaxed mb-6 text-sm">
                   {location.description}
                 </p>
                 <div className="space-y-2.5">
                   {location.highlights.map((h, hi) => (
-                    <div key={hi} className="flex items-center gap-3 text-sm text-[#3a3530]">
-                      <h.icon className="h-4 w-4 text-[#0d9488] shrink-0" strokeWidth={1.5} />
+                    <div key={hi} className="flex items-center gap-3 text-sm text-[#2d433b]">
+                      <h.icon className="h-4 w-4 text-[#00a878] shrink-0" strokeWidth={1.5} />
                       <span>{h.label}</span>
                     </div>
                   ))}
@@ -141,7 +141,7 @@ export function Locations() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8 }}
-          className="mt-16 relative border border-[#e8e3d8] overflow-hidden h-[420px]"
+          className="mt-16 relative border border-[#dce5e0] overflow-hidden h-[420px]"
         >
           <iframe
             title="ABN Homes Accra locations"
@@ -150,10 +150,10 @@ export function Locations() {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
-          <div className="absolute top-6 left-6 max-w-xs bg-[#0a0e1a] text-white p-6">
+          <div className="absolute top-6 left-6 max-w-xs bg-[#0c1a16] text-white p-6">
             <div className="flex items-center gap-2 mb-2">
-              <MapPin className="h-4 w-4 text-[#0d9488]" />
-              <span className="text-[10px] tracking-[0.3em] uppercase text-[#0d9488]">Head Office</span>
+              <MapPin className="h-4 w-4 text-[#00a878]" />
+              <span className="text-[10px] tracking-[0.3em] uppercase text-[#00a878]">Head Office</span>
             </div>
             <div className="font-serif text-lg leading-snug mb-1">
               8 Asiko Street, Tantra Hill
@@ -165,7 +165,7 @@ export function Locations() {
               href="https://www.google.com/maps/search/?api=1&query=ABN+Apartments+Tantra+Hill+Accra"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 mt-4 text-xs tracking-[0.2em] uppercase text-[#0d9488] hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 mt-4 text-xs tracking-[0.2em] uppercase text-[#00a878] hover:text-white transition-colors"
             >
               Open in Google Maps
               <span aria-hidden>-&gt;</span>

@@ -30,7 +30,7 @@ export async function LiveHomes() {
       <div className="mx-auto max-w-7xl px-5 lg:px-10">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0d9488]">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#00a878]">
               Available to book now
             </p>
             <h2 className="font-serif text-3xl tracking-tight md:text-4xl">Our live collection</h2>
@@ -53,7 +53,7 @@ export async function LiveHomes() {
             <Link
               key={unit.id}
               href={`/stays/${unitSlug(unit, property)}`}
-              className="group overflow-hidden rounded-2xl border border-white/10 bg-[#10151f] transition hover:border-[#14b8a6]/40"
+              className="group overflow-hidden rounded-2xl border border-white/10 bg-[#10151f] transition hover:border-[#1fd39a]/40"
             >
               <div className="relative aspect-[4/3] bg-black/30">
                 {(unit.images[0] ?? property.images[0]) && (
@@ -66,7 +66,7 @@ export async function LiveHomes() {
                   />
                 )}
                 {unit.instantBook && (
-                  <span className="absolute right-3 top-3 rounded-full bg-[#14b8a6] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#06251f]">
+                  <span className="absolute right-3 top-3 rounded-full bg-[#1fd39a] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#06251f]">
                     Instant book
                   </span>
                 )}
@@ -90,7 +90,7 @@ export async function LiveHomes() {
                   ) : (
                     <span className="text-xs text-white/50">Live pricing on search</span>
                   )}
-                  <span className="inline-flex items-center gap-1 text-xs font-medium text-[#14b8a6]">
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-[#1fd39a]">
                     View home
                     <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
                   </span>

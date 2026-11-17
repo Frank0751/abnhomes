@@ -84,7 +84,7 @@ export function StayRooms() {
   }
 
   return (
-    <section id="rooms" className="relative bg-[#faf8f3] py-16 lg:py-24">
+    <section id="rooms" className="relative bg-[#f5f7f5] py-16 lg:py-24">
       <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
         {/* Header — one line each, then the rooms */}
         <motion.div
@@ -94,7 +94,7 @@ export function StayRooms() {
           transition={{ duration: 0.7 }}
           className="mb-10 flex flex-col gap-3 text-center lg:mb-14"
         >
-          <h2 className="font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-[#0a0e1a] md:text-5xl">
+          <h2 className="font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-[#0c1a16] md:text-5xl">
             Rooms available now
           </h2>
         </motion.div>
@@ -108,11 +108,11 @@ export function StayRooms() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.6, delay: i * 0.08 }}
-              className="group flex cursor-pointer flex-col overflow-hidden border border-[#e8e3d8] bg-white shadow-[0_10px_40px_-24px_rgba(10,14,26,0.35)] transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgba(10,14,26,0.5)]"
+              className="group flex cursor-pointer flex-col overflow-hidden border border-[#dce5e0] bg-white shadow-[0_10px_40px_-24px_rgba(12, 26, 22,0.35)] transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgba(12, 26, 22,0.5)]"
               onClick={() => bookRoom(room)}
             >
               {/* Photo — second image fades in on hover where one exists */}
-              <div className="relative aspect-[4/5] overflow-hidden bg-[#0a0e1a]">
+              <div className="relative aspect-[4/5] overflow-hidden bg-[#0c1a16]">
                 <Image
                   src={room.images[0]}
                   alt={room.name}
@@ -129,11 +129,11 @@ export function StayRooms() {
                     className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   />
                 )}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/75 via-transparent to-transparent" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0c1a16]/75 via-transparent to-transparent" />
 
-                <span className="absolute right-3 top-3 bg-[#faf8f3]/95 px-2.5 py-1 text-xs font-semibold text-[#0a0e1a]">
+                <span className="absolute right-3 top-3 bg-[#f5f7f5]/95 px-2.5 py-1 text-xs font-semibold text-[#0c1a16]">
                   ${room.rate}
-                  <span className="font-normal text-[#6b6253]"> / night</span>
+                  <span className="font-normal text-[#5a6b64]"> / night</span>
                 </span>
 
                 <div className="absolute inset-x-4 bottom-3 flex items-end justify-between gap-2">
@@ -143,11 +143,11 @@ export function StayRooms() {
                     </h3>
                     <p className="mt-0.5 flex items-center gap-3 text-[11px] text-white/80">
                       <span className="inline-flex items-center gap-1">
-                        <BedDouble className="size-3.5 text-[#14b8a6]" />
+                        <BedDouble className="size-3.5 text-[#1fd39a]" />
                         {room.beds} bed{room.beds > 1 ? "s" : ""}
                       </span>
                       <span className="inline-flex items-center gap-1">
-                        <Users className="size-3.5 text-[#14b8a6]" />
+                        <Users className="size-3.5 text-[#1fd39a]" />
                         sleeps {room.sleeps}
                       </span>
                     </p>
@@ -162,7 +162,7 @@ export function StayRooms() {
                   e.stopPropagation();
                   bookRoom(room);
                 }}
-                className="flex items-center justify-center gap-2 bg-[#0a0e1a] py-3.5 text-sm font-semibold uppercase tracking-wide text-white transition-colors duration-300 group-hover:bg-[#0d9488] group-hover:text-[#0a0e1a]"
+                className="flex items-center justify-center gap-2 bg-[#0c1a16] py-3.5 text-sm font-semibold uppercase tracking-wide text-white transition-colors duration-300 group-hover:bg-[#00a878] group-hover:text-[#0c1a16]"
               >
                 Book this room
               </button>
@@ -176,7 +176,7 @@ export function StayRooms() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-[#3a3530]"
+          className="mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-[#2d433b]"
         >
           <span>Prefer to talk?</span>
           <a
@@ -185,14 +185,14 @@ export function StayRooms() {
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-sm bg-[#0d9488] px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-[#faf8f3] transition-colors hover:bg-[#0a0e1a] hover:text-white"
+            className="inline-flex items-center gap-2 rounded-sm bg-[#00a878] px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-[#f5f7f5] transition-colors hover:bg-[#0c1a16] hover:text-white"
           >
             <MessageCircle className="size-4" />
             WhatsApp us
           </a>
           <a
             href={`tel:${COMPANY.phoneIntl}`}
-            className="inline-flex items-center gap-2 rounded-sm border border-[#0a0e1a]/25 px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-[#0a0e1a] transition-colors hover:border-[#0d9488] hover:text-[#0d9488]"
+            className="inline-flex items-center gap-2 rounded-sm border border-[#0c1a16]/25 px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-[#0c1a16] transition-colors hover:border-[#00a878] hover:text-[#00a878]"
           >
             <Phone className="size-4" />
             {COMPANY.phone}

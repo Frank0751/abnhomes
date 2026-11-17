@@ -20,7 +20,7 @@ import type { Currency } from '@prisma/client'
 import { completePurchaseAction, recordPurchasePaymentAction } from '@/app/admin/sales/actions'
 
 const labelCls = 'mb-1 block text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground'
-const inputCls = 'w-full rounded-lg border border-black/12 bg-white px-2.5 py-2 text-sm outline-none transition focus:border-[#0d9488] focus:ring-2 focus:ring-[#0d9488]/20'
+const inputCls = 'w-full rounded-lg border border-black/12 bg-white px-2.5 py-2 text-sm outline-none transition focus:border-[#00a878] focus:ring-2 focus:ring-[#00a878]/20'
 
 export function SalePaymentForm({
   purchaseId,
@@ -71,7 +71,7 @@ export function SalePaymentForm({
         <span className={labelCls}>Reference</span>
         <Input value={reference} onChange={(e) => setReference(e.target.value)} placeholder="Bank slip / MoMo ref (optional)" />
       </label>
-      <Button onClick={submit} disabled={pending} className="w-full bg-[#0d9488] hover:bg-[#0f766e]">
+      <Button onClick={submit} disabled={pending} className="w-full bg-[#00a878] hover:bg-[#06684c]">
         {pending ? <Loader2 className="size-4 animate-spin" /> : <Receipt className="size-4" />}
         Record payment &amp; issue receipt
       </Button>
@@ -107,13 +107,13 @@ export function CompleteSaleButton({
       <Button
         onClick={onComplete}
         disabled={disabled}
-        className="w-full bg-[#0a0e1a] hover:bg-[#1a2233]"
+        className="w-full bg-[#0c1a16] hover:bg-[#1a2233]"
         title={disabled ? 'Settle the balance first' : 'Mark as sold and hand over'}
       >
         <KeyRound className="size-4" />
         Complete sale &amp; hand over keys
       </Button>
-      <p className={`mt-2 text-xs ${disabled ? 'text-muted-foreground' : 'text-[#0f766e]'}`}>
+      <p className={`mt-2 text-xs ${disabled ? 'text-muted-foreground' : 'text-[#06684c]'}`}>
         {disabled
           ? `Blocked until the outstanding ${formatMinor(outstandingMinor, currency as Currency)} is settled — the engine enforces this, not the UI.`
           : 'Everything is settled. This marks the unit SOLD, withdraws it from /own and closes the journey.'}

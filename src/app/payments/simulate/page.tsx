@@ -38,24 +38,24 @@ export default async function SimulateCheckoutPage({
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-[#0a0e1a] px-4 py-10">
+    <div className="flex min-h-dvh items-center justify-center bg-[#0c1a16] px-4 py-10">
       <div className="w-full max-w-md">
         <div className="rounded-2xl bg-white p-6 shadow-lifted">
           <div className="mb-5 flex items-center justify-between border-b border-black/[0.06] pb-4">
-            <span className="font-serif text-lg tracking-tight text-[#0a0e1a]">Checkout</span>
+            <span className="font-serif text-lg tracking-tight text-[#0c1a16]">Checkout</span>
             <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-semibold text-amber-900 ring-1 ring-amber-300">
               TEST MODE — no real money
             </span>
           </div>
 
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8a93a5]">Amount due</p>
-          <p className="mt-1 font-serif text-4xl tracking-tight tabular-nums text-[#0a0e1a]">
+          <p className="mt-1 font-serif text-4xl tracking-tight tabular-nums text-[#0c1a16]">
             {formatMinor(amountMinor, currency)}
           </p>
 
           {summary && (
-            <div className="mt-4 rounded-xl bg-[#f7f5f0] px-4 py-3">
-              <p className="text-sm font-medium text-[#0a0e1a]">{summary.label}</p>
+            <div className="mt-4 rounded-xl bg-[#eff3f0] px-4 py-3">
+              <p className="text-sm font-medium text-[#0c1a16]">{summary.label}</p>
               <p className="text-xs text-[#5b6472]">{summary.sub}</p>
             </div>
           )}
@@ -63,7 +63,7 @@ export default async function SimulateCheckoutPage({
           <dl className="mt-4 space-y-1.5 text-sm text-[#5b6472]">
             <div className="flex justify-between">
               <dt>Method</dt>
-              <dd className="font-medium text-[#0a0e1a]">{(intent?.channel ?? sp.channel ?? 'CARD').replace(/_/g, ' ')}</dd>
+              <dd className="font-medium text-[#0c1a16]">{(intent?.channel ?? sp.channel ?? 'CARD').replace(/_/g, ' ')}</dd>
             </div>
             <div className="flex justify-between">
               <dt>Reference</dt>
@@ -73,7 +73,7 @@ export default async function SimulateCheckoutPage({
 
           <form action={completeSimulatedPaymentAction} className="mt-6">
             <input type="hidden" name="reference" value={reference} />
-            <button className="w-full rounded-xl bg-[#0d9488] px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0f8578]">
+            <button className="w-full rounded-xl bg-[#00a878] px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-[#00916a]">
               Complete test payment
             </button>
           </form>

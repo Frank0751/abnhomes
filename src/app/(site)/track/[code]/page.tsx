@@ -56,9 +56,9 @@ function stepState(index: number, current: number, failed: boolean, closed: bool
 
 function StepIcon({ state, n }: { state: Step['state']; n: number }) {
   if (state === 'failed') return <CircleX className="size-6 text-red-500" />
-  if (state === 'done') return <BadgeCheck className="size-6 text-[#0d9488]" />
+  if (state === 'done') return <BadgeCheck className="size-6 text-[#00a878]" />
   if (state === 'current') return (
-    <span className="flex size-6 items-center justify-center rounded-full bg-[#0d9488] font-mono text-[11px] font-bold text-white">
+    <span className="flex size-6 items-center justify-center rounded-full bg-[#00a878] font-mono text-[11px] font-bold text-white">
       {n}
     </span>
   )
@@ -104,10 +104,10 @@ export default async function TrackPage({ params }: { params: Promise<{ code: st
               <li key={s.label} className="flex gap-4">
                 <StepIcon state={state} n={i + 1} />
                 <div>
-                  <h3 className={`font-medium ${state === 'todo' ? 'text-black/40' : 'text-[#1a1f2e]'}`}>{s.label}</h3>
+                  <h3 className={`font-medium ${state === 'todo' ? 'text-black/40' : 'text-[#16271f]'}`}>{s.label}</h3>
                   <p className={`mt-0.5 text-sm ${state === 'todo' ? 'text-black/35' : 'text-[#5b6472]'}`}>{s.detail}</p>
                   {state === 'current' && i === 1 && purchase.status === 'APPROVED' && (
-                    <p className="mt-2 rounded-lg bg-[#0d9488]/10 px-3 py-2 text-xs font-medium text-[#0f766e]">
+                    <p className="mt-2 rounded-lg bg-[#00a878]/10 px-3 py-2 text-xs font-medium text-[#06684c]">
                       Approved — our sales team will call {purchase.buyerPhone} to agree the payment plan.
                     </p>
                   )}
@@ -118,21 +118,21 @@ export default async function TrackPage({ params }: { params: Promise<{ code: st
         </ol>
 
         {purchase.status === 'CONTRACTED' || purchase.status === 'COMPLETED' ? (
-          <div className="mt-8 rounded-xl bg-[#faf8f3] p-5">
+          <div className="mt-8 rounded-xl bg-[#f5f7f5] p-5">
             <div className="flex items-center justify-between text-sm">
               <span className="text-[#5b6472]">Agreed price</span>
-              <span className="font-medium text-[#1a1f2e]">{formatMoney(purchase.offerMinor, purchase.currency)}</span>
+              <span className="font-medium text-[#16271f]">{formatMoney(purchase.offerMinor, purchase.currency)}</span>
             </div>
             <div className="mt-2 flex items-center justify-between text-sm">
               <span className="text-[#5b6472]">Paid so far</span>
-              <span className="font-medium text-[#0f766e]">{formatMoney(paid, purchase.currency)}</span>
+              <span className="font-medium text-[#06684c]">{formatMoney(paid, purchase.currency)}</span>
             </div>
             <div className="mt-2 flex items-center justify-between text-sm">
               <span className="text-[#5b6472]">Outstanding</span>
-              <span className="font-medium text-[#1a1f2e]">{formatMoney(Math.max(0, owed - paid), purchase.currency)}</span>
+              <span className="font-medium text-[#16271f]">{formatMoney(Math.max(0, owed - paid), purchase.currency)}</span>
             </div>
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/8">
-              <div className="h-full rounded-full bg-[#0d9488]" style={{ width: `${owed > 0 ? Math.min(100, (paid / owed) * 100) : 100}%` }} />
+              <div className="h-full rounded-full bg-[#00a878]" style={{ width: `${owed > 0 ? Math.min(100, (paid / owed) * 100) : 100}%` }} />
             </div>
             <p className="mt-3 text-xs text-[#5b6472]">
               Payments post to a double-entry ledger — the figures here are the ledger, not a promise.
@@ -186,10 +186,10 @@ export default async function TrackPage({ params }: { params: Promise<{ code: st
               <li key={s.label} className="flex gap-4">
                 <StepIcon state={state} n={i + 1} />
                 <div>
-                  <h3 className={`font-medium ${state === 'todo' ? 'text-black/40' : 'text-[#1a1f2e]'}`}>{s.label}</h3>
+                  <h3 className={`font-medium ${state === 'todo' ? 'text-black/40' : 'text-[#16271f]'}`}>{s.label}</h3>
                   <p className={`mt-0.5 text-sm ${state === 'todo' ? 'text-black/35' : 'text-[#5b6472]'}`}>{s.detail}</p>
                   {state === 'current' && application.status === 'APPROVED' && (
-                    <p className="mt-2 rounded-lg bg-[#0d9488]/10 px-3 py-2 text-xs font-medium text-[#0f766e]">
+                    <p className="mt-2 rounded-lg bg-[#00a878]/10 px-3 py-2 text-xs font-medium text-[#06684c]">
                       Approved — our leasing team will call {application.applicantPhone} to sign your lease.
                     </p>
                   )}
@@ -199,18 +199,18 @@ export default async function TrackPage({ params }: { params: Promise<{ code: st
           })}
         </ol>
 
-        <div className="mt-8 grid gap-3 rounded-xl bg-[#faf8f3] p-5 text-sm sm:grid-cols-2">
+        <div className="mt-8 grid gap-3 rounded-xl bg-[#f5f7f5] p-5 text-sm sm:grid-cols-2">
           <div className="flex items-center justify-between">
             <span className="text-[#5b6472]">Monthly rent</span>
-            <span className="font-medium text-[#1a1f2e]">{formatMoney(application.unit.baseRentMinor ?? 0, application.unit.currency)}</span>
+            <span className="font-medium text-[#16271f]">{formatMoney(application.unit.baseRentMinor ?? 0, application.unit.currency)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[#5b6472]">Move-in requested</span>
-            <span className="font-medium text-[#1a1f2e]">{application.moveInDate.toISOString().slice(0, 10)}</span>
+            <span className="font-medium text-[#16271f]">{application.moveInDate.toISOString().slice(0, 10)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[#5b6472]">Lease length</span>
-            <span className="font-medium text-[#1a1f2e]">{application.leaseMonths} months</span>
+            <span className="font-medium text-[#16271f]">{application.leaseMonths} months</span>
           </div>
         </div>
 
@@ -224,7 +224,7 @@ export default async function TrackPage({ params }: { params: Promise<{ code: st
           </div>
         )}
         {application.status === 'CONVERTED' && application.leaseId && (
-          <div className="mt-8 rounded-xl border border-[#0d9488]/30 bg-[#0d9488]/5 p-5 text-sm text-[#0f766e]">
+          <div className="mt-8 rounded-xl border border-[#00a878]/30 bg-[#00a878]/5 p-5 text-sm text-[#06684c]">
             <p className="flex items-center gap-2 font-medium">
               <KeyRound className="size-4" /> Your lease is active.
             </p>
@@ -240,15 +240,15 @@ export default async function TrackPage({ params }: { params: Promise<{ code: st
 
   // Neither family — fall through to a soft not-found page with a lookup form.
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#faf8f3] px-5">
+    <main className="flex min-h-screen items-center justify-center bg-[#f5f7f5] px-5">
       <div className="w-full max-w-md rounded-2xl border border-black/8 bg-white p-8 text-center shadow-soft">
         <Search className="mx-auto mb-4 size-10 text-black/25" />
-        <h1 className="font-serif text-2xl text-[#1a1f2e]">We could not find that code</h1>
+        <h1 className="font-serif text-2xl text-[#16271f]">We could not find that code</h1>
         <p className="mt-2 text-sm text-[#5b6472]">
-          Tracking codes look like <span className="font-mono text-[#1a1f2e]">OWN-4K7X2M</span> for purchases or{' '}
-          <span className="font-mono text-[#1a1f2e]">RNT-9QW3TB</span> for rentals. Check the confirmation we sent you.
+          Tracking codes look like <span className="font-mono text-[#16271f]">OWN-4K7X2M</span> for purchases or{' '}
+          <span className="font-mono text-[#16271f]">RNT-9QW3TB</span> for rentals. Check the confirmation we sent you.
         </p>
-        <Link href="/" className="mt-6 inline-block rounded-lg bg-[#0a0e1a] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#1a2233]">
+        <Link href="/" className="mt-6 inline-block rounded-lg bg-[#0c1a16] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#1a2233]">
           Back to ABN Homes
         </Link>
       </div>
@@ -272,24 +272,24 @@ function TrackShell({
   children: React.ReactNode
 }) {
   return (
-    <main className="min-h-screen bg-[#faf8f3] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(13,148,136,0.10),transparent)]">
+    <main className="min-h-screen bg-[#f5f7f5] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0, 168, 120,0.10),transparent)]">
       <div className="mx-auto max-w-2xl px-5 py-12">
-        <Link href="/" className="font-serif text-lg tracking-tight text-[#1a1f2e]">ABN Homes</Link>
+        <Link href="/" className="font-serif text-lg tracking-tight text-[#16271f]">ABN Homes</Link>
         <div className="mt-6 overflow-hidden rounded-2xl border border-black/8 bg-white shadow-soft">
           {image && (
-            <div className="relative h-44 w-full bg-[#e8e3d8]">
+            <div className="relative h-44 w-full bg-[#dce5e0]">
               <Image src={image} alt="" fill sizes="(max-width: 768px) 100vw, 672px" className="object-cover" />
             </div>
           )}
           <div className="p-7">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h1 className="font-serif text-2xl text-[#1a1f2e]">{title}</h1>
+                <h1 className="font-serif text-2xl text-[#16271f]">{title}</h1>
                 <p className="mt-1 text-sm text-[#5b6472]">{subtitle}</p>
               </div>
               <span
                 className={`whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${
-                  badgeFailed ? 'bg-red-100 text-red-700' : 'bg-[#0d9488]/10 text-[#0f766e]'
+                  badgeFailed ? 'bg-red-100 text-red-700' : 'bg-[#00a878]/10 text-[#06684c]'
                 }`}
               >
                 {badge}
@@ -297,7 +297,7 @@ function TrackShell({
             </div>
             <div className="mt-7">{children}</div>
             <p className="mt-8 flex items-center gap-1.5 border-t border-black/8 pt-5 text-xs text-[#5b6472]">
-              <ClipboardCheck className="size-3.5 text-[#0d9488]" />
+              <ClipboardCheck className="size-3.5 text-[#00a878]" />
               Questions about this application? Call <a href="tel:+233541704048" className="underline underline-offset-2">054 170 4048</a> quoting your code.
             </p>
           </div>

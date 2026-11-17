@@ -34,7 +34,7 @@ const steps = [
 export function Process() {
   const { t } = useI18n();
   return (
-    <section className="relative py-24 lg:py-32 bg-[#0a0e1a] text-white overflow-hidden">
+    <section className="relative py-24 lg:py-32 bg-[#0c1a16] text-white overflow-hidden">
       {/* Decorative dotted pattern */}
 
 
@@ -71,18 +71,18 @@ export function Process() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.7, delay: i * 0.1 }}
-              className="group bg-[#0a0e1a] p-8 lg:p-9 hover:bg-[#141826] transition-colors duration-300 relative"
+              className="group bg-[#0c1a16] p-8 lg:p-9 hover:bg-[#0f1e19] transition-colors duration-300 relative"
             >
               {/* Connector arrow */}
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-3 z-10 w-6 h-6 bg-[#0a0e1a] border border-[#0d9488]/40 -translate-y-1/2 rotate-45 group-hover:border-[#0d9488] transition-colors" />
+                <div className="hidden lg:block absolute top-1/2 -right-3 z-10 w-6 h-6 bg-[#0c1a16] border border-[#00a878]/40 -translate-y-1/2 rotate-45 group-hover:border-[#00a878] transition-colors" />
               )}
 
               <div className="flex items-start justify-between mb-7">
-                <div className="w-14 h-14 border border-[#0d9488]/40 group-hover:border-[#0d9488] group-hover:bg-[#0d9488]/5 flex items-center justify-center transition-all duration-300">
-                  <step.icon className="h-6 w-6 text-[#0d9488]" strokeWidth={1.5} />
+                <div className="w-14 h-14 border border-[#00a878]/40 group-hover:border-[#00a878] group-hover:bg-[#00a878]/5 flex items-center justify-center transition-all duration-300">
+                  <step.icon className="h-6 w-6 text-[#00a878]" strokeWidth={1.5} />
                 </div>
-                <span className="font-serif text-5xl text-white/10 group-hover:text-[#0d9488]/30 transition-colors">
+                <span className="font-serif text-5xl text-white/10 group-hover:text-[#00a878]/30 transition-colors">
                   {step.step}
                 </span>
               </div>

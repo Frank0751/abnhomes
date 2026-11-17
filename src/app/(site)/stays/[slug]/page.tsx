@@ -162,7 +162,7 @@ export default async function StayPage({
             <header>
               <div className="flex flex-wrap items-center gap-2">
                 {unit.property.neighbourhood && (
-                  <span className="rounded-full bg-[#0d9488]/10 px-2.5 py-1 text-[11px] font-medium text-[#0d9488]">
+                  <span className="rounded-full bg-[#00a878]/10 px-2.5 py-1 text-[11px] font-medium text-[#00a878]">
                     {unit.property.neighbourhood}
                   </span>
                 )}
@@ -226,7 +226,7 @@ export default async function StayPage({
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   {unit.backupPower && unit.backupPower !== 'none' && (
                     <div className="flex items-start gap-3 rounded-xl border border-black/[0.08] bg-white px-4 py-3">
-                      <Zap className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                      <Zap className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                       <div>
                         <p className="text-sm font-medium">
                           {unit.backupPower === 'generator' && 'Backup generator'}
@@ -241,7 +241,7 @@ export default async function StayPage({
                   )}
                   {unit.waterStorageLitres ? (
                     <div className="flex items-start gap-3 rounded-xl border border-black/[0.08] bg-white px-4 py-3">
-                      <Droplets className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                      <Droplets className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                       <div>
                         <p className="text-sm font-medium">{(unit.waterStorageLitres / 1000).toFixed(1)} m³ water storage</p>
                         <p className="text-xs text-muted-foreground">Reserve supply when the flow stops</p>
@@ -250,7 +250,7 @@ export default async function StayPage({
                   ) : null}
                   {unit.wifiSpeedMbps ? (
                     <div className="flex items-start gap-3 rounded-xl border border-black/[0.08] bg-white px-4 py-3">
-                      <Wifi className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                      <Wifi className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                       <div>
                         <p className="text-sm font-medium">{unit.wifiSpeedMbps} Mbps verified Wi-Fi</p>
                         <p className="text-xs text-muted-foreground">
@@ -261,7 +261,7 @@ export default async function StayPage({
                   ) : null}
                   {unit.securityNotes && (
                     <div className="flex items-start gap-3 rounded-xl border border-black/[0.08] bg-white px-4 py-3">
-                      <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                      <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                       <div>
                         <p className="text-sm font-medium">Security</p>
                         <p className="text-xs text-muted-foreground">{unit.securityNotes}</p>
@@ -278,7 +278,7 @@ export default async function StayPage({
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   {sleeping.map((s, i) => (
                     <div key={i} className="rounded-xl border border-black/[0.08] bg-white px-4 py-3">
-                      <BedDouble className="mb-1.5 size-4 text-[#0d9488]" />
+                      <BedDouble className="mb-1.5 size-4 text-[#00a878]" />
                       <p className="text-sm font-medium">{s.room}</p>
                       <p className="text-xs text-muted-foreground">
                         {s.bed}
@@ -296,7 +296,7 @@ export default async function StayPage({
                 <ul className="mt-3 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
                   {unit.features.map((f) => (
                     <li key={f} className="flex items-center gap-2.5 text-sm text-foreground/85">
-                      <Sparkles className="size-3.5 shrink-0 text-[#0d9488]" />
+                      <Sparkles className="size-3.5 shrink-0 text-[#00a878]" />
                       {f}
                     </li>
                   ))}
@@ -320,7 +320,7 @@ export default async function StayPage({
                 <h2 className="font-serif text-xl tracking-tight">
                   {summary.count > 0 ? (
                     <span className="inline-flex items-center gap-2">
-                      <Star className="size-4 fill-[#0d9488] text-[#0d9488]" />
+                      <Star className="size-4 fill-[#00a878] text-[#00a878]" />
                       {summary.average.toFixed(1)} · {summary.count} review{summary.count === 1 ? '' : 's'}
                     </span>
                   ) : (
@@ -338,7 +338,7 @@ export default async function StayPage({
                       </span>
                       <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-black/[0.07]">
                         <span
-                          className="block h-full rounded-full bg-[#0d9488]"
+                          className="block h-full rounded-full bg-[#00a878]"
                           style={{ width: `${(score / 5) * 100}%` }}
                         />
                       </span>
@@ -352,7 +352,7 @@ export default async function StayPage({
                 {reviews.slice(0, 6).map((r) => (
                   <article key={r.id} className="rounded-xl border border-black/[0.08] bg-white px-5 py-4">
                     <div className="flex items-center gap-3">
-                      <span className="flex size-9 items-center justify-center rounded-full bg-[#0a0e1a] font-serif text-sm text-white">
+                      <span className="flex size-9 items-center justify-center rounded-full bg-[#0c1a16] font-serif text-sm text-white">
                         {(r.authorParty?.name ?? 'G')[0]}
                       </span>
                       <div>
@@ -365,13 +365,13 @@ export default async function StayPage({
                     </div>
                     <div className="mt-2 flex gap-0.5">
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className={`size-3.5 ${i < r.rating ? 'fill-[#0d9488] text-[#0d9488]' : 'text-black/15'}`} />
+                        <Star key={i} className={`size-3.5 ${i < r.rating ? 'fill-[#00a878] text-[#00a878]' : 'text-black/15'}`} />
                       ))}
                     </div>
                     <p className="mt-2 text-sm leading-relaxed text-foreground/85">{r.body}</p>
                     {r.hostResponse && (
-                      <div className="mt-3 rounded-lg bg-[#f7f5f0] px-3.5 py-2.5">
-                        <p className="text-xs font-semibold text-[#0a0e1a]">Response from ABN Homes</p>
+                      <div className="mt-3 rounded-lg bg-[#eff3f0] px-3.5 py-2.5">
+                        <p className="text-xs font-semibold text-[#0c1a16]">Response from ABN Homes</p>
                         <p className="mt-0.5 text-xs leading-relaxed text-foreground/80">{r.hostResponse}</p>
                       </div>
                     )}
@@ -389,7 +389,7 @@ export default async function StayPage({
             <section className="mt-8">
               <h2 className="font-serif text-xl tracking-tight">Where you&apos;ll be</h2>
               <p className="mt-3 text-sm text-foreground/85">
-                <MapPin className="mr-1.5 inline size-4 text-[#0d9488]" />
+                <MapPin className="mr-1.5 inline size-4 text-[#00a878]" />
                 {unit.property.addressLine}, {unit.property.city}
                 {unit.property.neighbourhood ? ` (${unit.property.neighbourhood})` : ''}
               </p>
@@ -413,7 +413,7 @@ export default async function StayPage({
                 <ul className="mt-3 space-y-1.5">
                   {unit.houseRules.map((r) => (
                     <li key={r} className="flex items-center gap-2.5 text-sm text-foreground/85">
-                      <span className="size-1 rounded-full bg-[#0d9488]" />
+                      <span className="size-1 rounded-full bg-[#00a878]" />
                       {r}
                     </li>
                   ))}
@@ -426,19 +426,19 @@ export default async function StayPage({
               <h2 className="font-serif text-xl tracking-tight">Safety &amp; property details</h2>
               <ul className="mt-3 space-y-1.5 text-sm text-foreground/85">
                 <li className="flex items-center gap-2.5">
-                  <BadgeCheck className={`size-4 ${safety.smokeAlarm ? 'text-[#0d9488]' : 'text-black/20'}`} />
+                  <BadgeCheck className={`size-4 ${safety.smokeAlarm ? 'text-[#00a878]' : 'text-black/20'}`} />
                   Smoke alarm {safety.smokeAlarm ? 'installed' : 'not reported'}
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <BadgeCheck className={`size-4 ${safety.coAlarm ? 'text-[#0d9488]' : 'text-black/20'}`} />
+                  <BadgeCheck className={`size-4 ${safety.coAlarm ? 'text-[#00a878]' : 'text-black/20'}`} />
                   Carbon monoxide alarm {safety.coAlarm ? 'installed' : 'not reported'}
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <BadgeCheck className={`size-4 ${safety.fireExtinguisher ? 'text-[#0d9488]' : 'text-black/20'}`} />
+                  <BadgeCheck className={`size-4 ${safety.fireExtinguisher ? 'text-[#00a878]' : 'text-black/20'}`} />
                   Fire extinguisher {safety.fireExtinguisher ? 'on site' : 'not reported'}
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <BadgeCheck className={`size-4 ${safety.firstAidKit ? 'text-[#0d9488]' : 'text-black/20'}`} />
+                  <BadgeCheck className={`size-4 ${safety.firstAidKit ? 'text-[#00a878]' : 'text-black/20'}`} />
                   First aid kit {safety.firstAidKit ? 'on site' : 'not reported'}
                 </li>
                 {safety.securityCameraNote && <li className="text-muted-foreground">📷 {safety.securityCameraNote}</li>}
@@ -577,7 +577,7 @@ export default async function StayPage({
 
               <Link
                 href={bookUrl}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0d9488] px-4 py-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-[#0f8578]"
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#00a878] px-4 py-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-[#00916a]"
               >
                 {hasDates ? (unit.instantBook ? 'Book instantly' : 'Request to book') : 'Choose dates & book'}
                 <ArrowRight className="size-4" />

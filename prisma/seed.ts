@@ -93,23 +93,27 @@ async function main() {
     },
   })
 
-  // A third-party owner, to exercise the managed-for-others path. ABN's own
-  // buildings and a client's building run through identical code.
+  // A placeholder third-party owner, so the managed-for-others path stays
+  // exercised and the owner portal has something to sign into. Named
+  // unmistakably as a placeholder: nobody should ever mistake this for a real
+  // client. Replace it with the actual owner's details — same record, so
+  // nothing downstream has to be rebuilt — when ABN takes on a real one.
   const clientOwner = await db.party.upsert({
     where: { id: 'party-demo-owner' },
     update: {},
     create: {
       id: 'party-demo-owner',
       type: 'PERSON',
-      name: 'Demo Client Owner',
+      name: 'Placeholder Owner — details pending',
       email: 'owner@example.com',
       phone: '+233201234567',
       address: 'Sakumono, Accra',
       isOwner: true,
-      notes: 'Example third-party owner created by the seed. Safe to delete.',
+      notes:
+        'PLACEHOLDER. Not a real client. Overwrite this record with the real owner when one is signed — do not create a second one, or the Sakumono statements will split across two parties.',
     },
   })
-  console.log('  Owners: ABN Homes, Demo Client Owner')
+  console.log('  Owners: ABN Homes, placeholder owner (Sakumono)')
 
   // -------------------------------------------------------------------------
   // Properties
@@ -152,7 +156,9 @@ async function main() {
         'A four-bedroom ensuite residence with two halls and a spacious compound in a serene, established neighbourhood.',
       amenities: ['Spacious compound', 'Secure compound', 'Modern finishes', 'Family friendly'],
       images: ['/images/abn-real/abn-ig-5-hd.jpg'],
-      published: true,
+      // Unpublished until its rooms, rates and photographs are confirmed.
+      // The record stays so the detail can be filled in rather than recreated.
+      published: false,
       ownerPartyId: abnOwner.id,
     },
   })
@@ -165,15 +171,15 @@ async function main() {
       name: 'Sakumono Residences',
       addressLine: 'Sakumono Estates',
       city: 'Tema',
-      description:
-        'Managed on behalf of a client owner. Long-let apartments billed monthly in cedis.',
+      description: 'Long-let apartments billed monthly in cedis.',
       amenities: ['Gated community', 'Borehole water', 'Backup power'],
       images: ['/images/abn-real/abn-ig-10-hd.jpg'],
+      // Unpublished until its rooms, rates and photographs are confirmed.
       published: false,
       ownerPartyId: clientOwner.id,
     },
   })
-  console.log('  Properties: Tantra Hill, Achimota, Sakumono')
+  console.log('  Properties: Tantra Hill (live), Achimota + Sakumono (details pending)')
 
   // -------------------------------------------------------------------------
   // Management agreements — ABN's own carry a zero fee so that every
@@ -206,75 +212,142 @@ async function main() {
   // -------------------------------------------------------------------------
   // Units
   // -------------------------------------------------------------------------
+  // --- Tantra Hill, 8 Asiko Street — the live building ----------------------
+  //
+  // Six lettable rooms and the rooftop. Each room is run independently: its own
+  // calendar, its own manager, its own revenue. Nightly rates follow the prices
+  // ABN already publishes — $50 for a one-bedroom, $70 for the penthouse. The
+  // studio rate is an estimate and should be confirmed before go-live.
+  //
+  // Photography: these are the existing building shots. Replace the `images`
+  // array per room as the individual room photographs come in.
+  const ROOM_PHOTOS = [
+    '/images/abn-real/abn-ig-8-hd.jpg',
+    '/images/abn-real/abn-ig-1-hd.jpg',
+    '/images/abn-real/abn-ig-4-hd.jpg',
+    '/images/abn-real/abn-ig-6-hd.jpg',
+  ]
+
+  const oneBedroom = (n: number, photo: string) => ({
+    propertyId: tantraHill.id,
+    code: String(n),
+    name: `Room ${n}`,
+    type: 'ONE_BED' as const,
+    lettingMode: 'BOTH' as const,
+    sortOrder: n,
+    bedrooms: 1,
+    bathrooms: 1,
+    sizeSqm: 65,
+    maxGuests: 2,
+    baseNightlyMinor: usd(50),
+    baseRentMinor: ghs(3800),
+    currency: 'USD' as Currency,
+    description:
+      'A furnished one-bedroom apartment with a luxury feel — Smart TV, fully equipped kitchen, air conditioning. Suits a short stay, a business trip or a longer let.',
+    features: [
+      'Smart TV',
+      'Fully equipped kitchen',
+      'Air conditioning',
+      'Free WiFi',
+      'Backup power',
+      'Secure parking',
+      'Rooftop access',
+    ],
+    images: [photo],
+    published: true,
+  })
+
   const units = [
+    oneBedroom(2, ROOM_PHOTOS[0]),
+    oneBedroom(3, ROOM_PHOTOS[1]),
     {
       propertyId: tantraHill.id,
-      code: 'PH',
-      name: 'Tantra Hill Penthouse',
+      code: '4',
+      name: 'Room 4',
+      type: 'STUDIO' as const,
+      lettingMode: 'BOTH' as const,
+      sortOrder: 4,
+      bedrooms: 1,
+      bathrooms: 1,
+      sizeSqm: 42,
+      maxGuests: 2,
+      baseNightlyMinor: usd(40),
+      baseRentMinor: ghs(2800),
+      currency: 'USD' as Currency,
+      description:
+        'A self-contained studio — open living and sleeping area with its own kitchenette and bathroom. The most economical room in the building.',
+      features: [
+        'Smart TV',
+        'Kitchenette',
+        'Air conditioning',
+        'Free WiFi',
+        'Backup power',
+        'Rooftop access',
+      ],
+      images: [ROOM_PHOTOS[2]],
+      published: true,
+    },
+    oneBedroom(5, ROOM_PHOTOS[3]),
+    oneBedroom(6, ROOM_PHOTOS[0]),
+    {
+      propertyId: tantraHill.id,
+      code: '7',
+      name: 'Room 7 — Penthouse',
       type: 'PENTHOUSE' as const,
-      lettingMode: 'SHORT_STAY' as const,
+      lettingMode: 'BOTH' as const,
+      sortOrder: 7,
       bedrooms: 2,
       bathrooms: 2,
       sizeSqm: 180,
       maxGuests: 4,
       baseNightlyMinor: usd(70),
+      baseRentMinor: ghs(6500),
       currency: 'USD' as Currency,
       description:
-        'Two-bedroom penthouse with a luxury and elegant touch. 75-inch Smart TVs, an oven for your grills, and an open rooftop bar for BBQ parties.',
+        'The two-bedroom penthouse, with a luxury and elegant touch. 75-inch Smart TVs, an oven for your grills, and direct access to the open rooftop bar.',
       features: [
         '75-inch Smart TV',
-        'Open rooftop bar',
+        'Two bedrooms',
         'BBQ oven',
-        'Free WiFi',
-        'Private parking',
+        'Direct rooftop access',
         'Air conditioning',
+        'Free WiFi',
+        'Secure parking',
       ],
       images: ['/images/abn-real/abn-ig-2-hd.jpg', '/images/abn-real/abn-ig-7-hd.jpg'],
       published: true,
     },
     {
+      // Shared space, not a room. It appears on the board so housekeeping and
+      // maintenance can see it, but it is never bookable and earns nothing
+      // directly, so every occupancy and revenue figure leaves it out.
       propertyId: tantraHill.id,
-      code: 'A1',
-      name: 'Furnished One Bedroom',
-      type: 'ONE_BED' as const,
+      code: 'ROOFTOP',
+      name: 'Rooftop',
+      type: 'COMMERCIAL' as const,
       lettingMode: 'SHORT_STAY' as const,
-      bedrooms: 1,
-      bathrooms: 1,
-      sizeSqm: 65,
-      maxGuests: 2,
-      baseNightlyMinor: usd(50),
+      isAmenity: true,
+      sortOrder: 8,
+      bedrooms: 0,
+      bathrooms: 0,
+      maxGuests: 20,
       currency: 'USD' as Currency,
       description:
-        'Stay with us and feel at home. A furnished one-bedroom apartment with a luxury feel, ideal for short stays and business trips.',
-      features: ['Smart TV', 'Fully equipped kitchen', 'Free WiFi', 'Air conditioning'],
-      images: ['/images/abn-real/abn-ig-8-hd.jpg'],
-      published: true,
+        'The open rooftop bar and BBQ terrace, shared by every guest in the building.',
+      features: ['Open bar', 'BBQ grill', 'Seating', 'City views'],
+      images: ['/images/abn-real/abn-ig-11-hd.jpg'],
+      published: false,
     },
-    {
-      propertyId: tantraHill.id,
-      code: 'A2',
-      name: 'Two Bedroom Apartment',
-      type: 'TWO_BED' as const,
-      lettingMode: 'BOTH' as const,
-      bedrooms: 2,
-      bathrooms: 2,
-      sizeSqm: 110,
-      maxGuests: 4,
-      baseNightlyMinor: usd(85),
-      baseRentMinor: ghs(4500),
-      currency: 'USD' as Currency,
-      description:
-        'Two-bedroom apartment available nightly or on a long let, depending on the season.',
-      features: ['Smart TV', 'Balcony', 'Free WiFi', 'Air conditioning'],
-      images: ['/images/abn-real/abn-ig-1-hd.jpg'],
-      published: true,
-    },
+    // --- Other ABN properties — real, but details still to come -------------
+    // Kept in place so they can be filled in rather than recreated. Unpublished
+    // until their rooms, rates and photographs are confirmed.
     {
       propertyId: achimota.id,
       code: 'MAIN',
       name: 'Achimota Four Bedroom Residence',
       type: 'FOUR_BED' as const,
       lettingMode: 'BOTH' as const,
+      sortOrder: 1,
       bedrooms: 4,
       bathrooms: 4,
       sizeSqm: 220,
@@ -286,7 +359,7 @@ async function main() {
         'Four bedrooms ensuite with two halls and a spacious compound in a serene environment.',
       features: ['4 bedrooms ensuite', '2 halls', 'Spacious compound', 'Glass staircase'],
       images: ['/images/abn-real/abn-ig-5-hd.jpg'],
-      published: true,
+      published: false,
     },
     {
       propertyId: sakumono.id,
@@ -513,8 +586,8 @@ async function main() {
     },
   })
 
-  const penthouse = createdUnits.find((u) => u.code === 'PH')!
-  const oneBed = createdUnits.find((u) => u.code === 'A1')!
+  const penthouse = createdUnits.find((u) => u.code === '7')!
+  const oneBed = createdUnits.find((u) => u.code === '2')!
 
   const reservations = [
     {

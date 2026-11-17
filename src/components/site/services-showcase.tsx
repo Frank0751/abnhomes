@@ -9,7 +9,7 @@ const serviceIcons = [Home, MapPin, Building2, PencilRuler, ShieldCheck, KeyRoun
 
 export function ServicesShowcase() {
   return (
-    <section className="py-24 lg:py-32 bg-[#0a0e1a] text-white overflow-hidden">
+    <section className="py-24 lg:py-32 bg-[#0c1a16] text-white overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <motion.div
@@ -37,10 +37,10 @@ export function ServicesShowcase() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: (i % 4) * 0.1 }}
-                className="group bg-white/[0.03] border border-white/10 p-7 hover:border-[#0d9488]/40 hover:bg-white/[0.05] transition-all duration-300"
+                className="group bg-white/[0.03] border border-white/10 p-7 hover:border-[#00a878]/40 hover:bg-white/[0.05] transition-all duration-300"
               >
-                <div className="w-12 h-12 border border-[#0d9488]/40 group-hover:border-[#0d9488] group-hover:bg-[#0d9488]/10 flex items-center justify-center mb-5 transition-all">
-                  <Icon className="h-6 w-6 text-[#0d9488]" strokeWidth={1.5} />
+                <div className="w-12 h-12 border border-[#00a878]/40 group-hover:border-[#00a878] group-hover:bg-[#00a878]/10 flex items-center justify-center mb-5 transition-all">
+                  <Icon className="h-6 w-6 text-[#00a878]" strokeWidth={1.5} />
                 </div>
                 <h3 className="font-serif text-xl mb-3 leading-tight">{service.title}</h3>
                 <p className="text-sm text-white/65 leading-relaxed">{service.body}</p>
@@ -54,7 +54,7 @@ export function ServicesShowcase() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8 }}
-          className="mt-16 p-8 lg:p-12 border border-[#0d9488]/30 bg-[#0d9488]/5 text-center"
+          className="mt-16 p-8 lg:p-12 border border-[#00a878]/30 bg-[#00a878]/5 text-center"
         >
           <h3 className="font-serif text-2xl md:text-3xl mb-4">Ready to build, buy, rent or renovate?</h3>
           <p className="text-white/65 max-w-xl mx-auto mb-6">
@@ -62,7 +62,7 @@ export function ServicesShowcase() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center px-7 py-4 bg-[#0d9488] hover:bg-[#14b8a6] text-white font-semibold tracking-[0.2em] uppercase text-sm transition-colors"
+            className="inline-flex items-center px-7 py-4 bg-[#00a878] hover:bg-[#1fd39a] text-white font-semibold tracking-[0.2em] uppercase text-sm transition-colors"
           >
             Start a Conversation
           </Link>

@@ -8,7 +8,7 @@ import { StayRooms } from "@/components/site/stay-rooms";
  */
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-[#faf8f3]">
+    <main className="relative min-h-screen bg-[#f5f7f5]">
       <BookingHero />
       <StayRooms />
     </main>

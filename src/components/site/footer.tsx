@@ -46,7 +46,7 @@ export function Footer() {
   const { t } = useI18n();
 
   return (
-    <footer className="relative bg-[#0a0e1a] text-white overflow-hidden">
+    <footer className="relative bg-[#0c1a16] text-white overflow-hidden">
       <div className="gold-divider" />
 
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10 pt-20 pb-10">
@@ -71,13 +71,13 @@ export function Footer() {
           <div className="flex flex-col gap-3 lg:items-end lg:justify-end">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-3 px-7 py-4 bg-[#0d9488] hover:bg-[#14b8a6] text-white font-semibold tracking-[0.2em] uppercase text-sm transition-colors"
+              className="inline-flex items-center justify-center gap-3 px-7 py-4 bg-[#00a878] hover:bg-[#1fd39a] text-white font-semibold tracking-[0.2em] uppercase text-sm transition-colors"
             >
               {t("cta.bookTourToday")}
             </Link>
             <a
               href={`tel:${COMPANY.phoneIntl}`}
-              className="inline-flex items-center justify-center gap-2 text-white/70 hover:text-[#0d9488] text-sm tracking-wide transition-colors"
+              className="inline-flex items-center justify-center gap-2 text-white/70 hover:text-[#00a878] text-sm tracking-wide transition-colors"
             >
               <Phone className="h-4 w-4" />
               {COMPANY.phone}
@@ -97,7 +97,7 @@ export function Footer() {
               />
               <div>
                 <div className="font-serif text-xl">ABN Homes</div>
-                <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d9488]">
+                <div className="text-[10px] tracking-[0.3em] uppercase text-[#00a878]">
                   Company Limited
                 </div>
               </div>
@@ -107,16 +107,16 @@ export function Footer() {
             </p>
             <div className="space-y-2 text-sm text-white/65">
               <div className="flex items-start gap-2.5">
-                <MapPin className="h-4 w-4 text-[#0d9488] shrink-0 mt-0.5" />
+                <MapPin className="h-4 w-4 text-[#00a878] shrink-0 mt-0.5" />
                 <span>{COMPANY.address}</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Phone className="h-4 w-4 text-[#0d9488] shrink-0" />
-                <a href={`tel:${COMPANY.phoneIntl}`} className="hover:text-[#0d9488] transition-colors">{COMPANY.phone}</a>
+                <Phone className="h-4 w-4 text-[#00a878] shrink-0" />
+                <a href={`tel:${COMPANY.phoneIntl}`} className="hover:text-[#00a878] transition-colors">{COMPANY.phone}</a>
               </div>
               <div className="flex items-center gap-2.5">
-                <Mail className="h-4 w-4 text-[#0d9488] shrink-0" />
-                <a href={`mailto:${COMPANY.email}`} className="hover:text-[#0d9488] transition-colors">{COMPANY.email}</a>
+                <Mail className="h-4 w-4 text-[#00a878] shrink-0" />
+                <a href={`mailto:${COMPANY.email}`} className="hover:text-[#00a878] transition-colors">{COMPANY.email}</a>
               </div>
             </div>
 
@@ -137,7 +137,7 @@ export function Footer() {
           {/* Footer nav columns */}
           {Object.entries(footerNav).map(([title, items]) => (
             <div key={title}>
-              <h4 className="text-[11px] tracking-[0.3em] uppercase text-[#0d9488] mb-5">
+              <h4 className="text-[11px] tracking-[0.3em] uppercase text-[#00a878] mb-5">
                 {t(`footer.col${title}`)}
               </h4>
               <ul className="space-y-3">
@@ -150,7 +150,7 @@ export function Footer() {
                         rel="noopener noreferrer"
                         className="text-sm text-white/70 hover:text-white transition-colors inline-flex items-center group"
                       >
-                        <span className="w-0 h-px bg-[#0d9488] mr-0 group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
+                        <span className="w-0 h-px bg-[#00a878] mr-0 group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
                         {item.key}
                       </a>
                     ) : (
@@ -158,7 +158,7 @@ export function Footer() {
                         href={item.href}
                         className="text-sm text-white/70 hover:text-white transition-colors inline-flex items-center group"
                       >
-                        <span className="w-0 h-px bg-[#0d9488] mr-0 group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
+                        <span className="w-0 h-px bg-[#00a878] mr-0 group-hover:w-4 group-hover:mr-2 transition-all duration-300" />
                         {t(item.key)}
                       </Link>
                     )}
@@ -175,11 +175,11 @@ export function Footer() {
             (c) {new Date().getFullYear()} {COMPANY.fullName}, {t("footer.rights")}
           </div>
           <div className="flex items-center gap-6 text-xs text-white/45">
-            <a href="#" className="hover:text-[#0d9488] transition-colors">{t("footer.privacy")}</a>
-            <a href="#" className="hover:text-[#0d9488] transition-colors">{t("footer.terms")}</a>
+            <a href="#" className="hover:text-[#00a878] transition-colors">{t("footer.privacy")}</a>
+            <a href="#" className="hover:text-[#00a878] transition-colors">{t("footer.terms")}</a>
             <button
               onClick={scrollTop}
-              className="flex items-center gap-2 hover:text-[#0d9488] transition-colors"
+              className="flex items-center gap-2 hover:text-[#00a878] transition-colors"
             >
               {t("cta.backToTop")}
               <ArrowUp className="h-3 w-3" />
@@ -206,7 +206,7 @@ function SocialLink({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="w-10 h-10 border border-white/15 hover:border-[#0d9488] hover:bg-[#0d9488]/10 flex items-center justify-center text-white/70 hover:text-[#0d9488] transition-all duration-300"
+      className="w-10 h-10 border border-white/15 hover:border-[#00a878] hover:bg-[#00a878]/10 flex items-center justify-center text-white/70 hover:text-[#00a878] transition-all duration-300"
     >
       {children}
     </a>

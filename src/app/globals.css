@@ -3,12 +3,35 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ===========================================================================
+   ABN Homes — design system
+   ---------------------------------------------------------------------------
+   Typeface: Ubuntu throughout, Ubuntu Mono for anything with digits that must
+   line up — receipts, ledgers, codes, calendars.
+
+   Palette: jade and saffron on an ink-green ground. Green and gold carry real
+   resonance here without being literal about it, and the combination is far
+   more alive than the cream-and-teal it replaces.
+
+   The state colours below are not decoration — the room board and every
+   calendar read their meaning from them, so they are tokens, never literals.
+   Each state is separated by hue AND lightness so it survives colour-blindness
+   and a black-and-white print, and the interface always pairs them with a
+   written label.
+   =========================================================================== */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-satoshi);
-  --font-serif: var(--font-playfair);
-  --font-display: var(--font-playfair);
+
+  /* One family, three roles. `font-serif` is mapped here too: 169 headings
+     across the app already ask for it, and this turns every one of them into
+     Ubuntu without touching a single component. */
+  --font-sans: var(--font-ubuntu);
+  --font-serif: var(--font-ubuntu);
+  --font-display: var(--font-ubuntu);
+  --font-mono: var(--font-ubuntu-mono);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -28,6 +51,8 @@
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -38,129 +63,240 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* Occupancy states, available as Tailwind colours. */
+  --color-free: var(--state-free-solid);
+  --color-held: var(--state-held-solid);
+  --color-confirmed: var(--state-confirmed-solid);
+  --color-occupied: var(--state-occupied-solid);
+  --color-blocked: var(--state-blocked-solid);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
 }
 
 :root {
   --radius: 0.625rem;
 
-  /* ABN Homes brand palette - luxury real estate */
-  --background: #faf8f3;
-  --foreground: #0a0e1a;
+  /* --- ground and ink ---------------------------------------------------- */
+  --background: #f5f7f5;
+  --foreground: #0c1a16;
   --card: #ffffff;
-  --card-foreground: #0a0e1a;
+  --card-foreground: #0c1a16;
   --popover: #ffffff;
-  --popover-foreground: #0a0e1a;
+  --popover-foreground: #0c1a16;
 
-  /* Primary: Deep charcoal/ink */
-  --primary: #0a0e1a;
-  --primary-foreground: #faf8f3;
+  /* Primary: deep ink-jade rather than flat black — it reads as considered. */
+  --primary: #0c1a16;
+  --primary-foreground: #f5f7f5;
 
-  /* Secondary: Warm sand */
-  --secondary: #f1ebdd;
-  --secondary-foreground: #1a1f2e;
+  --secondary: #e9efeb;
+  --secondary-foreground: #12241e;
 
-  /* Muted: Soft cream */
-  --muted: #ebe5d6;
-  --muted-foreground: #6b6253;
+  --muted: #e1e9e4;
+  --muted-foreground: #5a6b64;
 
-  /* Accent: Warm gold (signature ABN color) */
-  --accent: #0d9488;
-  --accent-foreground: #0a0e1a;
+  /* Accent: jade. The interactive colour — every link, button and focus ring. */
+  --accent: #00a878;
+  --accent-foreground: #ffffff;
+  --accent-hover: #00916a;
+  --accent-deep: #06684c;
+  --accent-bright: #1fd39a;
+  --accent-wash: #dcf5ea;
 
-  --destructive: #b3261e;
-  --border: #e8e3d8;
-  --input: #e8e3d8;
-  --ring: #0d9488;
+  /* Gold: saffron. Attention, highlights, anything that should catch the eye
+     without implying an error. */
+  --gold: #f2a541;
+  --gold-foreground: #0c1a16;
+  --gold-deep: #b8781f;
+  --gold-wash: #fdf0d9;
 
-  --chart-1: #0d9488;
-  --chart-2: #0a0e1a;
-  --chart-3: #134e4a;
-  --chart-4: #4a7c59;
-  --chart-5: #0f766e;
+  --destructive: #d7263d;
+  --destructive-foreground: #ffffff;
+  --destructive-wash: #fbe4e7;
 
-  --sidebar: #0a0e1a;
-  --sidebar-foreground: #faf8f3;
-  --sidebar-primary: #0d9488;
-  --sidebar-primary-foreground: #0a0e1a;
-  --sidebar-accent: #1a1f2e;
-  --sidebar-accent-foreground: #faf8f3;
-  --sidebar-border: #2a2f3e;
-  --sidebar-ring: #0d9488;
+  --border: #dce5e0;
+  --input: #dce5e0;
+  --ring: #00a878;
+
+  /* --- occupancy states -------------------------------------------------- */
+  --state-free-bg: #dcf5ea;
+  --state-free-fg: #056b4c;
+  --state-free-solid: #16a77a;
+
+  --state-held-bg: #fdf0d9;
+  --state-held-fg: #8a5a10;
+  --state-held-solid: #f2a541;
+
+  --state-confirmed-bg: #e0e7fb;
+  --state-confirmed-fg: #2a3f92;
+  --state-confirmed-solid: #3b5bc0;
+
+  --state-occupied-bg: #c9efdf;
+  --state-occupied-fg: #04543c;
+  --state-occupied-solid: #00845f;
+
+  --state-blocked-bg: #e6eae8;
+  --state-blocked-fg: #55635d;
+  --state-blocked-solid: #8a9792;
+
+  /* --- charts ------------------------------------------------------------ */
+  --chart-1: #00a878;
+  --chart-2: #f2a541;
+  --chart-3: #3b5bc0;
+  --chart-4: #e5734a;
+  --chart-5: #0a3d30;
+
+  /* --- admin sidebar ----------------------------------------------------- */
+  --sidebar: #0c1a16;
+  --sidebar-foreground: #e8f1ec;
+  --sidebar-primary: #00a878;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #16281f;
+  --sidebar-accent-foreground: #e8f1ec;
+  --sidebar-border: #1f352c;
+  --sidebar-ring: #00a878;
 }
 
 .dark {
-  --background: #0a0e1a;
-  --foreground: #faf8f3;
-  --card: #141826;
-  --card-foreground: #faf8f3;
-  --popover: #141826;
-  --popover-foreground: #faf8f3;
-  --primary: #faf8f3;
-  --primary-foreground: #0a0e1a;
-  --secondary: #1a1f2e;
-  --secondary-foreground: #faf8f3;
-  --muted: #1a1f2e;
-  --muted-foreground: #94a3b8;
-  --accent: #0d9488;
-  --accent-foreground: #0a0e1a;
-  --destructive: #f06460;
-  --border: #2a2f3e;
-  --input: #2a2f3e;
-  --ring: #0d9488;
-  --chart-1: #0d9488;
-  --chart-2: #faf8f3;
-  --chart-3: #0f766e;
-  --chart-4: #5a9b6a;
-  --chart-5: #14b8a6;
-  --sidebar: #141826;
-  --sidebar-foreground: #faf8f3;
-  --sidebar-primary: #0d9488;
-  --sidebar-primary-foreground: #0a0e1a;
-  --sidebar-accent: #1a1f2e;
-  --sidebar-accent-foreground: #faf8f3;
-  --sidebar-border: #2a2f3e;
-  --sidebar-ring: #0d9488;
+  --background: #081310;
+  --foreground: #eaf2ee;
+  --card: #0f1e19;
+  --card-foreground: #eaf2ee;
+  --popover: #0f1e19;
+  --popover-foreground: #eaf2ee;
+
+  --primary: #eaf2ee;
+  --primary-foreground: #081310;
+
+  --secondary: #16271f;
+  --secondary-foreground: #eaf2ee;
+
+  --muted: #16271f;
+  --muted-foreground: #90a49c;
+
+  --accent: #1fd39a;
+  --accent-foreground: #04231a;
+  --accent-hover: #35e0ab;
+  --accent-deep: #8af0cc;
+  --accent-bright: #5ff0c0;
+  --accent-wash: #0d2e24;
+
+  --gold: #f5b65b;
+  --gold-foreground: #231604;
+  --gold-deep: #f8cd8e;
+  --gold-wash: #2e2210;
+
+  --destructive: #f2626f;
+  --destructive-foreground: #2a0309;
+  --destructive-wash: #2e1217;
+
+  --border: #22362e;
+  --input: #22362e;
+  --ring: #1fd39a;
+
+  --state-free-bg: #0d2e24;
+  --state-free-fg: #6fe9bd;
+  --state-free-solid: #1fd39a;
+
+  --state-held-bg: #2e2210;
+  --state-held-fg: #f8cd8e;
+  --state-held-solid: #f5b65b;
+
+  --state-confirmed-bg: #161f3c;
+  --state-confirmed-fg: #9fb4f5;
+  --state-confirmed-solid: #6782db;
+
+  --state-occupied-bg: #07372a;
+  --state-occupied-fg: #7df0c6;
+  --state-occupied-solid: #0bb584;
+
+  --state-blocked-bg: #1a2420;
+  --state-blocked-fg: #98a7a1;
+  --state-blocked-solid: #6d7d77;
+
+  --chart-1: #1fd39a;
+  --chart-2: #f5b65b;
+  --chart-3: #6782db;
+  --chart-4: #f08a63;
+  --chart-5: #8af0cc;
+
+  --sidebar: #0a1713;
+  --sidebar-foreground: #eaf2ee;
+  --sidebar-primary: #1fd39a;
+  --sidebar-primary-foreground: #04231a;
+  --sidebar-accent: #16271f;
+  --sidebar-accent-foreground: #eaf2ee;
+  --sidebar-border: #22362e;
+  --sidebar-ring: #1fd39a;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-satoshi), system-ui, -apple-system, sans-serif;
-    font-feature-settings: "ss01", "cv01", "cv02", "cv03", "cv04";
-    letter-spacing: -0.006em;
+    font-family: var(--font-ubuntu), "Ubuntu", system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.003em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+
+  /* Ubuntu carries the headings too. At weight 700 with tight tracking it has
+     plenty of personality — a second display family would only dilute it. */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+    font-family: var(--font-ubuntu), "Ubuntu", system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.021em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  /* Figures line up by default wherever they are compared or summed. */
+  table, .tabular, [data-numeric] {
+    font-variant-numeric: tabular-nums;
   }
 }
 
-/* Custom utility classes - defined outside layers so they always apply */
-.font-serif {
-  font-family: var(--font-playfair), Georgia, serif !important;
-}
+/* Font utilities. All three resolve to Ubuntu so existing markup keeps working. */
+.font-serif,
 .font-display {
-  font-family: var(--font-playfair), Georgia, serif !important;
+  font-family: var(--font-ubuntu), "Ubuntu", system-ui, sans-serif !important;
+  font-weight: 700;
+  letter-spacing: -0.021em;
 }
 .font-sans {
-  font-family: var(--font-satoshi), system-ui, sans-serif !important;
+  font-family: var(--font-ubuntu), "Ubuntu", system-ui, sans-serif !important;
+}
+.font-mono {
+  font-family: var(--font-ubuntu-mono), "Ubuntu Mono", ui-monospace, monospace !important;
 }
 
-/* Text gradients for hero */
+/* ---------------------------------------------------------------------------
+   Occupancy chips. One class per state, used by the room board, every
+   calendar and every status pill, so a colour can never mean two things.
+   --------------------------------------------------------------------------- */
+.state-free      { background: var(--state-free-bg);      color: var(--state-free-fg); }
+.state-held      { background: var(--state-held-bg);      color: var(--state-held-fg); }
+.state-confirmed { background: var(--state-confirmed-bg); color: var(--state-confirmed-fg); }
+.state-occupied  { background: var(--state-occupied-bg);  color: var(--state-occupied-fg); }
+.state-blocked   { background: var(--state-blocked-bg);   color: var(--state-blocked-fg); }
+
+.state-free-solid      { background: var(--state-free-solid);      color: #fff; }
+.state-held-solid      { background: var(--state-held-solid);      color: #3b2706; }
+.state-confirmed-solid { background: var(--state-confirmed-solid); color: #fff; }
+.state-occupied-solid  { background: var(--state-occupied-solid);  color: #fff; }
+.state-blocked-solid   { background: var(--state-blocked-solid);   color: #fff; }
+
+/* Text gradients for the hero */
 .text-gradient-gold {
-  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 35%, #134e4a 75%, #0d9488 100%);
+  background: linear-gradient(135deg, #1fd39a 0%, #00a878 35%, #06684c 75%, #00a878 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -168,66 +304,80 @@
 }
 
 .text-gradient-ink {
-  background: linear-gradient(180deg, #0a0e1a 0%, #2a2f3e 100%);
+  background: linear-gradient(180deg, #0c1a16 0%, #2d433b 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
-/* Gold underline accent */
 .underline-gold {
-  background-image: linear-gradient(90deg, #0d9488 0%, #14b8a6 100%);
+  background-image: linear-gradient(90deg, #00a878 0%, #1fd39a 100%);
   background-size: 100% 2px;
   background-repeat: no-repeat;
   background-position: 0 100%;
 }
 
-/* Glass effect - must use explicit properties to override Tailwind bg-transparent */
+/* Glass — explicit properties so Tailwind's bg-transparent cannot win */
 .glass-light {
-  background-color: rgba(250, 248, 243, 0.85) !important;
+  background-color: rgba(245, 247, 245, 0.84) !important;
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 .glass-dark {
-  background-color: rgba(10, 14, 26, 0.88) !important;
+  background-color: rgba(8, 19, 16, 0.88) !important;
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 
-/* Section divider - gold filigree */
 .gold-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #0d9488 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, #00a878 50%, transparent 100%);
 }
 
-/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Brand selection + focus */
 ::selection {
-  background: rgba(13, 148, 136, 0.22);
-}
-:where(a, button, [role="button"], input, select, textarea):focus-visible {
-  outline: 2px solid #0d9488;
-  outline-offset: 2px;
+  background: rgba(0, 168, 120, 0.22);
 }
 
-/* Soft elevation used by cards and panels app-wide */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Elevation */
 .shadow-soft {
   box-shadow:
-    0 1px 2px rgba(10, 14, 26, 0.05),
-    0 12px 32px -24px rgba(10, 14, 26, 0.28);
+    0 1px 2px rgba(12, 26, 22, 0.05),
+    0 12px 32px -24px rgba(12, 26, 22, 0.28);
 }
 .shadow-lifted {
   box-shadow:
-    0 2px 4px rgba(10, 14, 26, 0.06),
-    0 24px 48px -24px rgba(10, 14, 26, 0.45);
+    0 2px 4px rgba(12, 26, 22, 0.06),
+    0 24px 48px -24px rgba(12, 26, 22, 0.45);
 }
 
-/* Custom scrollbar */
+/* Interactive lift — anything clickable that is bigger than a button. */
+.lift {
+  transition:
+    transform 180ms cubic-bezier(0.2, 0.7, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.2, 0.7, 0.3, 1),
+    border-color 180ms ease;
+}
+.lift:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 2px 4px rgba(12, 26, 22, 0.06),
+    0 24px 48px -28px rgba(12, 26, 22, 0.5);
+}
+.lift:active {
+  transform: translateY(0);
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -240,10 +390,9 @@ html {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #0f766e;
+  background: var(--accent-hover);
 }
 
-/* Marquee animation */
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -252,7 +401,6 @@ html {
   animation: marquee 40s linear infinite;
 }
 
-/* Slow float */
 @keyframes float-slow {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-12px); }
@@ -261,32 +409,27 @@ html {
   animation: float-slow 6s ease-in-out infinite;
 }
 
-/* Shimmer for gold accents */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 .animate-shimmer {
-  background: linear-gradient(90deg, #0d9488 0%, #5eead4 50%, #0d9488 100%);
+  background: linear-gradient(90deg, #00a878 0%, #8af0cc 50%, #00a878 100%);
   background-size: 200% 100%;
   animation: shimmer 3s linear infinite;
 }
 
-/* Reveal letter animation */
 @keyframes letter-reveal {
   0% {
     opacity: 0;
     transform: translateY(60%) rotateX(-90deg);
-
   }
   100% {
     opacity: 1;
     transform: translateY(0) rotateX(0);
-
   }
 }
 
-/* Ken Burns slow zoom */
 @keyframes ken-burns {
   0% { transform: scale(1) translate(0, 0); }
   100% { transform: scale(1.12) translate(-2%, -1%); }
@@ -295,29 +438,61 @@ html {
   animation: ken-burns 20s ease-out forwards;
 }
 
-/* Pulse ring for CTA */
 @keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.5); }
-  70% { box-shadow: 0 0 0 16px rgba(13, 148, 136, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(0, 168, 120, 0.5); }
+  70% { box-shadow: 0 0 0 16px rgba(0, 168, 120, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 168, 120, 0); }
 }
 .animate-pulse-ring {
   animation: pulse-ring 2.5s cubic-bezier(0.66, 0, 0, 1) infinite;
+}
+
+/* A live indicator for anything currently in progress — a stay in house, a
+   payment clearing. */
+@keyframes live-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.animate-live {
+  animation: live-dot 1.8s ease-in-out infinite;
+}
+
+/* Someone on a phone, on site, deserves a target they can actually hit. */
+@media (pointer: coarse) {
+  button, [role="button"], a.btn, .tap-target {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Print: an admin page prints as a clean document — shell stripped, shadow off. */
 @media print {
   body { background: #fff !important; }
   main { padding: 0 !important; }
-  .shadow-soft { box-shadow: none !important; }
+  .shadow-soft, .shadow-lifted { box-shadow: none !important; }
   .rounded-xl { break-inside: avoid; }
+  .no-print { display: none !important; }
 }
 
-/* i18n: Satoshi and Playfair carry no Arabic or CJK glyphs — these stacks
-   give Arabic and Chinese visitors a proper face without shipping fonts. */
-html[lang="ar"] body {
-  font-family: "Segoe UI", "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", Tahoma, sans-serif;
+/* i18n: Ubuntu carries no Arabic or CJK glyphs — these stacks give Arabic and
+   Chinese visitors a proper face without shipping fonts we do not need. */
+html[lang="ar"] body,
+html[lang="ar"] h1, html[lang="ar"] h2, html[lang="ar"] h3,
+html[lang="ar"] .font-serif, html[lang="ar"] .font-display {
+  font-family: "Segoe UI", "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", Tahoma, sans-serif !important;
 }
-html[lang="zh"] body {
-  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+html[lang="zh"] body,
+html[lang="zh"] h1, html[lang="zh"] h2, html[lang="zh"] h3,
+html[lang="zh"] .font-serif, html[lang="zh"] .font-display {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif !important;
 }

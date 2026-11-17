@@ -72,7 +72,7 @@ export default async function MessagesPage({
               <div key={c.key} className="bg-white px-5 py-4">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2 text-sm font-medium">
-                    <Icon className="size-4 text-[#0d9488]" />
+                    <Icon className="size-4 text-[#00a878]" />
                     {c.label}
                   </span>
                   <Pill tone={c.configured ? 'positive' : 'neutral'}>{c.configured ? 'Live' : 'Simulated'}</Pill>
@@ -94,7 +94,7 @@ export default async function MessagesPage({
                 <a
                   key={c || 'all'}
                   href={`/admin/messages${c ? `?channel=${c}` : ''}`}
-                  className={`rounded-full px-2.5 py-1 transition ${channel === c ? 'bg-[#0d9488] text-white' : 'bg-black/5 hover:bg-black/10'}`}
+                  className={`rounded-full px-2.5 py-1 transition ${channel === c ? 'bg-[#00a878] text-white' : 'bg-black/5 hover:bg-black/10'}`}
                 >
                   {c || 'All'}
                 </a>

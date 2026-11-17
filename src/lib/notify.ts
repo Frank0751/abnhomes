@@ -309,16 +309,16 @@ export function emailHtml(opts: { heading: string; lines: string[]; cta?: { labe
     .map((line) => `<tr><td style="padding:6px 0;color:#3a4354;font-size:15px;line-height:1.6;">${line}</td></tr>`)
     .join('')
   const cta = opts.cta
-    ? `<tr><td style="padding:22px 0 4px;"><a href="${opts.cta.url}" style="background:#0d9488;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:12px 28px;border-radius:8px;display:inline-block;">${opts.cta.label}</a></td></tr>`
+    ? `<tr><td style="padding:22px 0 4px;"><a href="${opts.cta.url}" style="background:#00a878;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:12px 28px;border-radius:8px;display:inline-block;">${opts.cta.label}</a></td></tr>`
     : ''
   return `<!doctype html><html><body style="margin:0;background:#f4f1ea;padding:32px 12px;font-family:Georgia,'Times New Roman',serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#fffdf8;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(10,14,26,0.08);">
-    <tr><td style="background:#0a0e1a;padding:26px 32px;">
-      <span style="color:#f7f5f0;font-size:20px;letter-spacing:0.04em;">ABN<span style="color:#14b8a6;">&#8202;Homes</span></span>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#fffdf8;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(12, 26, 22,0.08);">
+    <tr><td style="background:#0c1a16;padding:26px 32px;">
+      <span style="color:#eff3f0;font-size:20px;letter-spacing:0.04em;">ABN<span style="color:#1fd39a;">&#8202;Homes</span></span>
       <div style="color:#8a93a5;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-top:4px;">Serviced Apartments · Accra</div>
     </td></tr>
     <tr><td style="padding:30px 32px 8px;">
-      <h1 style="margin:0 0 14px;color:#0a0e1a;font-size:22px;font-weight:600;">${opts.heading}</h1>
+      <h1 style="margin:0 0 14px;color:#0c1a16;font-size:22px;font-weight:600;">${opts.heading}</h1>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}${cta}</table>
     </td></tr>
     <tr><td style="padding:18px 32px 28px;border-top:1px solid #eee6d9;margin-top:18px;">
@@ -525,7 +525,11 @@ export async function notifyPaymentReceived(args: {
   const guest = await guestContact(args.partyId)
   const amount = formatMinor(args.amountMinor, args.currency as never)
   const receipt = args.receiptNumber ?? '—'
-  const balanceUrl = `${APP_URL}/portal/tenant`
+
+  // The receipt itself — a real document they can open, print and keep. Keyed
+  // on the payment id rather than the receipt number, because receipt numbers
+  // run in sequence and anyone could walk them.
+  const receiptUrl = `${APP_URL}/receipt/${args.paymentId}`
 
   if (guest.email) {
     await queueMessage({
@@ -541,9 +545,9 @@ export async function notifyPaymentReceived(args: {
         lines: [
           `We have received <b>${amount}</b> from you${args.propertyName ? ` for ${args.propertyName}` : ''}.`,
           `Receipt number: <b>${receipt}</b> · Paid via ${args.channel.replace(/_/g, ' ').toLowerCase()}`,
-          'You can download all your receipts from the portal at any time.',
+          'Your receipt is below — open it to print it or save it as a PDF. It stays available at this link.',
         ],
-        cta: { label: 'View my statement', url: balanceUrl },
+        cta: { label: 'View my receipt', url: receiptUrl },
       }),
     })
   }
@@ -555,7 +559,7 @@ export async function notifyPaymentReceived(args: {
       entityType: 'Payment',
       entityId: args.paymentId,
       dedupe: true,
-      body: `Hello ${splitName(guest.name)}, we have received your payment of ${amount}. Receipt ${receipt}. Thank you. ABN Homes.`,
+      body: `Hello ${splitName(guest.name)}, we have received your payment of ${amount}. Receipt ${receipt}: ${receiptUrl} — ABN Homes.`,
     })
   }
 }

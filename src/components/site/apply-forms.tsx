@@ -15,21 +15,21 @@ import { applyToRentAction, type RentApplyResult } from '@/app/(site)/rent/actio
 import { useI18n } from '@/components/site/i18n'
 
 const inputCls =
-  'w-full rounded-lg border border-black/12 bg-white px-3.5 py-2.5 text-[15px] outline-none transition focus:border-[#0d9488] focus:ring-2 focus:ring-[#0d9488]/20'
+  'w-full rounded-lg border border-black/12 bg-white px-3.5 py-2.5 text-[15px] outline-none transition focus:border-[#00a878] focus:ring-2 focus:ring-[#00a878]/20'
 const labelCls = 'mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#5b6472]'
 
 function TrackingSuccess({ code, what }: { code: string; what: string }) {
   const [copied, setCopied] = useState(false)
   const { t } = useI18n()
   return (
-    <div className="rounded-2xl border border-[#0d9488]/30 bg-white p-8 text-center shadow-soft">
-      <CheckCircle2 className="mx-auto mb-4 size-12 text-[#0d9488]" />
-      <h3 className="font-serif text-2xl text-[#1a1f2e]">{t('apply.successIn').replace('{what}', what)}</h3>
+    <div className="rounded-2xl border border-[#00a878]/30 bg-white p-8 text-center shadow-soft">
+      <CheckCircle2 className="mx-auto mb-4 size-12 text-[#00a878]" />
+      <h3 className="font-serif text-2xl text-[#16271f]">{t('apply.successIn').replace('{what}', what)}</h3>
       <p className="mt-2 text-sm text-[#5b6472]">
         {t('apply.keepCode')}
       </p>
-      <div className="mx-auto mt-6 flex max-w-xs items-center justify-center gap-3 rounded-xl bg-[#0a0e1a] px-5 py-4">
-        <span className="font-mono text-2xl font-semibold tracking-[0.18em] text-[#14b8a6]">{code}</span>
+      <div className="mx-auto mt-6 flex max-w-xs items-center justify-center gap-3 rounded-xl bg-[#0c1a16] px-5 py-4">
+        <span className="font-mono text-2xl font-semibold tracking-[0.18em] text-[#1fd39a]">{code}</span>
         <button
           type="button"
           aria-label="Copy tracking code"
@@ -43,10 +43,10 @@ function TrackingSuccess({ code, what }: { code: string; what: string }) {
           <Copy className="size-4" />
         </button>
       </div>
-      {copied && <p className="mt-2 text-xs text-[#0d9488]">{t('apply.copied')}</p>}
+      {copied && <p className="mt-2 text-xs text-[#00a878]">{t('apply.copied')}</p>}
       <Link
         href={`/track/${code}`}
-        className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#0d9488] px-6 py-3 text-sm font-semibold tracking-[0.08em] text-white uppercase transition hover:bg-[#0f766e]"
+        className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#00a878] px-6 py-3 text-sm font-semibold tracking-[0.08em] text-white uppercase transition hover:bg-[#06684c]"
       >
         {t('apply.track')}
       </Link>
@@ -99,13 +99,13 @@ export function BuyForm({ unitId, priceLabel }: { unitId: string; priceLabel: st
       <button
         type="submit"
         disabled={pending}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0a0e1a] px-6 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-[#1a2233] disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0c1a16] px-6 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-[#1a2233] disabled:opacity-60"
       >
         {pending && <Loader2 className="size-4 animate-spin" />}
         {t('apply.buy')} {priceLabel ? `· ${priceLabel}` : ''}
       </button>
       <p className="flex items-center justify-center gap-1.5 text-xs text-[#5b6472]">
-        <ShieldCheck className="size-3.5 text-[#0d9488]" />
+        <ShieldCheck className="size-3.5 text-[#00a878]" />
         {t('apply.buyNoPayment')}
       </p>
     </form>
@@ -176,13 +176,13 @@ export function RentForm({ unitId, rentLabel }: { unitId: string; rentLabel: str
       <button
         type="submit"
         disabled={pending}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0a0e1a] px-6 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-[#1a2233] disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0c1a16] px-6 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-[#1a2233] disabled:opacity-60"
       >
         {pending && <Loader2 className="size-4 animate-spin" />}
         {t('apply.rent')} {rentLabel ? `· ${rentLabel}` : ''}
       </button>
       <p className="flex items-center justify-center gap-1.5 text-xs text-[#5b6472]">
-        <ShieldCheck className="size-3.5 text-[#0d9488]" />
+        <ShieldCheck className="size-3.5 text-[#00a878]" />
         {t('apply.rentFree')}
       </p>
     </form>
@@ -212,11 +212,11 @@ export function PurchaseCalculator({ priceMinor, currency }: { priceMinor: numbe
   return (
     <div className="rounded-2xl border border-black/8 bg-white p-6 shadow-soft">
       <div className="mb-5 flex items-center gap-2.5">
-        <span className="flex size-9 items-center justify-center rounded-lg bg-[#0d9488]/10">
-          <Calculator className="size-5 text-[#0d9488]" />
+        <span className="flex size-9 items-center justify-center rounded-lg bg-[#00a878]/10">
+          <Calculator className="size-5 text-[#00a878]" />
         </span>
         <div>
-          <h3 className="font-serif text-lg leading-tight text-[#1a1f2e]">{t('calc.title')}</h3>
+          <h3 className="font-serif text-lg leading-tight text-[#16271f]">{t('calc.title')}</h3>
           <p className="text-xs text-[#5b6472]">{t('calc.note')}</p>
         </div>
       </div>
@@ -224,7 +224,7 @@ export function PurchaseCalculator({ priceMinor, currency }: { priceMinor: numbe
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className={labelCls} htmlFor="calc-deposit">
-            {t('calc.deposit')}: <span className="font-bold text-[#1a1f2e]">{depositPct}%</span>
+            {t('calc.deposit')}: <span className="font-bold text-[#16271f]">{depositPct}%</span>
           </label>
           <input
             id="calc-deposit"
@@ -234,13 +234,13 @@ export function PurchaseCalculator({ priceMinor, currency }: { priceMinor: numbe
             step={5}
             value={depositPct}
             onChange={(e) => setDepositPct(Number(e.target.value))}
-            className="w-full accent-[#0d9488]"
+            className="w-full accent-[#00a878]"
           />
           <p className="mt-1 text-xs text-[#5b6472]">{t('calc.depositNote')}</p>
         </div>
         <div>
           <label className={labelCls} htmlFor="calc-months">
-            {t('calc.spreadOver')}: <span className="font-bold text-[#1a1f2e]">{months} {t('calc.monthsWord')}</span>
+            {t('calc.spreadOver')}: <span className="font-bold text-[#16271f]">{months} {t('calc.monthsWord')}</span>
           </label>
           <input
             id="calc-months"
@@ -250,28 +250,28 @@ export function PurchaseCalculator({ priceMinor, currency }: { priceMinor: numbe
             step={6}
             value={months}
             onChange={(e) => setMonths(Number(e.target.value))}
-            className="w-full accent-[#0d9488]"
+            className="w-full accent-[#00a878]"
           />
           <p className="mt-1 text-xs text-[#5b6472]">{t('calc.termNote')}</p>
         </div>
       </div>
 
-      <dl className="mt-6 grid grid-cols-3 gap-3 rounded-xl bg-[#faf8f3] p-4 text-center">
+      <dl className="mt-6 grid grid-cols-3 gap-3 rounded-xl bg-[#f5f7f5] p-4 text-center">
         <div>
           <dt className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#5b6472]">{t('calc.deposit')}</dt>
-          <dd className="mt-1 font-serif text-lg text-[#1a1f2e]">{fmt(deposit)}</dd>
+          <dd className="mt-1 font-serif text-lg text-[#16271f]">{fmt(deposit)}</dd>
         </div>
         <div className="border-x border-black/8">
           <dt className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#5b6472]">{t('calc.monthly')}</dt>
-          <dd className="mt-1 font-serif text-lg text-[#0d9488]">{fmt(installment)}</dd>
+          <dd className="mt-1 font-serif text-lg text-[#00a878]">{fmt(installment)}</dd>
         </div>
         <div>
           <dt className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#5b6472]">{t('calc.total')}</dt>
-          <dd className="mt-1 font-serif text-lg text-[#1a1f2e]">{fmt(total)}</dd>
+          <dd className="mt-1 font-serif text-lg text-[#16271f]">{fmt(total)}</dd>
         </div>
       </dl>
       <p className="mt-3 flex items-center gap-1.5 text-xs text-[#5b6472]">
-        <BadgeCheck className="size-3.5 text-[#0d9488]" />
+        <BadgeCheck className="size-3.5 text-[#00a878]" />
         {t('calc.zeroInterest')}
       </p>
     </div>

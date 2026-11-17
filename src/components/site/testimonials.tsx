@@ -38,8 +38,8 @@ const testimonials = [
 export function Testimonials() {
   const { t } = useI18n();
   return (
-    <section className="relative py-24 lg:py-32 bg-[#faf8f3] overflow-hidden">
-      <div className="absolute top-1/3 left-0 w-72 h-72 rounded-full bg-[#0d9488]/8 blur-3xl pointer-events-none" />
+    <section className="relative py-24 lg:py-32 bg-[#f5f7f5] overflow-hidden">
+      <div className="absolute top-1/3 left-0 w-72 h-72 rounded-full bg-[#00a878]/8 blur-3xl pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10 relative">
         {/* Header */}
@@ -50,7 +50,7 @@ export function Testimonials() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em]">
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0c1a16] leading-[1.05] tracking-[-0.02em]">
               {t("testimonials.heading")}
             </h2>
           </motion.div>
@@ -65,27 +65,27 @@ export function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.7, delay: (i % 2) * 0.12 }}
-              className="relative bg-white border border-[#e8e3d8] p-8 lg:p-10 group hover:border-[#0d9488]/40 transition-colors duration-500"
+              className="relative bg-white border border-[#dce5e0] p-8 lg:p-10 group hover:border-[#00a878]/40 transition-colors duration-500"
             >
-              <Quote className="absolute top-6 right-6 h-12 w-12 text-[#0d9488]/15 group-hover:text-[#0d9488]/30 transition-colors" />
+              <Quote className="absolute top-6 right-6 h-12 w-12 text-[#00a878]/15 group-hover:text-[#00a878]/30 transition-colors" />
 
               <div className="flex gap-1 mb-5">
                 {Array.from({ length: t.rating }).map((_, si) => (
-                  <Star key={si} className="h-4 w-4 fill-[#0d9488] text-[#0d9488]" />
+                  <Star key={si} className="h-4 w-4 fill-[#00a878] text-[#00a878]" />
                 ))}
               </div>
 
-              <blockquote className="font-display text-xl lg:text-2xl text-[#0a0e1a] leading-relaxed mb-7">
+              <blockquote className="font-display text-xl lg:text-2xl text-[#0c1a16] leading-relaxed mb-7">
                 &ldquo;{t.quote}&rdquo;
               </blockquote>
 
-              <figcaption className="flex items-center gap-4 pt-5 border-t border-[#e8e3d8]">
-                <div className="w-11 h-11 rounded-full bg-[#0a0e1a] text-[#0d9488] flex items-center justify-center font-serif text-lg">
+              <figcaption className="flex items-center gap-4 pt-5 border-t border-[#dce5e0]">
+                <div className="w-11 h-11 rounded-full bg-[#0c1a16] text-[#00a878] flex items-center justify-center font-serif text-lg">
                   {t.author.split(" ").map((n) => n[0]).slice(0, 2).join("")}
                 </div>
                 <div>
-                  <div className="font-serif text-lg text-[#0a0e1a]">{t.author}</div>
-                  <div className="text-xs tracking-[0.15em] uppercase text-[#6b6253]">{t.role}</div>
+                  <div className="font-serif text-lg text-[#0c1a16]">{t.author}</div>
+                  <div className="text-xs tracking-[0.15em] uppercase text-[#5a6b64]">{t.role}</div>
                 </div>
               </figcaption>
             </motion.figure>
@@ -98,7 +98,7 @@ export function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8 }}
-          className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#e8e3d8] border border-[#e8e3d8]"
+          className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#dce5e0] border border-[#dce5e0]"
         >
           {[
             { label: "testimonials.trust1", value: "4.9 / 5" },
@@ -106,9 +106,9 @@ export function Testimonials() {
             { label: "testimonials.trust3", value: "1 in 4" },
             { label: "testimonials.trust4", value: "< 2 hrs" },
           ].map((s, i) => (
-            <div key={i} className="bg-[#faf8f3] p-7 text-center">
-              <div className="font-serif text-3xl lg:text-4xl text-[#0a0e1a] mb-1">{s.value}</div>
-              <div className="text-[10px] tracking-[0.25em] uppercase text-[#6b6253]">{t(s.label)}</div>
+            <div key={i} className="bg-[#f5f7f5] p-7 text-center">
+              <div className="font-serif text-3xl lg:text-4xl text-[#0c1a16] mb-1">{s.value}</div>
+              <div className="text-[10px] tracking-[0.25em] uppercase text-[#5a6b64]">{t(s.label)}</div>
             </div>
           ))}
         </motion.div>

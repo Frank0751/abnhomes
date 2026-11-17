@@ -62,9 +62,9 @@ export function Properties() {
   const { t } = useI18n();
 
   return (
-    <section id="residences" className="relative py-24 lg:py-32 bg-[#0a0e1a] text-white overflow-hidden">
+    <section id="residences" className="relative py-24 lg:py-32 bg-[#0c1a16] text-white overflow-hidden">
 
-      <div className="absolute top-1/4 -left-32 w-[400px] h-[400px] rounded-full bg-[#0d9488]/10 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 -left-32 w-[400px] h-[400px] rounded-full bg-[#00a878]/10 blur-3xl pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10 relative">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-16">
@@ -113,7 +113,7 @@ export function Properties() {
           </div>
           <button
             onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
-            className="shrink-0 inline-flex items-center gap-2 px-7 py-4 bg-[#0d9488] text-[#0a0e1a] font-semibold tracking-wide text-sm uppercase hover:bg-[#14b8a6] transition-colors"
+            className="shrink-0 inline-flex items-center gap-2 px-7 py-4 bg-[#00a878] text-[#0c1a16] font-semibold tracking-wide text-sm uppercase hover:bg-[#1fd39a] transition-colors"
           >
             {t("cta.speakToAdvisor")}
             <ArrowUpRight className="h-4 w-4" />
@@ -150,25 +150,25 @@ function PropertyCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.9, delay: index * 0.05 }}
-      className="group grid lg:grid-cols-2 gap-0 border border-white/10 bg-white/[0.02] overflow-hidden hover:border-[#0d9488]/40 transition-colors duration-500"
+      className="group grid lg:grid-cols-2 gap-0 border border-white/10 bg-white/[0.02] overflow-hidden hover:border-[#00a878]/40 transition-colors duration-500"
     >
       <div className={`relative h-72 lg:h-auto overflow-hidden cursor-pointer ${reverse ? "lg:order-2" : ""}`} onClick={onView}>
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-[1200ms] ease-out group-hover:scale-105"
           style={{ backgroundImage: `url(${property.image})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a16]/80 via-transparent to-transparent" />
         <div className="absolute top-5 left-5 flex items-center gap-3">
-          <span className="px-3 py-1.5 text-[10px] tracking-[0.3em] uppercase font-medium bg-[#0d9488] text-[#0a0e1a]">
+          <span className="px-3 py-1.5 text-[10px] tracking-[0.3em] uppercase font-medium bg-[#00a878] text-[#0c1a16]">
             {t(STATUS_KEYS[property.status])}
           </span>
         </div>
-        <div className="absolute top-5 right-5 flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-white/70 bg-[#0a0e1a]/60 backdrop-blur-sm px-3 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Eye className="h-3 w-3 text-[#0d9488]" />
+        <div className="absolute top-5 right-5 flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-white/70 bg-[#0c1a16]/60 backdrop-blur-sm px-3 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Eye className="h-3 w-3 text-[#00a878]" />
           {t("cta.viewDetail")}
         </div>
         <div className="absolute bottom-5 left-5 right-5 flex items-center gap-2 text-white/85 text-xs tracking-[0.2em] uppercase">
-          <MapPin className="h-3.5 w-3.5 text-[#0d9488]" />
+          <MapPin className="h-3.5 w-3.5 text-[#00a878]" />
           {property.location}
         </div>
       </div>
@@ -203,11 +203,11 @@ function PropertyCard({
             <div className="text-[10px] tracking-[0.3em] text-white/50 uppercase mb-1">
               {t("properties.pricing")}
             </div>
-            <div className="font-serif text-xl text-[#0d9488]">{property.price}</div>
+            <div className="font-serif text-xl text-[#00a878]">{property.price}</div>
           </div>
           <button
             onClick={onView}
-            className="inline-flex items-center gap-2 px-6 py-3 border border-white/30 hover:border-[#0d9488] hover:bg-[#0d9488] hover:text-[#0a0e1a] text-white font-medium text-sm tracking-wide transition-all duration-300"
+            className="inline-flex items-center gap-2 px-6 py-3 border border-white/30 hover:border-[#00a878] hover:bg-[#00a878] hover:text-[#0c1a16] text-white font-medium text-sm tracking-wide transition-all duration-300"
           >
             {t("cta.viewDetail")}
             <ArrowUpRight className="h-4 w-4" />
@@ -230,8 +230,8 @@ function Spec({
   isText?: boolean;
 }) {
   return (
-    <div className="bg-[#0a0e1a] p-4 text-center">
-      <Icon className="h-5 w-5 text-[#0d9488] mx-auto mb-2" strokeWidth={1.5} />
+    <div className="bg-[#0c1a16] p-4 text-center">
+      <Icon className="h-5 w-5 text-[#00a878] mx-auto mb-2" strokeWidth={1.5} />
       <div className="font-serif text-xl text-white">{value}</div>
       <div className="text-[10px] tracking-[0.2em] text-white/50 uppercase mt-1">
         {label}

@@ -24,7 +24,7 @@ export function LanguageSwitcher() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase text-white/70 hover:text-[#0d9488] transition-colors px-2 py-1.5"
+        className="flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase text-white/70 hover:text-[#00a878] transition-colors px-2 py-1.5"
         aria-label="Switch language"
         aria-haspopup="menu"
         aria-expanded={open}
@@ -42,7 +42,7 @@ export function LanguageSwitcher() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
-              className="absolute right-0 top-full mt-2 z-20 bg-[#0a0e1a] border border-white/15 min-w-[160px]"
+              className="absolute right-0 top-full mt-2 z-20 bg-[#0c1a16] border border-white/15 min-w-[160px]"
               role="menu"
               aria-label="Available languages"
             >
@@ -58,7 +58,7 @@ export function LanguageSwitcher() {
                   lang={l.code}
                   className={`flex w-full items-center justify-between gap-3 text-left px-4 py-2.5 text-xs tracking-wide transition-colors ${
                     lang === l.code
-                      ? "bg-[#0d9488]/10 text-[#0d9488]"
+                      ? "bg-[#00a878]/10 text-[#00a878]"
                       : "text-white/70 hover:bg-white/5 hover:text-white"
                   }`}
                 >

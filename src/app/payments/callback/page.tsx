@@ -53,20 +53,20 @@ export default async function PaymentCallbackPage({
   const status = payment?.status === 'CONFIRMED' ? 'success' : sp.missing ? 'unknown' : 'pending'
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-[#f7f5f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(13,148,136,0.1),transparent)] px-4 py-10">
+    <div className="flex min-h-dvh items-center justify-center bg-[#eff3f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0, 168, 120,0.1),transparent)] px-4 py-10">
       <div className="w-full max-w-md rounded-2xl border border-black/[0.08] bg-white p-8 text-center shadow-lifted">
         {status === 'success' && (
           <>
             <CheckCircle2 className="mx-auto size-12 text-emerald-600" strokeWidth={1.5} />
-            <h1 className="mt-4 font-serif text-2xl tracking-tight text-[#0a0e1a]">Payment received</h1>
+            <h1 className="mt-4 font-serif text-2xl tracking-tight text-[#0c1a16]">Payment received</h1>
             <p className="mt-2 text-sm text-[#5b6472]">
               {formatMinor(payment!.amountMinor, payment!.currency)} · Receipt{' '}
               {payment!.receiptNumber}
               {sp.simulated ? ' · (test mode)' : ''}
             </p>
             {reservation && (
-              <div className="mt-5 rounded-xl bg-[#f7f5f0] px-4 py-3 text-left">
-                <p className="text-sm font-medium text-[#0a0e1a]">{reservation.unit.name}</p>
+              <div className="mt-5 rounded-xl bg-[#eff3f0] px-4 py-3 text-left">
+                <p className="text-sm font-medium text-[#0c1a16]">{reservation.unit.name}</p>
                 <p className="text-xs text-[#5b6472]">
                   {formatDate(reservation.checkIn)} → {formatDate(reservation.checkOut)} · Booking{' '}
                   {reservation.code}
@@ -81,7 +81,7 @@ export default async function PaymentCallbackPage({
             <div className="mt-6 flex gap-2">
               <Link
                 href="/portal"
-                className="flex-1 rounded-xl bg-[#0a0e1a] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#1a2233]"
+                className="flex-1 rounded-xl bg-[#0c1a16] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#1a2233]"
               >
                 Open my portal
               </Link>
@@ -98,7 +98,7 @@ export default async function PaymentCallbackPage({
         {status === 'pending' && (
           <>
             <Clock className="mx-auto size-12 text-amber-500" strokeWidth={1.5} />
-            <h1 className="mt-4 font-serif text-2xl tracking-tight text-[#0a0e1a]">Payment not completed yet</h1>
+            <h1 className="mt-4 font-serif text-2xl tracking-tight text-[#0c1a16]">Payment not completed yet</h1>
             <p className="mt-2 text-sm text-[#5b6472]">
               We have not received a confirmation for reference{' '}
               <span className="font-mono text-xs">{reference}</span>. If you aborted the payment you can
@@ -106,7 +106,7 @@ export default async function PaymentCallbackPage({
             </p>
             <Link
               href={reservation ? `/pay/${reservation.code}` : '/book'}
-              className="mt-6 inline-block rounded-xl bg-[#0d9488] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f8578]"
+              className="mt-6 inline-block rounded-xl bg-[#00a878] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#00916a]"
             >
               Try payment again
             </Link>
@@ -116,14 +116,14 @@ export default async function PaymentCallbackPage({
         {status === 'unknown' && (
           <>
             <XCircle className="mx-auto size-12 text-red-500" strokeWidth={1.5} />
-            <h1 className="mt-4 font-serif text-2xl tracking-tight text-[#0a0e1a]">Payment not found</h1>
+            <h1 className="mt-4 font-serif text-2xl tracking-tight text-[#0c1a16]">Payment not found</h1>
             <p className="mt-2 text-sm text-[#5b6472]">
               We could not match that payment reference. If money left your account, call or
               WhatsApp +233 54 170 4048 and we will sort it out quickly.
             </p>
             <Link
               href="/"
-              className="mt-6 inline-block rounded-xl bg-[#0a0e1a] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#1a2233]"
+              className="mt-6 inline-block rounded-xl bg-[#0c1a16] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#1a2233]"
             >
               Back to home
             </Link>

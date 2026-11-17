@@ -48,10 +48,10 @@ export function VideoShowcase() {
   return (
     <section
       id="film"
-      className="relative overflow-hidden bg-[#0a0e1a] py-24 text-white lg:py-32"
+      className="relative overflow-hidden bg-[#0c1a16] py-24 text-white lg:py-32"
     >
       {/* Ambient glow */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[46rem] -translate-x-1/2 rounded-full bg-[#0d9488]/10 blur-[120px]" />
+      <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[46rem] -translate-x-1/2 rounded-full bg-[#00a878]/10 blur-[120px]" />
 
       <div className="relative mx-auto max-w-[1400px] px-5 lg:px-10">
         {/* Header */}
@@ -103,7 +103,7 @@ export function VideoShowcase() {
             href={COMPANY.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 bg-[#0d9488] px-6 py-3.5 text-sm font-semibold uppercase tracking-wide text-[#0a0e1a] transition-all duration-300 hover:bg-[#14b8a6]"
+            className="group inline-flex items-center gap-2 bg-[#00a878] px-6 py-3.5 text-sm font-semibold uppercase tracking-wide text-[#0c1a16] transition-all duration-300 hover:bg-[#1fd39a]"
           >
             Book a Guided Tour
             <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -151,15 +151,15 @@ function FilmCard({ film, index }: { film: Film; index: number }) {
       </video>
 
       {/* Gradient + label */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/85 via-transparent to-[#0a0e1a]/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a16]/85 via-transparent to-[#0c1a16]/10" />
 
-      <div className="absolute left-3 top-3 bg-[#0a0e1a]/60 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.3em] text-[#0d9488]">
+      <div className="absolute left-3 top-3 bg-[#0c1a16]/60 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.3em] text-[#00a878]">
         {film.label}
       </div>
 
       {/* Play affordance (fades out on hover as the clip plays) */}
       <div className="absolute inset-0 flex items-center justify-center opacity-100 transition-opacity duration-300 group-hover:opacity-0">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-[#0a0e1a]/40 backdrop-blur-sm">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-[#0c1a16]/40 backdrop-blur-sm">
           <Play className="h-5 w-5 translate-x-0.5 fill-white text-white" />
         </span>
       </div>

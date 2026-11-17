@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Luxury apartments and homes across Accra, Ghana. Tantra Hill, Sakumono and Nii Ayi Mensah residences by ABN Homes Company Limited.",
     start_url: "/",
     display: "standalone",
-    background_color: "#faf8f3",
-    theme_color: "#0a0e1a",
+    background_color: "#f5f7f5",
+    theme_color: "#0c1a16",
     orientation: "portrait-primary",
     categories: ["business", "lifestyle", "shopping"],
     icons: [

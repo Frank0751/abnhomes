@@ -9,7 +9,7 @@ const serviceIcons = [Home, MapPin, Building2, PencilRuler, ShieldCheck, KeyRoun
 
 export function ServicesList() {
   return (
-    <section className="py-24 lg:py-32 bg-[#0a0e1a] text-white">
+    <section className="py-24 lg:py-32 bg-[#0c1a16] text-white">
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-end mb-16">
           <motion.div
@@ -43,14 +43,14 @@ export function ServicesList() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: i * 0.05 }}
-                className="group flex flex-col md:flex-row gap-5 md:gap-8 p-7 lg:p-8 border border-white/10 hover:border-[#0d9488]/40 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-300"
+                className="group flex flex-col md:flex-row gap-5 md:gap-8 p-7 lg:p-8 border border-white/10 hover:border-[#00a878]/40 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-300"
               >
                 <div className="flex items-start gap-5 md:w-1/3">
-                  <div className="shrink-0 w-14 h-14 border border-[#0d9488]/40 group-hover:border-[#0d9488] group-hover:bg-[#0d9488]/10 flex items-center justify-center transition-all">
-                    <Icon className="h-6 w-6 text-[#0d9488]" strokeWidth={1.5} />
+                  <div className="shrink-0 w-14 h-14 border border-[#00a878]/40 group-hover:border-[#00a878] group-hover:bg-[#00a878]/10 flex items-center justify-center transition-all">
+                    <Icon className="h-6 w-6 text-[#00a878]" strokeWidth={1.5} />
                   </div>
                   <div>
-                    <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d9488]/70 mb-1">
+                    <div className="text-[10px] tracking-[0.3em] uppercase text-[#00a878]/70 mb-1">
                       Service {String(i + 1).padStart(2, "0")}
                     </div>
                     <h3 className="font-serif text-xl md:text-2xl">{service.title}</h3>
@@ -67,7 +67,7 @@ export function ServicesList() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8 }}
-          className="mt-16 text-center p-8 lg:p-10 border border-[#0d9488]/30 bg-[#0d9488]/5"
+          className="mt-16 text-center p-8 lg:p-10 border border-[#00a878]/30 bg-[#00a878]/5"
         >
           <h3 className="font-serif text-2xl md:text-3xl mb-4">Have a project in mind?</h3>
           <p className="text-white/65 max-w-xl mx-auto mb-6">
@@ -75,7 +75,7 @@ export function ServicesList() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center px-7 py-4 bg-[#0d9488] hover:bg-[#14b8a6] text-white font-semibold tracking-[0.2em] uppercase text-sm transition-colors"
+            className="inline-flex items-center px-7 py-4 bg-[#00a878] hover:bg-[#1fd39a] text-white font-semibold tracking-[0.2em] uppercase text-sm transition-colors"
           >
             Request a Quote
           </Link>

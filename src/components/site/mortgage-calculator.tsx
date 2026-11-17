@@ -57,12 +57,12 @@ export function MortgageCalculator({
   const interestPct = 100 - principalPct;
 
   return (
-    <div className="bg-[#0a0e1a] text-white p-6 lg:p-8 border border-white/10">
+    <div className="bg-[#0c1a16] text-white p-6 lg:p-8 border border-white/10">
       {/* Header */}
       <div className="flex items-center justify-between mb-7">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 border border-[#0d9488]/40 flex items-center justify-center">
-            <Calculator className="h-5 w-5 text-[#0d9488]" strokeWidth={1.5} />
+          <div className="w-11 h-11 border border-[#00a878]/40 flex items-center justify-center">
+            <Calculator className="h-5 w-5 text-[#00a878]" strokeWidth={1.5} />
           </div>
           <div>
             <h3 className="font-serif text-xl">Mortgage Estimator</h3>
@@ -75,7 +75,7 @@ export function MortgageCalculator({
               key={c}
               onClick={() => setCurrency(c)}
               className={`px-3 py-1.5 text-xs font-medium tracking-wide transition-colors ${
-                currency === c ? "bg-[#0d9488] text-[#0a0e1a]" : "text-white/60 hover:text-white"
+                currency === c ? "bg-[#00a878] text-[#0c1a16]" : "text-white/60 hover:text-white"
               }`}
             >
               {c}
@@ -130,15 +130,15 @@ export function MortgageCalculator({
 
       {/* Result */}
       <div className="grid sm:grid-cols-2 gap-px bg-white/10 border border-white/10 mb-6">
-        <div className="bg-[#0a0e1a] p-5">
-          <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d9488] mb-1">
+        <div className="bg-[#0c1a16] p-5">
+          <div className="text-[10px] tracking-[0.3em] uppercase text-[#00a878] mb-1">
             Monthly Payment
           </div>
           <div className="font-serif text-3xl text-white">{fmt(monthlyPayment)}</div>
           <div className="text-xs text-white/50 mt-1">over {termYears} years</div>
         </div>
-        <div className="bg-[#0a0e1a] p-5">
-          <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d9488] mb-1">
+        <div className="bg-[#0c1a16] p-5">
+          <div className="text-[10px] tracking-[0.3em] uppercase text-[#00a878] mb-1">
             Total Interest
           </div>
           <div className="font-serif text-3xl text-white">{fmt(totalInterest)}</div>
@@ -154,7 +154,7 @@ export function MortgageCalculator({
         </div>
         <div className="h-2 bg-white/10 flex overflow-hidden">
           <motion.div
-            className="bg-[#0d9488]"
+            className="bg-[#00a878]"
             initial={{ width: 0 }}
             animate={{ width: `${principalPct}%` }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -167,13 +167,13 @@ export function MortgageCalculator({
           />
         </div>
         <div className="text-xs text-white/60 mt-3 leading-relaxed">
-          You would pay a total of <span className="text-[#0d9488] font-medium">{fmt(totalPayment)}</span> over {termYears} years, on a principal of {fmt(principal)} after a {downPaymentPct}% down payment.
+          You would pay a total of <span className="text-[#00a878] font-medium">{fmt(totalPayment)}</span> over {termYears} years, on a principal of {fmt(principal)} after a {downPaymentPct}% down payment.
         </div>
       </div>
 
       <button
         onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
-        className="group w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0d9488] hover:bg-[#14b8a6] text-[#0a0e1a] font-semibold tracking-[0.2em] uppercase text-xs transition-colors"
+        className="group w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00a878] hover:bg-[#1fd39a] text-[#0c1a16] font-semibold tracking-[0.2em] uppercase text-xs transition-colors"
       >
         <RefreshCw className="h-3.5 w-3.5" />
         Talk to an ABN Advisor
@@ -210,10 +210,10 @@ function Slider({
     <div>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase text-white/60">
-          <Icon className="h-3.5 w-3.5 text-[#0d9488]" strokeWidth={1.5} />
+          <Icon className="h-3.5 w-3.5 text-[#00a878]" strokeWidth={1.5} />
           {label}
         </div>
-        <div className="font-serif text-sm text-[#0d9488]">{display}</div>
+        <div className="font-serif text-sm text-[#00a878]">{display}</div>
       </div>
       <input
         type="range"
@@ -222,9 +222,9 @@ function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full h-1 appearance-none cursor-pointer bg-white/15 accent-[#0d9488]"
+        className="w-full h-1 appearance-none cursor-pointer bg-white/15 accent-[#00a878]"
         style={{
-          background: `linear-gradient(to right, #0d9488 ${pct}%, rgba(255,255,255,0.15) ${pct}%)`,
+          background: `linear-gradient(to right, #00a878 ${pct}%, rgba(255,255,255,0.15) ${pct}%)`,
         }}
       />
     </div>

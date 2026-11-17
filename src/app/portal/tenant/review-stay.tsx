@@ -47,7 +47,7 @@ export function ReviewStayButton({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 rounded-full border border-[#0d9488]/40 bg-[#0d9488]/[0.07] px-3 py-1.5 text-xs font-medium text-[#0d9488] transition hover:bg-[#0d9488]/[0.14]"
+        className="inline-flex items-center gap-1.5 rounded-full border border-[#00a878]/40 bg-[#00a878]/[0.07] px-3 py-1.5 text-xs font-medium text-[#00a878] transition hover:bg-[#00a878]/[0.14]"
       >
         <Star className="size-3" />
         Review this stay
@@ -77,7 +77,7 @@ export function ReviewStayButton({
           <div className="flex items-center justify-center gap-1.5 py-2">
             {[1, 2, 3, 4, 5].map((n) => (
               <button key={n} type="button" onClick={() => setRating(n)} aria-label={`${n} star${n > 1 ? 's' : ''}`}>
-                <Star className={`size-8 transition ${n <= rating ? 'fill-[#0d9488] text-[#0d9488]' : 'text-black/15 hover:text-black/30'}`} />
+                <Star className={`size-8 transition ${n <= rating ? 'fill-[#00a878] text-[#00a878]' : 'text-black/15 hover:text-black/30'}`} />
               </button>
             ))}
           </div>
@@ -94,7 +94,7 @@ export function ReviewStayButton({
                       onClick={() => setSubs((prev) => ({ ...prev, [key]: n }))}
                       aria-label={`${label} ${n}`}
                     >
-                      <Star className={`size-4 ${n <= (subs[key] ?? 0) ? 'fill-[#0d9488] text-[#0d9488]' : 'text-black/15'}`} />
+                      <Star className={`size-4 ${n <= (subs[key] ?? 0) ? 'fill-[#00a878] text-[#00a878]' : 'text-black/15'}`} />
                     </button>
                   ))}
                 </span>
@@ -111,7 +111,7 @@ export function ReviewStayButton({
               required
               rows={4}
               placeholder="What stood out — good or bad?"
-              className="w-full resize-none rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#0d9488] focus:outline-none"
+              className="w-full resize-none rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#00a878] focus:outline-none"
             />
           </label>
 
@@ -122,7 +122,7 @@ export function ReviewStayButton({
             <textarea
               name="privateNote"
               rows={2}
-              className="w-full resize-none rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#0d9488] focus:outline-none"
+              className="w-full resize-none rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#00a878] focus:outline-none"
             />
           </label>
 
@@ -139,7 +139,7 @@ export function ReviewStayButton({
             <button
               type="submit"
               disabled={pending || rating === 0}
-              className="flex-1 rounded-lg bg-[#0d9488] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0f8578] disabled:opacity-50"
+              className="flex-1 rounded-lg bg-[#00a878] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#00916a] disabled:opacity-50"
             >
               {pending ? 'Sending…' : 'Submit review'}
             </button>

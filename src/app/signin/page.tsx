@@ -23,7 +23,7 @@ export default function SignInPage() {
           sizes="55vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/90 via-[#0a0e1a]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a16]/90 via-[#0c1a16]/40 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-12">
           <p className="font-serif text-3xl leading-tight text-white/95 max-w-md text-balance">
             Building dreams in every home.

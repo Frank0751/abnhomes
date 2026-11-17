@@ -34,15 +34,15 @@ export function PageHero({
   const resolvedSubtitle = subtitleKey ? t(subtitleKey) : subtitle;
 
   return (
-    <section className="relative flex h-[100svh] min-h-[560px] w-full flex-col overflow-hidden bg-[#0a0e1a]">
+    <section className="relative flex h-[100svh] min-h-[560px] w-full flex-col overflow-hidden bg-[#0c1a16]">
       {/* Background image with slow Ken Burns drift */}
       <div className="absolute inset-0">
         <div
           className="absolute inset-0 animate-ken-burns bg-cover bg-center"
           style={{ backgroundImage: `url(${bgImage})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a] via-[#0a0e1a]/55 to-[#0a0e1a]/40" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0e1a]/70 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a16] via-[#0c1a16]/55 to-[#0c1a16]/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a16]/70 via-transparent to-transparent" />
       </div>
 
       {/* Content, anchored toward the bottom for an editorial feel */}
@@ -53,11 +53,11 @@ export function PageHero({
           transition={{ duration: 0.6 }}
           className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/55"
         >
-          <Link href="/" className="transition-colors hover:text-[#0d9488]">
+          <Link href="/" className="transition-colors hover:text-[#00a878]">
             {t("pagehero.home")}
           </Link>
           <ChevronRight className="h-3 w-3 rtl:rotate-180" />
-          <span className="text-[#0d9488]">{breadcrumb}</span>
+          <span className="text-[#00a878]">{breadcrumb}</span>
         </motion.nav>
 
         <motion.div

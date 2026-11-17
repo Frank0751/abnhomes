@@ -65,7 +65,7 @@ export default async function OwnPage({
   }
 
   return (
-    <main className="min-h-screen bg-[#faf8f3]">
+    <main className="min-h-screen bg-[#f5f7f5]">
       <PageHero
         title="Own an ABN Home."
         subtitle="Transparently priced homes in Accra with interest-free payment plans, a tracked application, and an honest ledger behind every payment. From offer to keys, you always know where you stand."
@@ -78,10 +78,10 @@ export default async function OwnPage({
         <div className="mx-auto grid max-w-6xl gap-6 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:px-10">
           {STEPS.map((s) => (
             <div key={s.n}>
-              <div className="mb-3 flex size-9 items-center justify-center rounded-full bg-[#0d9488]/10 font-serif text-lg text-[#0d9488]">
+              <div className="mb-3 flex size-9 items-center justify-center rounded-full bg-[#00a878]/10 font-serif text-lg text-[#00a878]">
                 {s.n}
               </div>
-              <h3 className="font-serif text-lg text-[#1a1f2e]">{s.title}</h3>
+              <h3 className="font-serif text-lg text-[#16271f]">{s.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-[#5b6472]">{s.body}</p>
             </div>
           ))}
@@ -92,7 +92,7 @@ export default async function OwnPage({
       <section className="mx-auto max-w-6xl px-5 pt-10 lg:px-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="font-serif text-3xl text-[#1a1f2e]">Homes for sale</h2>
+            <h2 className="font-serif text-3xl text-[#16271f]">Homes for sale</h2>
             <p className="mt-1 text-sm text-[#5b6472]">
               {homes.length} home{homes.length === 1 ? '' : 's'} open for offers · prices include documentation
             </p>
@@ -124,7 +124,7 @@ export default async function OwnPage({
                 <option value="price_desc">Price: high to low</option>
               </select>
             </label>
-            <button className="rounded-lg bg-[#0a0e1a] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
+            <button className="rounded-lg bg-[#0c1a16] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
               Apply filters
             </button>
           </form>
@@ -135,9 +135,9 @@ export default async function OwnPage({
       <section className="mx-auto max-w-6xl px-5 pb-16 pt-8 lg:px-10">
         {homes.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-black/15 bg-white px-8 py-16 text-center">
-            <p className="font-serif text-xl text-[#1a1f2e]">No homes match those filters right now.</p>
+            <p className="font-serif text-xl text-[#16271f]">No homes match those filters right now.</p>
             <p className="mt-2 text-sm text-[#5b6472]">
-              New homes go on sale as owners list them. <Link href="/contact" className="text-[#0d9488] underline underline-offset-2">Tell us what you are looking for</Link> and we will call you first.
+              New homes go on sale as owners list them. <Link href="/contact" className="text-[#00a878] underline underline-offset-2">Tell us what you are looking for</Link> and we will call you first.
             </p>
           </div>
         ) : (
@@ -148,7 +148,7 @@ export default async function OwnPage({
                 href={`/own/${home.slug}`}
                 className="group overflow-hidden rounded-2xl border border-black/8 bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg"
               >
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#e8e3d8]">
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#dce5e0]">
                   {home.image ? (
                     <Image
                       src={home.image}
@@ -158,34 +158,34 @@ export default async function OwnPage({
                       className="object-cover transition duration-500 group-hover:scale-[1.03]"
                     />
                   ) : null}
-                  <span className="absolute left-4 top-4 rounded-full bg-[#0a0e1a]/85 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur">
+                  <span className="absolute left-4 top-4 rounded-full bg-[#0c1a16]/85 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur">
                     For sale
                   </span>
                   {home.backupPower && home.backupPower !== 'none' && (
-                    <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-medium text-[#1a1f2e] backdrop-blur">
-                      <Zap className="size-3 text-[#0d9488]" /> Backup power
+                    <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-medium text-[#16271f] backdrop-blur">
+                      <Zap className="size-3 text-[#00a878]" /> Backup power
                     </span>
                   )}
                 </div>
                 <div className="p-5">
                   <p className="flex items-center gap-1 text-xs text-[#5b6472]">
-                    <MapPin className="size-3.5 text-[#0d9488]" />
+                    <MapPin className="size-3.5 text-[#00a878]" />
                     {home.propertyName}
                     {home.neighbourhood ? ` · ${home.neighbourhood}` : ''}
                   </p>
-                  <h3 className="mt-1 font-serif text-xl text-[#1a1f2e]">{home.name}</h3>
+                  <h3 className="mt-1 font-serif text-xl text-[#16271f]">{home.name}</h3>
                   {home.saleBlurb && <p className="mt-1 line-clamp-2 text-sm text-[#5b6472]">{home.saleBlurb}</p>}
                   <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[#5b6472]">
-                    <span className="flex items-center gap-1.5"><BedDouble className="size-4 text-[#0d9488]" />{home.bedrooms}</span>
-                    <span className="flex items-center gap-1.5"><Bath className="size-4 text-[#0d9488]" />{home.bathrooms}</span>
-                    {home.sizeSqm && <span className="flex items-center gap-1.5"><Ruler className="size-4 text-[#0d9488]" />{home.sizeSqm} m²</span>}
+                    <span className="flex items-center gap-1.5"><BedDouble className="size-4 text-[#00a878]" />{home.bedrooms}</span>
+                    <span className="flex items-center gap-1.5"><Bath className="size-4 text-[#00a878]" />{home.bathrooms}</span>
+                    {home.sizeSqm && <span className="flex items-center gap-1.5"><Ruler className="size-4 text-[#00a878]" />{home.sizeSqm} m²</span>}
                     <span>{TYPE_LABELS[home.type] ?? home.type}</span>
                   </div>
                   <div className="mt-4 flex items-center justify-between border-t border-black/8 pt-4">
-                    <p className="font-serif text-xl text-[#1a1f2e]">
+                    <p className="font-serif text-xl text-[#16271f]">
                       {formatMoney(home.salePriceMinor, home.saleCurrency)}
                     </p>
-                    <span className="flex items-center gap-1 text-sm font-semibold text-[#0d9488] transition group-hover:gap-2">
+                    <span className="flex items-center gap-1 text-sm font-semibold text-[#00a878] transition group-hover:gap-2">
                       View home <ArrowRight className="size-4" />
                     </span>
                   </div>
@@ -197,7 +197,7 @@ export default async function OwnPage({
       </section>
 
       {/* CTA */}
-      <section className="bg-[#0a0e1a] py-16 text-center text-white">
+      <section className="bg-[#0c1a16] py-16 text-center text-white">
         <div className="mx-auto max-w-3xl px-5 lg:px-10">
           <h2 className="font-serif text-3xl md:text-4xl">Can&apos;t find the one? Be first to know.</h2>
           <p className="mx-auto mt-3 max-w-xl text-white/65">
@@ -207,7 +207,7 @@ export default async function OwnPage({
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href="/contact"
-              className="rounded-lg bg-[#0d9488] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#14b8a6]"
+              className="rounded-lg bg-[#00a878] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#1fd39a]"
             >
               Talk to sales
             </Link>

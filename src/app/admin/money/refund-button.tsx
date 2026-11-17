@@ -63,7 +63,7 @@ export function RefundPaymentButton({ paymentId }: { paymentId: string }) {
             onChange={(e) => setReason(e.target.value)}
             rows={2}
             placeholder="Guest cancelled within the free window"
-            className="w-full resize-none rounded-lg border border-black/10 px-3 py-2 text-sm focus:border-[#0d9488] focus:outline-none"
+            className="w-full resize-none rounded-lg border border-black/10 px-3 py-2 text-sm focus:border-[#00a878] focus:outline-none"
           />
         </label>
         <DialogFooter>
