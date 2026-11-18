@@ -373,24 +373,81 @@ export async function roomPerformance(
 
 export type RoomMonth = { month: string; revenueMinor: number; nightsSold: number }
 
-/** Month-by-month revenue for one room, for the dashboard chart. */
+/**
+ * Month-by-month revenue for one room.
+ *
+ * Two queries for the whole window, not one pass per month. The obvious
+ * implementation — calling roomPerformance in a loop — issues thirty queries
+ * for six months, and against a pooled connection with `connection_limit=1`
+ * (which is what Supabase and serverless require) they serialise and blow the
+ * pool timeout. Aggregate in the database and split the nights here.
+ */
 export async function roomRevenueTrend(unitId: string, months = 6): Promise<RoomMonth[]> {
   const now = new Date()
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - (months - 1), 1))
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1))
+
+  const [revenueRows, reservations] = await Promise.all([
+    db.$queryRaw<Array<{ month: Date; revenue: bigint | null }>>`
+      SELECT date_trunc('month', c."dueDate") AS month,
+             SUM(c."amountMinor" * COALESCE(le."fxRateToBase", 1))::bigint AS revenue
+        FROM "Charge" c
+        LEFT JOIN LATERAL (
+               SELECT l."fxRateToBase"
+                 FROM "LedgerEntry" l
+                WHERE l."chargeId" = c.id AND l.kind = 'CHARGE'
+                LIMIT 1
+             ) le ON true
+       WHERE c."unitId" = ${unitId}
+         AND c."dueDate" >= ${start}
+         AND c."dueDate" <  ${end}
+         AND c.status NOT IN ('REVERSED', 'WAIVED')
+         AND c.type <> 'SECURITY_DEPOSIT'
+       GROUP BY 1`,
+    db.reservation.findMany({
+      where: {
+        unitId,
+        status: { in: ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'] },
+        checkIn: { lt: end },
+        checkOut: { gt: start },
+      },
+      select: { checkIn: true, checkOut: true },
+    }),
+  ])
+
+  const revenueByMonth = new Map<string, number>()
+  for (const row of revenueRows) {
+    revenueByMonth.set(monthKey(row.month), Number(row.revenue ?? 0))
+  }
+
   const out: RoomMonth[] = []
 
   for (let i = months - 1; i >= 0; i -= 1) {
-    const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1))
-    const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i + 1, 1))
-    const perf = await roomPerformance(unitId, { from: start, to: end })
+    const from = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1))
+    const to = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i + 1, 1))
+
+    // Nights that fall inside this month, clipped at both ends so a stay
+    // spanning a month boundary is counted once in each.
+    let nightsSold = 0
+    for (const r of reservations) {
+      const s = dateOnly(r.checkIn) < from ? from : dateOnly(r.checkIn)
+      const e = dateOnly(r.checkOut) > to ? to : dateOnly(r.checkOut)
+      if (e > s) nightsSold += nightsBetween(s, e)
+    }
 
     out.push({
-      month: start.toLocaleDateString('en-GB', { month: 'short', timeZone: 'UTC' }),
-      revenueMinor: perf.revenueMinor,
-      nightsSold: perf.nightsSold,
+      month: from.toLocaleDateString('en-GB', { month: 'short', timeZone: 'UTC' }),
+      revenueMinor: revenueByMonth.get(monthKey(from)) ?? 0,
+      nightsSold,
     })
   }
 
   return out
+}
+
+function monthKey(d: Date): string {
+  const date = new Date(d)
+  return `${date.getUTCFullYear()}-${date.getUTCMonth()}`
 }
 
 function humaniseType(type: string): string {

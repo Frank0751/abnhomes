@@ -17,7 +17,13 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  /// Runtime connection. On Supabase this is the transaction pooler (6543),
+  /// which is what serverless functions must use.
   url      = env("DATABASE_URL")
+  /// Schema changes need a direct connection (5432). Prisma cannot push or
+  /// migrate through pgbouncer — the pooler does not keep the session state a
+  /// DDL statement depends on, and the push fails in confusing ways.
+  directUrl = env("DIRECT_URL")
 }
 
 // ===========================================================================

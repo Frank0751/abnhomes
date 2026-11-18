@@ -123,9 +123,13 @@
   --ring: #00a878;
 
   /* --- occupancy states -------------------------------------------------- */
-  --state-free-bg: #dcf5ea;
-  --state-free-fg: #056b4c;
-  --state-free-solid: #16a77a;
+  /* Empty is deliberately NEUTRAL, not green. The board's whole job is
+     separating "earning" from "sitting idle" at a glance, and if both are
+     green that is exactly the distinction it fails to make. Colour means
+     something is happening in the room; blank means nothing is. */
+  --state-free-bg: #f4f7f5;
+  --state-free-fg: #46574f;
+  --state-free-solid: #a9b8b1;
 
   --state-held-bg: #fdf0d9;
   --state-held-fg: #8a5a10;
@@ -198,9 +202,9 @@
   --input: #22362e;
   --ring: #1fd39a;
 
-  --state-free-bg: #0d2e24;
-  --state-free-fg: #6fe9bd;
-  --state-free-solid: #1fd39a;
+  --state-free-bg: #1b2520;
+  --state-free-fg: #a9b8b1;
+  --state-free-solid: #6b7c75;
 
   --state-held-bg: #2e2210;
   --state-held-fg: #f8cd8e;

@@ -23,10 +23,14 @@ export default async function PortalLayout({ children }: { children: React.React
   const actor = await currentActor()
   if (!actor) redirect('/signin?callbackUrl=/portal')
 
-  const user = await db.user.findUniqueOrThrow({
+  // Same reasoning as the admin shell: a cookie can outlive its account, and a
+  // tenant whose record was removed should be asked to sign in again rather
+  // than shown a server error.
+  const user = await db.user.findUnique({
     where: { id: actor.id },
-    select: { name: true, role: true },
+    select: { name: true, role: true, active: true },
   })
+  if (!user || !user.active) redirect('/signin?callbackUrl=/portal')
 
   return (
     <SessionProvider>
