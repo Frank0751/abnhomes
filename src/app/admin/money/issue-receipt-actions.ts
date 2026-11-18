@@ -70,10 +70,22 @@ export async function issueReceiptAction(
     })
     if (!party) return { ok: false, error: 'That person is no longer on file.' }
 
-    const receivedAt = input.receivedAt ? new Date(input.receivedAt) : new Date()
-    if (Number.isNaN(receivedAt.getTime())) {
-      return { ok: false, error: 'That date could not be read.' }
+    // The form gives a date with no time, which would otherwise stamp every
+    // receipt at midnight — and a receipt that says a clerk took cash at
+    // 00:00 reads as a mistake. Today keeps the real clock time; a past date
+    // is set to midday, which is honestly vague rather than falsely precise.
+    const now = new Date()
+    let receivedAt = now
+
+    if (input.receivedAt) {
+      const chosen = new Date(`${input.receivedAt}T00:00:00Z`)
+      if (Number.isNaN(chosen.getTime())) {
+        return { ok: false, error: 'That date could not be read.' }
+      }
+      const isToday = input.receivedAt === now.toISOString().slice(0, 10)
+      receivedAt = isToday ? now : new Date(`${input.receivedAt}T12:00:00Z`)
     }
+
     if (receivedAt.getTime() > Date.now() + 60_000) {
       return { ok: false, error: 'A payment cannot be received in the future.' }
     }

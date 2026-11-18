@@ -305,24 +305,30 @@ function splitName(full: string): string {
 // ---------------------------------------------------------------------------
 
 export function emailHtml(opts: { heading: string; lines: string[]; cta?: { label: string; url: string }; footer?: string }): string {
+  // Email clients cannot be relied on to load a webfont, so Ubuntu is named
+  // first and falls back through faces that actually exist everywhere. The
+  // colours are the same tokens the app uses, written as literals because no
+  // mail client supports CSS variables.
+  const FONT = "Ubuntu,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
+
   const rows = opts.lines
-    .map((line) => `<tr><td style="padding:6px 0;color:#3a4354;font-size:15px;line-height:1.6;">${line}</td></tr>`)
+    .map((line) => `<tr><td style="padding:7px 0;color:#46574f;font-size:15px;line-height:1.65;">${line}</td></tr>`)
     .join('')
   const cta = opts.cta
-    ? `<tr><td style="padding:22px 0 4px;"><a href="${opts.cta.url}" style="background:#00a878;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:12px 28px;border-radius:8px;display:inline-block;">${opts.cta.label}</a></td></tr>`
+    ? `<tr><td style="padding:24px 0 4px;"><a href="${opts.cta.url}" style="background:#00a878;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:13px 30px;border-radius:9px;display:inline-block;">${opts.cta.label}</a></td></tr>`
     : ''
-  return `<!doctype html><html><body style="margin:0;background:#f4f1ea;padding:32px 12px;font-family:Georgia,'Times New Roman',serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#fffdf8;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(12, 26, 22,0.08);">
+  return `<!doctype html><html><body style="margin:0;background:#f5f7f5;padding:32px 12px;font-family:${FONT};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(12,26,22,0.08);">
     <tr><td style="background:#0c1a16;padding:26px 32px;">
-      <span style="color:#eff3f0;font-size:20px;letter-spacing:0.04em;">ABN<span style="color:#1fd39a;">&#8202;Homes</span></span>
-      <div style="color:#8a93a5;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-top:4px;">Serviced Apartments · Accra</div>
+      <span style="color:#f5f7f5;font-size:20px;font-weight:700;letter-spacing:0.01em;">ABN<span style="color:#1fd39a;">&#8202;Homes</span></span>
+      <div style="color:#90a49c;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin-top:5px;">Serviced Apartments · Accra</div>
     </td></tr>
     <tr><td style="padding:30px 32px 8px;">
-      <h1 style="margin:0 0 14px;color:#0c1a16;font-size:22px;font-weight:600;">${opts.heading}</h1>
+      <h1 style="margin:0 0 14px;color:#0c1a16;font-size:23px;font-weight:700;letter-spacing:-0.02em;line-height:1.2;">${opts.heading}</h1>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}${cta}</table>
     </td></tr>
-    <tr><td style="padding:18px 32px 28px;border-top:1px solid #eee6d9;margin-top:18px;">
-      <p style="margin:0;color:#8a93a5;font-size:12px;line-height:1.7;">${opts.footer ?? 'Questions? Call or WhatsApp +233 54 170 4048 · abnhomes.com.gh'}</p>
+    <tr><td style="padding:18px 32px 28px;border-top:1px solid #dce5e0;">
+      <p style="margin:0;color:#7d8f87;font-size:12px;line-height:1.7;">${opts.footer ?? 'Questions? Call or WhatsApp +233 54 170 4048 · abnhomes.com.gh'}</p>
     </td></tr>
   </table></body></html>`
 }

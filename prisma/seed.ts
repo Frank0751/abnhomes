@@ -21,6 +21,13 @@ const DEV_PASSWORD = 'AbnHomes2026!'
 
 const USD_TO_GHS = 12.5
 
+/**
+ * Demonstration data is opt-in. A live database should contain the real
+ * building and nothing invented: the ledger is append-only, so a made-up
+ * booking cannot be quietly removed once it is in.
+ */
+const WITH_DEMO = process.argv.includes('--demo') || process.env.SEED_DEMO === '1'
+
 function daysFromNow(days: number): Date {
   const d = new Date()
   d.setUTCHours(0, 0, 0, 0)
@@ -496,6 +503,26 @@ async function main() {
     },
   })
 
+  // ===========================================================================
+  // DEMONSTRATION DATA — everything below this line is invented
+  // ===========================================================================
+  //
+  // A sample tenant, a sample guest, three bookings, a maintenance ticket.
+  // Useful for showing the system to a client; wrong in a live database, where
+  // a made-up booking sits in the same reports as real ones and the ledger is
+  // append-only, so it cannot be quietly removed later.
+  //
+  //   npm run db:seed        the real building, nothing invented
+  //   npm run db:seed:demo   the above, plus everything below
+  //
+  if (!WITH_DEMO) {
+    console.log('\nDone — real portfolio only, no demonstration data.\n')
+    printAccounts()
+    return
+  }
+
+  console.log('\n  Adding demonstration data…')
+
   // -------------------------------------------------------------------------
   // A tenant on a long let, paying a year in advance — the local case the
   // whole advance-rent design exists for.
@@ -707,17 +734,24 @@ async function main() {
 
   console.log('  Housekeeping task and maintenance ticket created')
 
-  // -------------------------------------------------------------------------
-  console.log('\nDone.\n')
+  console.log('\nDone — including demonstration data.\n')
+  printAccounts(true)
+}
+
+function printAccounts(withDemo = false) {
   console.log('Sign in at /signin with any of these:')
-  for (const person of staff) {
-    console.log(`  ${person.email.padEnd(34)} ${person.role}`)
+  console.log(`  admin@abnhomes.com.gh              SUPER_ADMIN`)
+  console.log(`  manager@abnhomes.com.gh            PROPERTY_MANAGER`)
+  console.log(`  desk@abnhomes.com.gh               FRONT_DESK`)
+  console.log(`  finance@abnhomes.com.gh            FINANCE`)
+  console.log(`  housekeeping@abnhomes.com.gh       HOUSEKEEPING`)
+  console.log(`  owner@example.com                  OWNER       (placeholder)`)
+  if (withDemo) {
+    console.log(`  tenant@example.com                 TENANT      (demonstration)`)
   }
-  console.log(`  owner@example.com                  OWNER`)
-  console.log(`  tenant@example.com                 TENANT`)
   console.log(`\n  Password for all: ${DEV_PASSWORD}`)
-  console.log('\n  Change these before the system holds anything real.\n')
-  console.log('Next: run `npm run db:constraints` to install the database guarantees.\n')
+  console.log('\n  CHANGE THESE before the system holds anything real.\n')
+  console.log('Then run `npm run db:constraints` to install the database guarantees.\n')
 }
 
 main()
