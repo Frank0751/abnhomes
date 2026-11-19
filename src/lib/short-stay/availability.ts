@@ -151,6 +151,9 @@ export async function findAvailableUnits(args: {
   const candidates = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // The rooftop is shared space, not a room. Counting it as an empty
+      // unit would understate the building by a seventh, for ever.
+      isAmenity: false,
       status: { notIn: ['OFF_MARKET', 'MAINTENANCE'] },
       ...(args.propertyId ? { propertyId: args.propertyId } : {}),
       ...(args.guests ? { maxGuests: { gte: args.guests } } : {}),
@@ -281,6 +284,9 @@ export async function occupancyRate(args: {
   const units = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // The rooftop is shared space, not a room. Counting it as an empty
+      // unit would understate the building by a seventh, for ever.
+      isAmenity: false,
       status: { not: 'OFF_MARKET' },
       ...(args.propertyId ? { propertyId: args.propertyId } : {}),
     },

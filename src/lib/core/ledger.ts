@@ -280,6 +280,7 @@ export async function recordPayment(input: RecordPaymentInput, tx?: Tx) {
           partyId: input.partyId,
           amountMinor: input.amountMinor,
           currency: input.currency,
+          propertyId: input.propertyId,
         })
 
     return { payment, entry, allocations, created: true as const }
@@ -309,13 +310,29 @@ function humanChannel(channel: string): string {
  */
 async function allocateOldestFirst(
   client: Tx,
-  args: { paymentId: string; partyId: string; amountMinor: number; currency: Currency }
+  args: {
+    paymentId: string
+    partyId: string
+    amountMinor: number
+    currency: Currency
+    /**
+     * Confine the sweep to the building the money was taken for.
+     *
+     * Without it, a clerk authorised only for Tantra Hill who receipts a guest
+     * who is also a tenant in arrears elsewhere would silently settle the other
+     * building's rent: that building's arrears clear, this one's charge stays
+     * open, and the receipt renders unit names the clerk cannot otherwise see.
+     * Allocation must not reach further than the authorisation that allowed it.
+     */
+    propertyId?: string
+  }
 ) {
   const openCharges = await client.charge.findMany({
     where: {
       partyId: args.partyId,
       currency: args.currency,
       status: { in: ['OPEN', 'PART_PAID'] },
+      ...(args.propertyId ? { propertyId: args.propertyId } : {}),
     },
     include: { allocations: true },
     orderBy: [{ dueDate: 'asc' }, { createdAt: 'asc' }],

@@ -35,6 +35,7 @@ export async function afterPaymentRecorded(paymentId: string): Promise<void> {
       receiptNumber: payment.receiptNumber,
       channel: payment.channel,
       propertyName,
+      provisional: payment.status !== 'CONFIRMED',
     })
 
     // Auto-confirm: find the reservation this payment settled against.

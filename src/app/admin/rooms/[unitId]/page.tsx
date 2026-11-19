@@ -38,6 +38,13 @@ import {
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, CalendarPlus, Users, Wrench } from 'lucide-react'
 
+/** Parse `?m=` into a whole number of months within ±120 of this one. */
+function clampOffset(raw: string | undefined): number {
+  const n = Number(raw)
+  if (!Number.isFinite(n)) return 0
+  return Math.max(-120, Math.min(120, Math.trunc(n)))
+}
+
 export default async function RoomPage({
   params,
   searchParams,
@@ -68,7 +75,12 @@ export default async function RoomPage({
 
   // Which month the calendar is showing. `m` is an offset from this month so
   // the links stay readable and cannot be fed a nonsense date.
-  const offset = Number.isFinite(Number(m)) ? Number(m) : 0
+  //
+  // It still has to be clamped. `Number.isFinite` accepts '1e308', which makes
+  // `monthPeriod` build an Invalid Date, which Prisma rejects — so ?m=1e308
+  // turned the page into a 500. Round to a whole month and hold it inside ten
+  // years either way, which is further than any calendar here needs to go.
+  const offset = clampOffset(m)
   const now = new Date()
   const period = monthPeriod(now.getUTCFullYear(), now.getUTCMonth() + offset)
   const thisMonth = monthPeriod(now.getUTCFullYear(), now.getUTCMonth())
@@ -81,7 +93,10 @@ export default async function RoomPage({
       where: {
         unitId,
         status: { in: ['PENDING', 'CONFIRMED', 'CHECKED_IN'] },
-        checkOut: { gte: today() },
+        // Stays are half-open, [checkIn, checkOut): a booking checking out
+        // today ended this morning and the room is sellable tonight, so 'gte'
+        // left a finished stay sitting at the top of "Coming up".
+        checkOut: { gt: today() },
       },
       include: { guest: { select: { name: true, phone: true } } },
       orderBy: { checkIn: 'asc' },
@@ -93,6 +108,11 @@ export default async function RoomPage({
       take: 5,
     }),
   ])
+
+  // Housekeeping and maintenance hold 'units:read' so they can find a room,
+  // but deliberately not 'money:read'. Every figure below that is money, as
+  // opposed to occupancy, is gated on it separately.
+  const showMoney = can(actor, 'money:read')
 
   const staff = can(actor, 'units:write')
     ? await db.user.findMany({
@@ -148,31 +168,43 @@ export default async function RoomPage({
         </Panel>
       ) : (
         <StatGrid>
-          <StatCard
-            label="Earned this month"
-            value={formatMinor(performance.revenueMinor, performance.currency)}
-            sublabel={
-              performance.expensesMinor > 0
-                ? `${formatMinor(performance.netMinor, performance.currency)} after costs`
-                : 'No costs this month'
-            }
-          />
+          {showMoney && (
+            <StatCard
+              label="Earned this month"
+              value={formatMinor(performance.revenueMinor, performance.currency)}
+              sublabel={
+                performance.expensesMinor > 0
+                  ? `${formatMinor(performance.netMinor, performance.currency)} after costs`
+                  : 'No costs this month'
+              }
+            />
+          )}
           <StatCard
             label="Occupancy"
             value={`${Math.round(performance.occupancy * 100)}%`}
             sublabel={`${performance.nightsSold} of ${performance.nightsAvailable} nights`}
             tone={performance.occupancy >= 0.6 ? 'positive' : 'warning'}
           />
-          <StatCard
-            label="Average nightly rate"
-            value={formatMinor(performance.adrMinor, performance.currency)}
-            sublabel={`${performance.bookings} booking${performance.bookings === 1 ? '' : 's'}`}
-          />
-          <StatCard
-            label="Revenue per available night"
-            value={formatMinor(performance.revParMinor, performance.currency)}
-            sublabel="Rate and occupancy combined"
-          />
+          {showMoney ? (
+            <>
+              <StatCard
+                label="Average nightly rate"
+                value={formatMinor(performance.adrMinor, performance.currency)}
+                sublabel={`${performance.bookings} booking${performance.bookings === 1 ? '' : 's'}`}
+              />
+              <StatCard
+                label="Revenue per available night"
+                value={formatMinor(performance.revParMinor, performance.currency)}
+                sublabel="Rate and occupancy combined"
+              />
+            </>
+          ) : (
+            <StatCard
+              label="Bookings this month"
+              value={String(performance.bookings)}
+              sublabel="Arrivals counted against this room"
+            />
+          )}
         </StatGrid>
       )}
 
@@ -189,7 +221,7 @@ export default async function RoomPage({
             />
           )}
 
-          {!unit.isAmenity && (
+          {!unit.isAmenity && showMoney && (
             <Panel
               title="Revenue, last six months"
               description="What this room earned, month by month."
@@ -239,9 +271,11 @@ export default async function RoomPage({
                         </p>
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
-                        <span className="font-mono text-sm tabular-nums">
-                          {formatMinor(r.totalMinor, r.currency)}
-                        </span>
+                        {showMoney && (
+                          <span className="font-mono text-sm tabular-nums">
+                            {formatMinor(r.totalMinor, r.currency)}
+                          </span>
+                        )}
                         <StatusPill status={r.status} />
                       </div>
                     </Link>
@@ -287,10 +321,12 @@ export default async function RoomPage({
             <Panel title="Sitting tenant">
               <dl className="space-y-2.5 p-4 text-sm">
                 <Field label="Tenant" value={lease.tenant.name} />
-                <Field
-                  label="Rent"
-                  value={`${formatMinor(lease.rentMinor, lease.currency)} ${lease.cycle.toLowerCase()}`}
-                />
+                {showMoney && (
+                  <Field
+                    label="Rent"
+                    value={`${formatMinor(lease.rentMinor, lease.currency)} ${lease.cycle.toLowerCase()}`}
+                  />
+                )}
                 <Field label="Lease ends" value={formatDate(lease.endDate)} />
               </dl>
             </Panel>
@@ -306,15 +342,20 @@ export default async function RoomPage({
                     label="Bedrooms"
                     value={unit.bedrooms === 0 ? '—' : String(unit.bedrooms)}
                   />
-                  {unit.sizeSqm && <Field label="Size" value={`${unit.sizeSqm} sqm`} />}
-                  {unit.baseNightlyMinor && (
+                  {unit.sizeSqm != null && (
+                    <Field label="Size" value={`${unit.sizeSqm} sqm`} />
+                  )}
+                  {showMoney && unit.baseNightlyMinor != null && (
                     <Field
                       label="Nightly"
                       value={formatMinor(unit.baseNightlyMinor, unit.currency)}
                     />
                   )}
-                  {unit.baseRentMinor && (
-                    <Field label="Monthly rent" value={formatMinor(unit.baseRentMinor, 'GHS')} />
+                  {showMoney && unit.baseRentMinor != null && (
+                    <Field
+                      label="Monthly rent"
+                      value={formatMinor(unit.baseRentMinor, unit.currency)}
+                    />
                   )}
                 </>
               )}

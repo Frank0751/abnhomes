@@ -79,6 +79,9 @@ export async function occupancyByProperty(
   const units = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // The rooftop is shared space, not a room. Counting it as an empty
+      // unit would understate the building by a seventh, for ever.
+      isAmenity: false,
       status: { notIn: ['OFF_MARKET', 'MAINTENANCE', 'SOLD'] },
       ...(propertyId ? { propertyId } : {}),
     },
@@ -136,6 +139,9 @@ export async function occupancyTrend(
   const units = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // The rooftop is shared space, not a room. Counting it as an empty
+      // unit would understate the building by a seventh, for ever.
+      isAmenity: false,
       status: { notIn: ['OFF_MARKET', 'MAINTENANCE', 'SOLD'] },
       ...(propertyId ? { propertyId } : {}),
     },
@@ -285,6 +291,9 @@ export async function topUnits(
   const units = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // The rooftop is shared space, not a room. Counting it as an empty
+      // unit would understate the building by a seventh, for ever.
+      isAmenity: false,
       status: { notIn: ['OFF_MARKET'] },
       ...(propertyId ? { propertyId } : {}),
     },

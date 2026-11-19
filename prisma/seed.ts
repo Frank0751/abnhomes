@@ -406,10 +406,18 @@ async function main() {
 
   const createdUnits: Unit[] = []
   for (const unit of units) {
+    // The descriptive fields are re-applied on every run, because this file is
+    // where the rooms are actually maintained: when the real photographs
+    // arrive they are added here, and `update: {}` meant re-seeding silently
+    // did nothing to the rooms that already existed.
+    //
+    // 'status' is deliberately NOT in the update. If someone has taken a room
+    // off the market in the admin, a seed run must not quietly put it back.
+    const { propertyId: _p, code: _c, ...rest } = unit
     createdUnits.push(
       await db.unit.upsert({
         where: { propertyId_code: { propertyId: unit.propertyId, code: unit.code } },
-        update: {},
+        update: rest,
         create: unit,
       })
     )

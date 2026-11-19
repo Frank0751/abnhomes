@@ -272,7 +272,7 @@ function TrackShell({
   children: React.ReactNode
 }) {
   return (
-    <main className="min-h-screen bg-[#f5f7f5] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0, 168, 120,0.10),transparent)]">
+    <main className="min-h-screen bg-[#f5f7f5] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0,168,120,0.10),transparent)]">
       <div className="mx-auto max-w-2xl px-5 py-12">
         <Link href="/" className="font-serif text-lg tracking-tight text-[#16271f]">ABN Homes</Link>
         <div className="mt-6 overflow-hidden rounded-2xl border border-black/8 bg-white shadow-soft">

@@ -15,8 +15,8 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { requireActor } from '@/lib/session'
-import { assertCanOnProperty } from '@/lib/rbac'
+import { requireActor, requirePermission } from '@/lib/session'
+import { AccessError, assertCanOnProperty } from '@/lib/rbac'
 import { logAudit } from '@/lib/audit'
 import { recordPayment } from '@/lib/core/ledger'
 import { afterPaymentRecorded } from '@/lib/payments/after-payment'
@@ -47,6 +47,8 @@ const schema = z.object({
   receivedAt: z.string().optional(),
   /** Cash taken in the field stays provisional until the office sees it. */
   provisional: z.string().optional(),
+  /** Minted by the form; makes a double-submit settle once. */
+  idempotencyKey: z.string().uuid().optional(),
 })
 
 export async function issueReceiptAction(
@@ -90,6 +92,16 @@ export async function issueReceiptAction(
       return { ok: false, error: 'A payment cannot be received in the future.' }
     }
 
+    // And a floor. The date input accepts '0025-01-14', which parses happily
+    // and would file real cash two thousand years into the past, where no
+    // report would ever look for it again. Two years back covers every
+    // late-entered receipt anyone here has had to key in.
+    const floor = new Date(now)
+    floor.setUTCFullYear(floor.getUTCFullYear() - 2)
+    if (receivedAt.getTime() < floor.getTime()) {
+      return { ok: false, error: 'That date is too far back to record here.' }
+    }
+
     // recordPayment allocates against the oldest open charges by itself, so a
     // manual receipt settles arrears in the same order an online payment would.
     const { payment } = await recordPayment({
@@ -105,6 +117,7 @@ export async function issueReceiptAction(
       notes: input.notes?.trim() || null,
       recordedById: actor.id,
       status: input.provisional === 'on' ? 'PENDING' : 'CONFIRMED',
+      idempotencyKey: input.idempotencyKey ?? null,
     })
 
     // Sends the receipt on every channel the payer has.
@@ -137,16 +150,37 @@ export async function issueReceiptAction(
           : `Receipt ${payment.receiptNumber} issued and sent to ${party.name}.`,
     }
   } catch (error) {
+    // Only our own errors carry text fit for a clerk to read. A Prisma failure
+    // names tables, columns and constraints, which is no use at the desk and
+    // tells an attacker the shape of the schema, so it is logged and replaced.
+    //
+    // The discriminator is the constructor: the access layer throws
+    // AccessError and the ledger's own rule violations throw a plain Error,
+    // while Prisma, the runtime and anything else throw a subclass.
+    const ours =
+      error instanceof AccessError ||
+      (error instanceof Error && error.constructor === Error)
+    if (ours) {
+      return { ok: false, error: (error as Error).message }
+    }
+    console.error('[receipt.issue] failed', error)
     return {
       ok: false,
-      error: error instanceof Error ? error.message : 'Could not issue the receipt.',
+      error: 'Could not issue the receipt. Nothing was recorded — please try again.',
     }
   }
 }
 
-/** Type-ahead for the payer field — tenants, guests and owners alike. */
+/**
+ * Type-ahead for the payer field — tenants, guests and owners alike.
+ *
+ * A server action is a public POST endpoint, not a private function of the
+ * component that imports it. Asserting only "is signed in" let any portal
+ * account — a tenant, a vendor, a guest with a booking code — walk the entire
+ * customer book two letters at a time, names and phone numbers included.
+ */
 export async function searchPayersAction(query: string) {
-  await requireActor()
+  await requirePermission('parties:read')
   const q = query.trim()
   if (q.length < 2) return []
 

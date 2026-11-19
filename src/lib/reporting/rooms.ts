@@ -114,7 +114,12 @@ export async function roomBoard(args: {
 
   const units = await db.unit.findMany({
     where: {
-      ...(args.propertyId ? { propertyId: args.propertyId } : propertyWhere(args.actor)),
+      // The actor's scope is applied ALWAYS and a requested property only
+      // narrows it further. Writing this as an either/or let a manager scoped
+      // to one building read another one's rooms — occupant names, lease end
+      // dates and revenue — just by editing ?property= in the URL.
+      ...propertyWhere(args.actor),
+      ...(args.propertyId ? { propertyId: args.propertyId } : {}),
       status: { not: 'SOLD' },
     },
     include: {
@@ -174,23 +179,44 @@ export async function roomBoard(args: {
     )
   }
 
-  // Nights sold in the period, for occupancy.
-  const sold = await db.reservation.findMany({
-    where: {
-      unitId: { in: unitIds },
-      status: { in: ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'] },
-      checkIn: { lt: to },
-      checkOut: { gt: from },
-    },
-    select: { unitId: true, checkIn: true, checkOut: true },
-  })
+  // Nights occupied in the period.
+  //
+  // Both letting modes count, which is the whole point of running them on one
+  // spine. A long let produces no Reservation rows at all — it is a Lease and
+  // its charges — so counting only reservations reported a room with a sitting
+  // tenant as 0% occupied, directly beneath a badge reading "Occupied", and
+  // dragged the building average down with every leased room.
+  const [sold, leased] = await Promise.all([
+    db.reservation.findMany({
+      where: {
+        unitId: { in: unitIds },
+        status: { in: ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT'] },
+        checkIn: { lt: to },
+        checkOut: { gt: from },
+      },
+      select: { unitId: true, checkIn: true, checkOut: true },
+    }),
+    db.lease.findMany({
+      where: {
+        unitId: { in: unitIds },
+        status: { in: ['ACTIVE', 'ENDED'] },
+        startDate: { lt: to },
+        endDate: { gt: from },
+      },
+      select: { unitId: true, startDate: true, endDate: true },
+    }),
+  ])
 
   const nightsByUnit = new Map<string, number>()
-  for (const r of sold) {
-    const start = dateOnly(r.checkIn) < from ? from : dateOnly(r.checkIn)
-    const end = dateOnly(r.checkOut) > to ? to : dateOnly(r.checkOut)
-    nightsByUnit.set(r.unitId, (nightsByUnit.get(r.unitId) ?? 0) + nightsBetween(start, end))
+
+  const addNights = (unitId: string, rawStart: Date, rawEnd: Date) => {
+    const start = dateOnly(rawStart) < from ? from : dateOnly(rawStart)
+    const end = dateOnly(rawEnd) > to ? to : dateOnly(rawEnd)
+    nightsByUnit.set(unitId, (nightsByUnit.get(unitId) ?? 0) + nightsBetween(start, end))
   }
+
+  for (const r of sold) addNights(r.unitId, r.checkIn, r.checkOut)
+  for (const l of leased) addNights(l.unitId, l.startDate, l.endDate)
 
   const periodNights = Math.max(1, nightsBetween(from, to))
 
@@ -295,7 +321,7 @@ export async function roomPerformance(
   const periodNights = Math.max(1, nightsBetween(from, to))
   const base = baseCurrency()
 
-  const [unit, charges, reservations, cancelled, expenses] = await Promise.all([
+  const [unit, charges, reservations, cancelled, expenses, leases] = await Promise.all([
     db.unit.findUniqueOrThrow({ where: { id: unitId }, select: { isAmenity: true } }),
     db.charge.findMany({
       where: {
@@ -319,11 +345,43 @@ export async function roomPerformance(
       select: { checkIn: true, checkOut: true },
     }),
     db.reservation.count({
-      where: { unitId, status: 'CANCELLED', checkIn: { gte: from, lt: to } },
+      where: {
+        unitId,
+        status: 'CANCELLED',
+        // Counted by WHEN IT WAS CANCELLED, not when the stay would have been.
+        // Keying off checkIn put a booking for next June, cancelled today, in
+        // next June's figures, and a November stay cancelled back in August in
+        // November's — so the month's own cancellations never matched the month.
+        // Rows predating the timestamp fall back to checkIn rather than vanish.
+        OR: [
+          { cancelledAt: { gte: from, lt: to } },
+          { cancelledAt: null, checkIn: { gte: from, lt: to } },
+        ],
+      },
     }),
     db.ledgerEntry.findMany({
-      where: { unitId, kind: 'EXPENSE', occurredAt: { gte: from, lt: to } },
+      where: {
+        unitId,
+        kind: 'EXPENSE',
+        occurredAt: { gte: from, lt: to },
+        // The ledger is append-only, so a wrongly-keyed expense is corrected
+        // by a REVERSAL entry beside it rather than by deleting it. Matching
+        // on kind alone therefore counts the mistake for ever: a GHS 5,000
+        // expense keyed to the wrong room, properly reversed, still ate
+        // GHS 5,000 of that room's net every time the page was opened.
+        reversedBy: { is: null },
+      },
       select: { amountMinor: true, fxRateToBase: true },
+    }),
+    // Long lets occupy the room without producing a single reservation row.
+    db.lease.findMany({
+      where: {
+        unitId,
+        status: { in: ['ACTIVE', 'ENDED'] },
+        startDate: { lt: to },
+        endDate: { gt: from },
+      },
+      select: { startDate: true, endDate: true },
     }),
   ])
 
@@ -337,17 +395,26 @@ export async function roomPerformance(
     0
   )
 
-  let nightsSold = 0
-  for (const r of reservations) {
-    const start = dateOnly(r.checkIn) < from ? from : dateOnly(r.checkIn)
-    const end = dateOnly(r.checkOut) > to ? to : dateOnly(r.checkOut)
-    nightsSold += nightsBetween(start, end)
+  // Both letting modes occupy the room. A long let has no reservation rows at
+  // all, so counting only reservations reported a tenanted room as 0% while
+  // its revenue said otherwise.
+  const clip = (rawStart: Date, rawEnd: Date) => {
+    const start = dateOnly(rawStart) < from ? from : dateOnly(rawStart)
+    const end = dateOnly(rawEnd) > to ? to : dateOnly(rawEnd)
+    return nightsBetween(start, end)
   }
+
+  let nightsSold = 0
+  for (const r of reservations) nightsSold += clip(r.checkIn, r.checkOut)
+  for (const l of leases) nightsSold += clip(l.startDate, l.endDate)
 
   // An amenity has no sellable nights, so its occupancy is not zero — it is
   // undefined, and reporting it as 0% would be a lie about an empty room.
   const nightsAvailable = unit.isAmenity ? 0 : periodNights
-  const occupancy = nightsAvailable === 0 ? 0 : nightsSold / nightsAvailable
+  // Capped: a unit that was let and also had a stray reservation in the same
+  // month would otherwise report over 100%.
+  const occupancy =
+    nightsAvailable === 0 ? 0 : Math.min(1, nightsSold / nightsAvailable)
   const adrMinor = nightsSold === 0 ? 0 : Math.round(revenueMinor / nightsSold)
 
   const totalStay = reservations.reduce(

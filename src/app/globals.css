@@ -99,9 +99,14 @@
   --muted: #e1e9e4;
   --muted-foreground: #5a6b64;
 
-  /* Accent: jade. The interactive colour — every link, button and focus ring. */
+  /* Accent: jade. The interactive colour — every link, button and focus ring.
+     The foreground is INK, not white. White on this jade measures 3.06:1,
+     under the 4.5:1 that 14px button text needs; ink gives 5.85:1. The pair is
+     used together by every shadcn primitive (button, select focus, dropdown,
+     command), so getting it right here fixes all of them at once — and bright
+     jade carrying dark text is the bolder look anyway. */
   --accent: #00a878;
-  --accent-foreground: #ffffff;
+  --accent-foreground: #0c1a16;
   --accent-hover: #00916a;
   --accent-deep: #06684c;
   --accent-bright: #1fd39a;

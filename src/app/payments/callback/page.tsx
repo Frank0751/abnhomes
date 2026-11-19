@@ -53,7 +53,7 @@ export default async function PaymentCallbackPage({
   const status = payment?.status === 'CONFIRMED' ? 'success' : sp.missing ? 'unknown' : 'pending'
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-[#eff3f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0, 168, 120,0.1),transparent)] px-4 py-10">
+    <div className="flex min-h-dvh items-center justify-center bg-[#eff3f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0,168,120,0.1),transparent)] px-4 py-10">
       <div className="w-full max-w-md rounded-2xl border border-black/[0.08] bg-white p-8 text-center shadow-lifted">
         {status === 'success' && (
           <>
