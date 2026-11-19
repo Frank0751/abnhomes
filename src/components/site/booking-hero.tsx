@@ -72,7 +72,13 @@ export function BookingHero() {
     <section
       id="home"
       ref={ref}
-      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#0c1a16] [@media(min-height:760px)]:h-[100svh]"
+      // The fixed height is a DESKTOP affordance: it stops a tall monitor
+      // leaving the hero floating in dead space. Keyed on height alone it also
+      // matched a phone — a 375x812 handset is "tall" — which pinned the hero
+      // to 812px while the stacked content needed more, so the last line ran
+      // underneath the marquee strip anchored at bottom-0. Requiring width too
+      // lets a phone keep min-h and grow, which is what it needed all along.
+      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#0c1a16] [@media(min-height:760px)_and_(min-width:768px)]:h-[100svh]"
     >
       {/* Background film + poster with slow Ken Burns drift */}
       <motion.div style={{ scale: bgScale, opacity: bgOpacity }} className="absolute inset-0">
