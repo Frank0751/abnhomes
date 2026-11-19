@@ -53,7 +53,7 @@ export function Hero() {
         {/* Multi-layer gradient overlays for depth and legibility */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0c1a16]/80 via-[#0c1a16]/55 to-[#0c1a16]/95" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a16]/80 via-transparent to-[#0c1a16]/45" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(12, 26, 22,0.55)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(12,26,22,0.55)_100%)]" />
       </motion.div>
 
       {/* Animated particle field */}
@@ -147,7 +147,7 @@ export function Hero() {
         >
           <button
             onClick={() => document.querySelector("#residences")?.scrollIntoView({ behavior: "smooth" })}
-            className="group relative px-8 py-4 bg-[#00a878] text-[#0c1a16] font-semibold tracking-wide text-sm uppercase overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_-15px_rgba(0, 168, 120,0.8)]"
+            className="group relative px-8 py-4 bg-[#00a878] text-[#0c1a16] font-semibold tracking-wide text-sm uppercase overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_-15px_rgba(0,168,120,0.8)]"
           >
             <span className="relative z-10">{t("cta.exploreResidences")}</span>
             <span className="absolute inset-0 bg-[#1fd39a] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />

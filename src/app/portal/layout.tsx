@@ -34,7 +34,7 @@ export default async function PortalLayout({ children }: { children: React.React
 
   return (
     <SessionProvider>
-      <div className="min-h-dvh bg-[#eff3f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0, 168, 120,0.08),transparent)]">
+      <div className="min-h-dvh bg-[#eff3f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0,168,120,0.08),transparent)]">
         <header className="sticky top-0 z-40 border-b border-black/[0.06] bg-[#f5f7f5]/85 backdrop-blur-md">
           <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-5 py-3.5">
             <Link href="/" className="flex items-center gap-2.5">

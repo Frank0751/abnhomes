@@ -36,7 +36,7 @@ export default async function PayPage({ params }: { params: Promise<{ code: stri
   const alreadyPaid = balanceMinor <= 0 || ['CANCELLED'].includes(reservation.status)
 
   return (
-    <div className="min-h-dvh bg-[#eff3f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0, 168, 120,0.1),transparent)] py-10 px-4">
+    <div className="min-h-dvh bg-[#eff3f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0,168,120,0.1),transparent)] py-10 px-4">
       <div className="mx-auto max-w-lg">
         <a href="/" className="mb-8 flex items-center justify-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}

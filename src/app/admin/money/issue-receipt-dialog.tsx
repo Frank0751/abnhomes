@@ -61,30 +61,72 @@ export function IssueReceiptDialog({
   const [payer, setPayer] = useState<Payer | null>(null)
   const [searching, startSearch] = useTransition()
 
+  /**
+   * Whether to show the issued-receipt panel.
+   *
+   * Kept separate from the action state because `useActionState` has no way to
+   * clear its result: once a receipt is issued, `state.ok` stays true for the
+   * life of the component. Gating on it alone meant the clerk reopened the
+   * dialog for the next guest and was shown the PREVIOUS guest's receipt
+   * number, with no way back to the form short of reloading the page.
+   */
+  const [showResult, setShowResult] = useState(false)
+
+  /**
+   * One key per receipt being written, not one per click.
+   *
+   * A clerk with a slow connection double-clicks Issue; both POSTs reach the
+   * server; without a key the ledger takes the cash twice and hands out two
+   * receipt numbers for one payment, and unpicking that means a reversal. The
+   * key travels with the form, so the second POST is recognised as the same
+   * payment and returns the receipt already written. A fresh one is minted
+   * only when the form is reset for the next payer.
+   */
+  const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID())
+
   // Debounced lookup — a clerk types faster than a round trip.
   useEffect(() => {
     if (payer || query.trim().length < 2) {
       setResults([])
       return
     }
+
+    // A slow early request must not overwrite the results of a later one.
+    // Typing "Ko" then "Koomson" fires twice; if the first reply lands last,
+    // the clerk is left looking at matches for a prefix they no longer typed
+    // and can pick the wrong person to receipt.
+    let live = true
+
     const timer = setTimeout(() => {
-      startSearch(async () => setResults(await searchPayersAction(query)))
+      startSearch(async () => {
+        const found = await searchPayersAction(query)
+        if (live) setResults(found)
+      })
     }, 250)
-    return () => clearTimeout(timer)
+
+    return () => {
+      live = false
+      clearTimeout(timer)
+    }
   }, [query, payer])
 
   useEffect(() => {
-    if (state?.ok) router.refresh()
+    if (state?.ok) {
+      setShowResult(true)
+      router.refresh()
+    }
   }, [state, router])
 
   function reset() {
     setQuery('')
     setResults([])
     setPayer(null)
+    setShowResult(false)
+    setIdempotencyKey(crypto.randomUUID())
   }
 
   // ---------------------------------------------------------------- issued
-  if (state?.ok && open) {
+  if (showResult && state?.ok && open) {
     return (
       <Dialog
         open={open}
@@ -145,6 +187,7 @@ export function IssueReceiptDialog({
 
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
         <form action={formAction}>
+          <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
           <DialogHeader>
             <DialogTitle>Issue a receipt</DialogTitle>
             <DialogDescription>

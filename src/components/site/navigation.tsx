@@ -121,7 +121,7 @@ export function Navigation() {
             </a>
             <Link
               href="/book"
-              className="hidden md:inline-flex items-center px-5 py-2.5 bg-[#00a878] hover:bg-[#1fd39a] text-white text-sm font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_10px_30px_-10px_rgba(0, 168, 120,0.7)]"
+              className="hidden md:inline-flex items-center px-5 py-2.5 bg-[#00a878] hover:bg-[#1fd39a] text-white text-sm font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_10px_30px_-10px_rgba(0,168,120,0.7)]"
             >
               {t("cta.bookStay")}
             </Link>

@@ -150,6 +150,15 @@ async function bookingTransaction(input: CreateReservationInput) {
       include: { ratePlans: { where: { active: true } }, property: true },
     })
 
+    // The rooftop is shared space: it has a Unit row so housekeeping and
+    // maintenance can be sent to it, but it is not something anyone sleeps in.
+    // The public availability query already filters amenities out; this is the
+    // rule itself, so the admin booking form, an import or a future API cannot
+    // route around it and sell the roof for the night.
+    if (unit.isAmenity) {
+      throw new Error(unit.name + ' is shared space and cannot be booked.')
+    }
+
     const quote: Quote = quoteFromUnit(unit, {
       checkIn: input.checkIn,
       checkOut: input.checkOut,

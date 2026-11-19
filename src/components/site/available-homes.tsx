@@ -147,7 +147,7 @@ function ListingCard({ listing, index }: { listing: Listing; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.7, delay: index * 0.1 }}
-      className="group flex flex-col overflow-hidden border border-[#dce5e0] bg-white shadow-[0_10px_40px_-24px_rgba(12, 26, 22,0.35)]"
+      className="group flex flex-col overflow-hidden border border-[#dce5e0] bg-white shadow-[0_10px_40px_-24px_rgba(12,26,22,0.35)]"
     >
       {/* Media slideshow */}
       <div

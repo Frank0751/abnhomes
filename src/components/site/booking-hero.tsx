@@ -90,7 +90,7 @@ export function BookingHero() {
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-[#0c1a16]/85 via-[#0c1a16]/60 to-[#0c1a16]/95" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a16]/80 via-transparent to-[#0c1a16]/45" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(12, 26, 22,0.55)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(12,26,22,0.55)_100%)]" />
       </motion.div>
 
       <ParticleField />
@@ -228,7 +228,7 @@ export function BookingHero() {
 
               <button
                 type="submit"
-                className="group relative h-[42px] w-full sm:w-auto overflow-hidden rounded-sm bg-[#00a878] px-6 text-[#f5f7f5] font-semibold tracking-wide text-sm uppercase transition-all duration-300 hover:shadow-[0_16px_40px_-12px_rgba(0, 168, 120,0.9)]"
+                className="group relative h-[42px] w-full sm:w-auto overflow-hidden rounded-sm bg-[#00a878] px-6 text-[#f5f7f5] font-semibold tracking-wide text-sm uppercase transition-all duration-300 hover:shadow-[0_16px_40px_-12px_rgba(0,168,120,0.9)]"
               >
                 <span className="relative z-10 inline-flex items-center gap-2">
                   <Search className="size-4" />

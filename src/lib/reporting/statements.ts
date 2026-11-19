@@ -115,11 +115,17 @@ export async function computeStatement(args: {
   }
 
   // Expenses booked against the property in the period.
+  //
+  // Reversed entries are excluded. A correction in an append-only ledger is a
+  // REVERSAL entry sitting beside the original, not a deletion, so filtering
+  // on kind alone would keep charging a withdrawn expense against the owner's
+  // payout in every statement from now on.
   const expenses = await db.ledgerEntry.findMany({
     where: {
       propertyId: args.propertyId,
       kind: 'EXPENSE',
       occurredAt: { gte: periodStart, lt: periodEnd },
+      reversedBy: { is: null },
     },
     orderBy: { occurredAt: 'asc' },
   })

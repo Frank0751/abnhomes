@@ -527,10 +527,18 @@ export async function notifyPaymentReceived(args: {
   receiptNumber: string | null
   channel: string
   propertyName?: string
+  /**
+   * The payment is recorded but not yet confirmed — field cash a clerk has
+   * taken and not yet handed to the office. The payer must not be told we
+   * "have received" it: if the cash never reaches the till it is reversed,
+   * and a message claiming receipt is then a document they can hold us to.
+   */
+  provisional?: boolean
 }): Promise<void> {
   const guest = await guestContact(args.partyId)
   const amount = formatMinor(args.amountMinor, args.currency as never)
   const receipt = args.receiptNumber ?? '—'
+  const provisional = args.provisional === true
 
   // The receipt itself — a real document they can open, print and keep. Keyed
   // on the payment id rather than the receipt number, because receipt numbers
@@ -545,14 +553,22 @@ export async function notifyPaymentReceived(args: {
       entityType: 'Payment',
       entityId: args.paymentId,
       dedupe: true,
-      subject: `Receipt ${receipt} · payment of ${amount} received`,
+      subject: provisional
+        ? `Receipt ${receipt} · payment of ${amount} recorded`
+        : `Receipt ${receipt} · payment of ${amount} received`,
       body: emailHtml({
-        heading: `Payment received — thank you`,
-        lines: [
-          `We have received <b>${amount}</b> from you${args.propertyName ? ` for ${args.propertyName}` : ''}.`,
-          `Receipt number: <b>${receipt}</b> · Paid via ${args.channel.replace(/_/g, ' ').toLowerCase()}`,
-          'Your receipt is below — open it to print it or save it as a PDF. It stays available at this link.',
-        ],
+        heading: provisional ? 'Payment recorded' : 'Payment received — thank you',
+        lines: provisional
+          ? [
+              `We have recorded a payment of <b>${amount}</b> from you${args.propertyName ? ` for ${args.propertyName}` : ''}, awaiting confirmation by our office.`,
+              `Receipt number: <b>${receipt}</b> · Paid via ${args.channel.replace(/_/g, ' ').toLowerCase()}`,
+              'This receipt is provisional until the payment clears. We will be in touch if anything does not match.',
+            ]
+          : [
+              `We have received <b>${amount}</b> from you${args.propertyName ? ` for ${args.propertyName}` : ''}.`,
+              `Receipt number: <b>${receipt}</b> · Paid via ${args.channel.replace(/_/g, ' ').toLowerCase()}`,
+              'Your receipt is below — open it to print it or save it as a PDF. It stays available at this link.',
+            ],
         cta: { label: 'View my receipt', url: receiptUrl },
       }),
     })
@@ -565,7 +581,9 @@ export async function notifyPaymentReceived(args: {
       entityType: 'Payment',
       entityId: args.paymentId,
       dedupe: true,
-      body: `Hello ${splitName(guest.name)}, we have received your payment of ${amount}. Receipt ${receipt}: ${receiptUrl} — ABN Homes.`,
+      body: provisional
+        ? `Hello ${splitName(guest.name)}, we have recorded your payment of ${amount}, awaiting confirmation. Provisional receipt ${receipt}: ${receiptUrl} — ABN Homes.`
+        : `Hello ${splitName(guest.name)}, we have received your payment of ${amount}. Receipt ${receipt}: ${receiptUrl} — ABN Homes.`,
     })
   }
 }

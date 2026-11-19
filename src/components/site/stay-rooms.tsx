@@ -108,7 +108,7 @@ export function StayRooms() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.6, delay: i * 0.08 }}
-              className="group flex cursor-pointer flex-col overflow-hidden border border-[#dce5e0] bg-white shadow-[0_10px_40px_-24px_rgba(12, 26, 22,0.35)] transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgba(12, 26, 22,0.5)]"
+              className="group flex cursor-pointer flex-col overflow-hidden border border-[#dce5e0] bg-white shadow-[0_10px_40px_-24px_rgba(12,26,22,0.35)] transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgba(12,26,22,0.5)]"
               onClick={() => bookRoom(room)}
             >
               {/* Photo — second image fades in on hover where one exists */}

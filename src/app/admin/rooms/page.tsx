@@ -12,10 +12,12 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { requirePermission } from '@/lib/session'
-import { propertyWhere } from '@/lib/rbac'
+import { can, propertyWhere } from '@/lib/rbac'
 import { db } from '@/lib/db'
 import { currentMonthPeriod, formatDate, today } from '@/lib/core/dates'
 import { formatMinor } from '@/lib/core/money'
+import type { Currency } from '@prisma/client'
+import { baseCurrency } from '@/lib/core/ledger'
 import {
   roomBoard,
   ROOM_STATE_CLASS,
@@ -45,6 +47,15 @@ export default async function RoomsPage({
   const actor = await requirePermission('units:read')
   const params = await searchParams
   const period = currentMonthPeriod()
+
+  // Housekeeping and maintenance need to know WHICH room, not what it earned.
+  // 'units:read' is the gate for the board itself; every money figure on it is
+  // gated separately on 'money:read', which those two roles deliberately lack.
+  const showMoney = can(actor, 'money:read')
+  // Revenue is accrued in the reporting base currency, not in the unit's own
+  // rate currency, so it must be formatted with the base — hardcoding GHS
+  // mislabels every figure the moment BASE_CURRENCY is set to anything else.
+  const base = baseCurrency()
 
   const [rooms, properties] = await Promise.all([
     roomBoard({
@@ -100,11 +111,13 @@ export default async function RoomsPage({
           sublabel={`${counts.free} empty, ${counts.blocked} blocked`}
           tone={counts.free > counts.occupied ? 'warning' : 'positive'}
         />
-        <StatCard
-          label="Earned this month"
-          value={formatMinor(monthRevenue, 'GHS')}
-          sublabel="Across all rooms, accrued"
-        />
+        {showMoney && (
+          <StatCard
+            label="Earned this month"
+            value={formatMinor(monthRevenue, base)}
+            sublabel="Across all rooms, accrued"
+          />
+        )}
         <StatCard
           label="Average occupancy"
           value={`${Math.round(avgOccupancy * 100)}%`}
@@ -172,7 +185,7 @@ export default async function RoomsPage({
       ) : (
         <div className="mt-6 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(270px,1fr))]">
           {filtered.map((room) => (
-            <RoomTile key={room.id} room={room} />
+            <RoomTile key={room.id} room={room} showMoney={showMoney} base={base} />
           ))}
         </div>
       )}
@@ -210,7 +223,15 @@ function FilterChip({
   )
 }
 
-function RoomTile({ room }: { room: RoomCard }) {
+function RoomTile({
+  room,
+  showMoney,
+  base,
+}: {
+  room: RoomCard
+  showMoney: boolean
+  base: Currency
+}) {
   const isAmenity = room.state === 'AMENITY'
 
   return (
@@ -313,15 +334,22 @@ function RoomTile({ room }: { room: RoomCard }) {
               )}
             </div>
 
-            <dl className="grid grid-cols-2 gap-2 border-t border-border pt-3 text-xs">
-              <div>
-                <dt className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                  This month
-                </dt>
-                <dd className="mt-0.5 font-mono text-sm font-bold tabular-nums">
-                  {formatMinor(room.revenueMinor, 'GHS')}
-                </dd>
-              </div>
+            <dl
+              className={cn(
+                'grid gap-2 border-t border-border pt-3 text-xs',
+                showMoney ? 'grid-cols-2' : 'grid-cols-1'
+              )}
+            >
+              {showMoney && (
+                <div>
+                  <dt className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                    This month
+                  </dt>
+                  <dd className="mt-0.5 font-mono text-sm font-bold tabular-nums">
+                    {formatMinor(room.revenueMinor, base)}
+                  </dd>
+                </div>
+              )}
               <div>
                 <dt className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                   Occupancy

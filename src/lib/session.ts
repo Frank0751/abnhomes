@@ -7,6 +7,7 @@
  */
 
 import { auth } from '@/lib/auth'
+import { db } from '@/lib/db'
 import { AccessError, type Actor, type Permission, assertCan, assertPropertyAccess } from '@/lib/rbac'
 
 export async function currentActor(): Promise<Actor | null> {
@@ -21,9 +22,31 @@ export async function currentActor(): Promise<Actor | null> {
   }
 }
 
+/**
+ * The actor behind a MUTATION, with the account confirmed still active.
+ *
+ * The session is a JWT and is never revalidated after sign-in, so deactivating
+ * someone does not invalidate the cookie they already hold. Redirecting them
+ * at the layout is not enough: a server action is a POST to the route, and its
+ * body runs before any layout re-render — so a dismissed clerk could still
+ * record payments, refund them, or reassign rooms, with the audit trail
+ * recording their name as if nothing were wrong.
+ *
+ * This costs one indexed lookup per action, which is the right trade for
+ * "a sacked employee cannot touch the money".
+ */
 export async function requireActor(): Promise<Actor> {
   const actor = await currentActor()
   if (!actor) throw new AccessError('You must be signed in.')
+
+  const account = await db.user.findUnique({
+    where: { id: actor.id },
+    select: { active: true },
+  })
+  if (!account || !account.active) {
+    throw new AccessError('This account is no longer active. Please sign in again.')
+  }
+
   return actor
 }
 
