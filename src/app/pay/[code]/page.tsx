@@ -36,12 +36,12 @@ export default async function PayPage({ params }: { params: Promise<{ code: stri
   const alreadyPaid = balanceMinor <= 0 || ['CANCELLED'].includes(reservation.status)
 
   return (
-    <div className="min-h-dvh bg-[#f7f5f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(13,148,136,0.1),transparent)] py-10 px-4">
+    <div className="min-h-dvh bg-[#eff3f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0, 168, 120,0.1),transparent)] py-10 px-4">
       <div className="mx-auto max-w-lg">
         <a href="/" className="mb-8 flex items-center justify-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/logo/abn-badge.png" alt="" className="size-7" />
-          <span className="font-serif text-lg tracking-tight text-[#0a0e1a]">ABN Homes</span>
+          <span className="font-serif text-lg tracking-tight text-[#0c1a16]">ABN Homes</span>
         </a>
 
         <div className="rounded-2xl border border-black/[0.08] bg-white shadow-lifted">
@@ -49,7 +49,7 @@ export default async function PayPage({ params }: { params: Promise<{ code: stri
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8a93a5]">
               Booking {reservation.code}
             </p>
-            <h1 className="mt-1 font-serif text-xl tracking-tight text-[#0a0e1a]">
+            <h1 className="mt-1 font-serif text-xl tracking-tight text-[#0c1a16]">
               {reservation.unit.name} · {reservation.unit.property.name}
             </h1>
             <p className="mt-1 text-sm text-[#5b6472]">
@@ -59,13 +59,13 @@ export default async function PayPage({ params }: { params: Promise<{ code: stri
 
           {alreadyPaid ? (
             <div className="px-6 py-10 text-center">
-              <p className="font-serif text-lg text-[#0a0e1a]">This booking is settled in full. 🎉</p>
+              <p className="font-serif text-lg text-[#0c1a16]">This booking is settled in full. 🎉</p>
               <p className="mx-auto mt-2 max-w-sm text-sm text-[#5b6472]">
                 Thank you — your receipt is in your guest portal. We look forward to welcoming you.
               </p>
               <a
                 href="/portal"
-                className="mt-5 inline-block rounded-lg bg-[#0a0e1a] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1a2233]"
+                className="mt-5 inline-block rounded-lg bg-[#0c1a16] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1a2233]"
               >
                 Open my portal
               </a>

@@ -73,7 +73,7 @@ export default async function AnalyticsPage({
           href={link(rangeDays)}
           className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
             !propertyId
-              ? 'bg-[#0a0e1a] text-white'
+              ? 'bg-[#0c1a16] text-white'
               : 'border border-black/10 bg-white hover:bg-black/5'
           }`}
         >
@@ -85,7 +85,7 @@ export default async function AnalyticsPage({
             href={link(rangeDays, p.id)}
             className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
               propertyId === p.id
-                ? 'bg-[#0a0e1a] text-white'
+                ? 'bg-[#0c1a16] text-white'
                 : 'border border-black/10 bg-white hover:bg-black/5'
             }`}
           >
@@ -105,7 +105,7 @@ export default async function AnalyticsPage({
           <div className="flex flex-wrap gap-2">
             <Link
               href={reportHref}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#0a0e1a] px-3.5 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#0c1a16] px-3.5 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]"
             >
               <FileText className="size-4" />
               Management report
@@ -257,12 +257,12 @@ export default async function AnalyticsPage({
           description="From public application to a signed lease, with stage-to-stage conversion. Rejects and withdrawals are excluded."
         >
           <div className="px-4 pb-4 pt-2">
-            <FunnelChart data={data.tenancyFunnel} color="#0d9488" noun="rental applications" />
+            <FunnelChart data={data.tenancyFunnel} color="#00a878" noun="rental applications" />
           </div>
           <p className="flex items-center gap-1.5 px-5 pb-4 text-xs text-muted-foreground">
-            <UserPlus className="size-3.5 text-[#0d9488]" />
+            <UserPlus className="size-3.5 text-[#00a878]" />
             Review the people behind these numbers in{' '}
-            <Link href="/admin/applications" className="font-medium text-[#0f766e] hover:underline">
+            <Link href="/admin/applications" className="font-medium text-[#06684c] hover:underline">
               Applications
             </Link>
             .
@@ -273,12 +273,12 @@ export default async function AnalyticsPage({
           description="From first offer to keys, with conversion. The purchase journey runs through the same ledger as rent."
         >
           <div className="px-4 pb-4 pt-2">
-            <FunnelChart data={data.salesFunnel} color="#0a0e1a" noun="purchase offers" />
+            <FunnelChart data={data.salesFunnel} color="#0c1a16" noun="purchase offers" />
           </div>
           <p className="flex items-center gap-1.5 px-5 pb-4 text-xs text-muted-foreground">
-            <KeyRound className="size-3.5 text-[#0d9488]" />
+            <KeyRound className="size-3.5 text-[#00a878]" />
             Manage the money side in{' '}
-            <Link href="/admin/sales" className="font-medium text-[#0f766e] hover:underline">
+            <Link href="/admin/sales" className="font-medium text-[#06684c] hover:underline">
               Property sales
             </Link>
             .
@@ -296,7 +296,7 @@ export default async function AnalyticsPage({
                   <AlertTriangle className="size-4 text-amber-500" />
                   <span>
                     <strong>{formatMinor(data.kpis.arrearsMinor, 'GHS')}</strong> sits in open charges — see{' '}
-                    <Link href="/admin/arrears" className="font-medium text-[#0f766e] hover:underline">Arrears</Link> for who and how late.
+                    <Link href="/admin/arrears" className="font-medium text-[#06684c] hover:underline">Arrears</Link> for who and how late.
                   </span>
                 </li>
               ),
@@ -314,7 +314,7 @@ export default async function AnalyticsPage({
                   <FileText className="size-4 text-amber-500" />
                   <span>
                     {newReviews} review{newReviews === 1 ? '' : 's'} waiting for moderation —{' '}
-                    <Link href="/admin/reviews" className="font-medium text-[#0f766e] hover:underline">moderate now</Link>.
+                    <Link href="/admin/reviews" className="font-medium text-[#06684c] hover:underline">moderate now</Link>.
                   </span>
                 </li>
               ),
@@ -324,7 +324,7 @@ export default async function AnalyticsPage({
                   <span>
                     {unreadMessages} message{unreadMessages === 1 ? '' : 's'} queued in the outbox — the sweeper will
                     drain them; see{' '}
-                    <Link href="/admin/messages" className="font-medium text-[#0f766e] hover:underline">Messages</Link>.
+                    <Link href="/admin/messages" className="font-medium text-[#06684c] hover:underline">Messages</Link>.
                   </span>
                 </li>
               ),
@@ -333,7 +333,7 @@ export default async function AnalyticsPage({
               !data.occupancy.some((o) => o.occupancy < 0.4) &&
               newReviews === 0 &&
               unreadMessages === 0 && (
-                <li className="flex items-center gap-2 text-[#0f766e]">
+                <li className="flex items-center gap-2 text-[#06684c]">
                   <AlertTriangle className="size-4" />
                   Nothing needs attention. The numbers are clean.
                 </li>

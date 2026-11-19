@@ -17,7 +17,13 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  /// Runtime connection. On Supabase this is the transaction pooler (6543),
+  /// which is what serverless functions must use.
   url      = env("DATABASE_URL")
+  /// Schema changes need a direct connection (5432). Prisma cannot push or
+  /// migrate through pgbouncer — the pooler does not keep the session state a
+  /// DDL statement depends on, and the push fails in confusing ways.
+  directUrl = env("DIRECT_URL")
 }
 
 // ===========================================================================
@@ -379,6 +385,7 @@ model User {
   tasksAssigned     HousekeepingTask[]   @relation("TaskAssignee")
   documents         Document[]           @relation("DocumentUploader")
   managedProperties Property[]           @relation("PropertyManager")
+  managedUnits      Unit[]               @relation("UnitManager")
   purchasesReviewed  Purchase[]           @relation("PurchaseReviewer")
   applicationsReviewed TenancyApplication[] @relation("TenancyApplicationReviewer")
 
@@ -577,6 +584,22 @@ model Unit {
   lettingMode LettingMode @default(SHORT_STAY)
   status      UnitStatus  @default(AVAILABLE)
   floor       Int?
+
+  /// Shared space that belongs to the building rather than being let — the
+  /// rooftop. It appears on the room board so housekeeping and maintenance can
+  /// see it, but it is never bookable, carries no rate and earns nothing, so
+  /// every occupancy and revenue figure excludes it.
+  isAmenity   Boolean     @default(false)
+
+  /// Who runs this room day to day. Rooms are managed independently, so this
+  /// is deliberately per-unit rather than inherited from the building.
+  managerId   String?
+  manager     User?       @relation("UnitManager", fields: [managerId], references: [id], onDelete: SetNull)
+
+  /// Display order on the board. Rooms read 2, 3, 4, 5, 6, 7 — not the
+  /// alphabetical order their codes would otherwise impose.
+  sortOrder   Int         @default(0)
+
   bedrooms    Int         @default(1)
   bathrooms   Int         @default(1)
   sizeSqm     Int?

@@ -10,7 +10,7 @@ type ActionResult = { ok: true; message: string } | { ok: false; error: string }
 type Action = (formData: FormData) => Promise<ActionResult>
 
 const inputClass =
-  'w-full rounded-lg border border-black/12 bg-white px-2.5 py-2 text-sm focus:border-[#0d9488] focus:outline-none'
+  'w-full rounded-lg border border-black/12 bg-white px-2.5 py-2 text-sm focus:border-[#00a878] focus:outline-none'
 const labelClass = 'mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground'
 
 export function AssetForm({ properties, action }: { properties: { id: string; name: string }[]; action: Action }) {
@@ -71,7 +71,7 @@ export function AssetForm({ properties, action }: { properties: { id: string; na
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-[#0a0e1a] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233] disabled:opacity-60"
+        className="w-full rounded-lg bg-[#0c1a16] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233] disabled:opacity-60"
       >
         {pending && <Loader2 className="mr-1.5 inline size-3.5 animate-spin" />}
         Add to register
@@ -150,7 +150,7 @@ export function ScheduleForm({ properties, action }: { properties: { id: string;
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-[#0a0e1a] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233] disabled:opacity-60"
+        className="w-full rounded-lg bg-[#0c1a16] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233] disabled:opacity-60"
       >
         {pending && <Loader2 className="mr-1.5 inline size-3.5 animate-spin" />}
         Schedule it

@@ -40,18 +40,18 @@ export default async function RentDetailPage({ params }: { params: Promise<{ slu
   const depositLabel = formatMoney(home.rentMinor, home.currency) // one month, standard
 
   return (
-    <main className="min-h-screen bg-[#faf8f3]">
-      <section className="relative h-[46vh] min-h-72 w-full overflow-hidden bg-[#0a0e1a]">
+    <main className="min-h-screen bg-[#f5f7f5]">
+      <section className="relative h-[46vh] min-h-72 w-full overflow-hidden bg-[#0c1a16]">
         {home.allImages[0] && (
           <Image src={home.allImages[0]} alt={home.name} fill priority sizes="100vw" className="object-cover opacity-90" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/85 via-[#0a0e1a]/25 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a16]/85 via-[#0c1a16]/25 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-6xl px-5 pb-8 lg:px-10">
           <Link href="/rent" className="mb-4 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.16em] text-white/70 transition hover:text-white">
             <ArrowLeft className="size-3.5" /> All homes to rent
           </Link>
           <p className="flex items-center gap-1.5 text-sm text-white/75">
-            <MapPin className="size-4 text-[#14b8a6]" />
+            <MapPin className="size-4 text-[#1fd39a]" />
             {home.propertyName}
             {home.neighbourhood ? ` · ${home.neighbourhood}, ${home.city}` : ''}
           </p>
@@ -62,13 +62,13 @@ export default async function RentDetailPage({ params }: { params: Promise<{ slu
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[1fr_400px] lg:px-10">
         <div>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-black/8 bg-white p-5 shadow-soft">
-            <p className="font-serif text-2xl text-[#1a1f2e]">
+            <p className="font-serif text-2xl text-[#16271f]">
               {rentLabel}<span className="ml-1 font-sans text-sm font-medium text-[#5b6472]">/ month</span>
             </p>
             <span className="text-[#5b6472]">·</span>
-            <span className="flex items-center gap-1.5 text-sm text-[#5b6472]"><BedDouble className="size-4 text-[#0d9488]" />{home.bedrooms} bed</span>
-            <span className="flex items-center gap-1.5 text-sm text-[#5b6472]"><Bath className="size-4 text-[#0d9488]" />{home.bathrooms} bath</span>
-            {home.sizeSqm && <span className="flex items-center gap-1.5 text-sm text-[#5b6472]"><Ruler className="size-4 text-[#0d9488]" />{home.sizeSqm} m²</span>}
+            <span className="flex items-center gap-1.5 text-sm text-[#5b6472]"><BedDouble className="size-4 text-[#00a878]" />{home.bedrooms} bed</span>
+            <span className="flex items-center gap-1.5 text-sm text-[#5b6472]"><Bath className="size-4 text-[#00a878]" />{home.bathrooms} bath</span>
+            {home.sizeSqm && <span className="flex items-center gap-1.5 text-sm text-[#5b6472]"><Ruler className="size-4 text-[#00a878]" />{home.sizeSqm} m²</span>}
           </div>
 
           {home.description && <p className="mt-6 leading-relaxed text-[#4b5563]">{home.description}</p>}
@@ -80,8 +80,8 @@ export default async function RentDetailPage({ params }: { params: Promise<{ slu
               { icon: ShieldCheck, t: 'Screening', d: 'ID + income check, free, about two working days' },
             ].map((f) => (
               <div key={f.t} className="rounded-xl border border-black/8 bg-white p-4">
-                <f.icon className="size-5 text-[#0d9488]" />
-                <dt className="mt-2 font-medium text-[#1a1f2e]">{f.t}</dt>
+                <f.icon className="size-5 text-[#00a878]" />
+                <dt className="mt-2 font-medium text-[#16271f]">{f.t}</dt>
                 <dd className="mt-1 text-xs leading-relaxed text-[#5b6472]">{f.d}</dd>
               </div>
             ))}
@@ -89,11 +89,11 @@ export default async function RentDetailPage({ params }: { params: Promise<{ slu
 
           {home.features.length > 0 && (
             <div className="mt-10">
-              <h2 className="font-serif text-2xl text-[#1a1f2e]">What&apos;s inside</h2>
+              <h2 className="font-serif text-2xl text-[#16271f]">What&apos;s inside</h2>
               <ul className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                 {home.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-[#4b5563]">
-                    <CheckCircle2 className="size-4 shrink-0 text-[#0d9488]" /> {f.replace(/_/g, ' ')}
+                    <CheckCircle2 className="size-4 shrink-0 text-[#00a878]" /> {f.replace(/_/g, ' ')}
                   </li>
                 ))}
               </ul>
@@ -102,10 +102,10 @@ export default async function RentDetailPage({ params }: { params: Promise<{ slu
 
           {home.allImages.length > 1 && (
             <div className="mt-10">
-              <h2 className="font-serif text-2xl text-[#1a1f2e]">Gallery</h2>
+              <h2 className="font-serif text-2xl text-[#16271f]">Gallery</h2>
               <div className="mt-4 grid grid-cols-2 gap-4">
                 {home.allImages.slice(1, 5).map((img, i) => (
-                  <div key={img + i} className="relative aspect-[4/3] overflow-hidden rounded-xl border border-black/8 bg-[#e8e3d8]">
+                  <div key={img + i} className="relative aspect-[4/3] overflow-hidden rounded-xl border border-black/8 bg-[#dce5e0]">
                     <Image src={img} alt={`${home.name} photo ${i + 2}`} fill sizes="(max-width: 1024px) 50vw, 25vw" className="object-cover" />
                   </div>
                 ))}
@@ -114,7 +114,7 @@ export default async function RentDetailPage({ params }: { params: Promise<{ slu
           )}
 
           <div className="mt-10 rounded-2xl border border-black/8 bg-white p-6 shadow-soft">
-            <h2 className="font-serif text-2xl text-[#1a1f2e]">How renting here works</h2>
+            <h2 className="font-serif text-2xl text-[#16271f]">How renting here works</h2>
             <ol className="mt-5 space-y-5">
               {[
                 { icon: FileCheck2, title: 'Apply with a code', body: 'Submit the form — it takes two minutes and creates your tracked RNT- application.' },
@@ -122,11 +122,11 @@ export default async function RentDetailPage({ params }: { params: Promise<{ slu
                 { icon: KeyRound, title: 'Sign and move in', body: 'Approved applicants sign digitally, pay the deposit, and get a tenant portal on day one.' },
               ].map((s, i) => (
                 <li key={i} className="flex gap-4">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0d9488]/10">
-                    <s.icon className="size-5 text-[#0d9488]" />
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#00a878]/10">
+                    <s.icon className="size-5 text-[#00a878]" />
                   </span>
                   <div>
-                    <h3 className="font-medium text-[#1a1f2e]">{s.title}</h3>
+                    <h3 className="font-medium text-[#16271f]">{s.title}</h3>
                     <p className="mt-0.5 text-sm leading-relaxed text-[#5b6472]">{s.body}</p>
                   </div>
                 </li>
@@ -137,7 +137,7 @@ export default async function RentDetailPage({ params }: { params: Promise<{ slu
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-2xl border border-black/8 bg-white p-6 shadow-soft">
-            <h3 className="font-serif text-xl text-[#1a1f2e]">Apply to rent this home</h3>
+            <h3 className="font-serif text-xl text-[#16271f]">Apply to rent this home</h3>
             <p className="mb-5 mt-1 text-sm text-[#5b6472]">
               Free screening, no obligation. You get a tracking code immediately.
             </p>

@@ -9,7 +9,7 @@ import { createCouponAction, toggleCouponAction } from './actions'
 type ActionResult = { ok: true; message: string } | { ok: false; error: string }
 
 const inputClass =
-  'w-full rounded-lg border border-black/12 bg-white px-2.5 py-2 text-sm focus:border-[#0d9488] focus:outline-none'
+  'w-full rounded-lg border border-black/12 bg-white px-2.5 py-2 text-sm focus:border-[#00a878] focus:outline-none'
 const labelClass = 'mb-1 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground'
 
 export function CouponForm({ action }: { action: (formData: FormData) => Promise<ActionResult> }) {
@@ -84,7 +84,7 @@ export function CouponForm({ action }: { action: (formData: FormData) => Promise
         </label>
       </div>
       <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" name="firstBookingOnly" className="accent-[#0d9488]" />
+        <input type="checkbox" name="firstBookingOnly" className="accent-[#00a878]" />
         First booking only
       </label>
       <label className="block">
@@ -94,7 +94,7 @@ export function CouponForm({ action }: { action: (formData: FormData) => Promise
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-[#0a0e1a] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233] disabled:opacity-60"
+        className="w-full rounded-lg bg-[#0c1a16] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233] disabled:opacity-60"
       >
         {pending && <Loader2 className="mr-1.5 inline size-3.5 animate-spin" />}
         Create coupon

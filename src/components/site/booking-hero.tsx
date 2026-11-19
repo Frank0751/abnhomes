@@ -72,7 +72,7 @@ export function BookingHero() {
     <section
       id="home"
       ref={ref}
-      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#0a0e1a] [@media(min-height:760px)]:h-[100svh]"
+      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#0c1a16] [@media(min-height:760px)]:h-[100svh]"
     >
       {/* Background film + poster with slow Ken Burns drift */}
       <motion.div style={{ scale: bgScale, opacity: bgOpacity }} className="absolute inset-0">
@@ -88,9 +88,9 @@ export function BookingHero() {
         >
           <source src="/videos/hero-loop.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e1a]/85 via-[#0a0e1a]/60 to-[#0a0e1a]/95" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0e1a]/80 via-transparent to-[#0a0e1a]/45" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(10,14,26,0.55)_100%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0c1a16]/85 via-[#0c1a16]/60 to-[#0c1a16]/95" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a16]/80 via-transparent to-[#0c1a16]/45" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(12, 26, 22,0.55)_100%)]" />
       </motion.div>
 
       <ParticleField />
@@ -138,7 +138,7 @@ export function BookingHero() {
                     backgroundSize: "200% 100%",
                     WebkitTextFillColor: "transparent",
                     backgroundImage:
-                      "linear-gradient(90deg, transparent 0%, rgba(20,184,166,0.85) 50%, transparent 100%)",
+                      "linear-gradient(90deg, transparent 0%, rgba(31, 211, 154,0.85) 50%, transparent 100%)",
                     backgroundClip: "text",
                     animation: `shimmer 3.5s ease-in-out ${1.5 + i * 0.1}s infinite`,
                   }}
@@ -172,16 +172,16 @@ export function BookingHero() {
               e.preventDefault();
               search(checkIn, checkOut, guests);
             }}
-            className="rounded-sm bg-[#faf8f3] p-4 sm:p-5 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] text-left"
+            className="rounded-sm bg-[#f5f7f5] p-4 sm:p-5 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] text-left"
           >
-            <p className="mb-3 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#0a0e1a]/70">
-              <CalendarDays className="size-3.5 text-[#0d9488]" />
+            <p className="mb-3 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#0c1a16]/70">
+              <CalendarDays className="size-3.5 text-[#00a878]" />
               {t("booking.checkAvailability")}
             </p>
 
             <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
               <div className="space-y-1">
-                <label htmlFor="hero-check-in" className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0a0e1a]/60">
+                <label htmlFor="hero-check-in" className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0c1a16]/60">
                   {t("booking.arrive")}
                 </label>
                 <input
@@ -190,12 +190,12 @@ export function BookingHero() {
                   value={checkIn}
                   min={iso(now)}
                   onChange={(e) => onCheckIn(e.target.value)}
-                  className="w-full rounded-sm border border-black/15 bg-white px-3 py-2.5 text-sm text-[#0a0e1a] outline-none focus:border-[#0d9488] focus:ring-2 focus:ring-[#0d9488]/25"
+                  className="w-full rounded-sm border border-black/15 bg-white px-3 py-2.5 text-sm text-[#0c1a16] outline-none focus:border-[#00a878] focus:ring-2 focus:ring-[#00a878]/25"
                 />
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="hero-check-out" className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0a0e1a]/60">
+                <label htmlFor="hero-check-out" className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0c1a16]/60">
                   {t("booking.leave")}
                 </label>
                 <input
@@ -204,19 +204,19 @@ export function BookingHero() {
                   value={checkOut}
                   min={iso(addDays(now, 1))}
                   onChange={(e) => setCheckOut(e.target.value)}
-                  className="w-full rounded-sm border border-black/15 bg-white px-3 py-2.5 text-sm text-[#0a0e1a] outline-none focus:border-[#0d9488] focus:ring-2 focus:ring-[#0d9488]/25"
+                  className="w-full rounded-sm border border-black/15 bg-white px-3 py-2.5 text-sm text-[#0c1a16] outline-none focus:border-[#00a878] focus:ring-2 focus:ring-[#00a878]/25"
                 />
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="hero-guests" className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0a0e1a]/60">
+                <label htmlFor="hero-guests" className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0c1a16]/60">
                   {t("booking.guests")}
                 </label>
                 <select
                   id="hero-guests"
                   value={guests}
                   onChange={(e) => setGuests(Number(e.target.value))}
-                  className="w-full sm:w-24 rounded-sm border border-black/15 bg-white px-3 py-2.5 text-sm text-[#0a0e1a] outline-none focus:border-[#0d9488] focus:ring-2 focus:ring-[#0d9488]/25"
+                  className="w-full sm:w-24 rounded-sm border border-black/15 bg-white px-3 py-2.5 text-sm text-[#0c1a16] outline-none focus:border-[#00a878] focus:ring-2 focus:ring-[#00a878]/25"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                     <option key={n} value={n}>
@@ -228,13 +228,13 @@ export function BookingHero() {
 
               <button
                 type="submit"
-                className="group relative h-[42px] w-full sm:w-auto overflow-hidden rounded-sm bg-[#0d9488] px-6 text-[#faf8f3] font-semibold tracking-wide text-sm uppercase transition-all duration-300 hover:shadow-[0_16px_40px_-12px_rgba(13,148,136,0.9)]"
+                className="group relative h-[42px] w-full sm:w-auto overflow-hidden rounded-sm bg-[#00a878] px-6 text-[#f5f7f5] font-semibold tracking-wide text-sm uppercase transition-all duration-300 hover:shadow-[0_16px_40px_-12px_rgba(0, 168, 120,0.9)]"
               >
                 <span className="relative z-10 inline-flex items-center gap-2">
                   <Search className="size-4" />
                   {t("cta.check")}
                 </span>
-                <span className="absolute inset-0 bg-[#14b8a6] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <span className="absolute inset-0 bg-[#1fd39a] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </button>
             </div>
 
@@ -246,8 +246,8 @@ export function BookingHero() {
 
             {/* Quick stays — one tap fills the card */}
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-[#0a0e1a]/50">
-                <Sparkles className="size-3 text-[#0d9488]" />
+              <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-[#0c1a16]/50">
+                <Sparkles className="size-3 text-[#00a878]" />
                 {t("booking.quickStay")}
               </span>
               {[
@@ -263,7 +263,7 @@ export function BookingHero() {
                     setCheckOut(iso(chip.co));
                     setError(null);
                   }}
-                  className="rounded-full border border-black/12 bg-white px-3 py-1 text-xs text-[#0a0e1a]/75 transition-colors hover:border-[#0d9488] hover:text-[#0d9488]"
+                  className="rounded-full border border-black/12 bg-white px-3 py-1 text-xs text-[#0c1a16]/75 transition-colors hover:border-[#00a878] hover:text-[#00a878]"
                 >
                   {t(chip.key)}
                 </button>
@@ -275,17 +275,17 @@ export function BookingHero() {
           <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] tracking-[0.14em] uppercase text-white/60">
             <span className="inline-flex items-center gap-1.5">
               <span className="relative flex size-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#14b8a6] opacity-75" />
-                <span className="relative inline-flex size-1.5 rounded-full bg-[#14b8a6]" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1fd39a] opacity-75" />
+                <span className="relative inline-flex size-1.5 rounded-full bg-[#1fd39a]" />
               </span>
               {t("booking.liveAvailability")}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Wallet className="size-3.5 text-[#0d9488]" />
+              <Wallet className="size-3.5 text-[#00a878]" />
               {t("booking.noPlatformFee")}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="size-3.5 text-[#0d9488]" />
+              <ShieldCheck className="size-3.5 text-[#00a878]" />
               {t("booking.confirmedByTeam")}
             </span>
           </div>
@@ -298,7 +298,7 @@ export function BookingHero() {
           transition={{ delay: 1.6, duration: 0.8 }}
           className="mt-7 flex items-center gap-2 text-white/55 text-[11px] tracking-[0.2em]"
         >
-          <MapPin className="h-3.5 w-3.5 text-[#0d9488] shrink-0" />
+          <MapPin className="h-3.5 w-3.5 text-[#00a878] shrink-0" />
           <span>8 Asiko Street, Tantra Hill, Accra, Ghana</span>
         </motion.div>
 
@@ -316,7 +316,7 @@ export function BookingHero() {
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline underline-offset-4 decoration-[#0d9488]/60 hover:text-white/70 transition-colors"
+            className="underline underline-offset-4 decoration-[#00a878]/60 hover:text-white/70 transition-colors"
           >
             {t("booking.whatsappUs")}
           </a>
@@ -328,7 +328,7 @@ export function BookingHero() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.0, duration: 0.8 }}
-        className="absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-[#0a0e1a]/60 backdrop-blur-sm overflow-hidden"
+        className="absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-[#0c1a16]/60 backdrop-blur-sm overflow-hidden"
       >
         <div className="flex whitespace-nowrap animate-marquee py-3">
           {Array.from({ length: 2 }).map((_, set) => (
@@ -348,7 +348,7 @@ export function BookingHero() {
                 "marquee.security",
               ].map((item, i) => (
                 <span key={`${set}-${i}`} className="flex items-center gap-3 text-xs tracking-[0.2em] text-white/55 uppercase">
-                  <span className="w-1 h-1 rounded-full bg-[#0d9488]" />
+                  <span className="w-1 h-1 rounded-full bg-[#00a878]" />
                   {t(item)}
                 </span>
               ))}
@@ -401,13 +401,13 @@ function ParticleField() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute rounded-full bg-[#0d9488]"
+          className="absolute rounded-full bg-[#00a878]"
           style={{
             width: `${p.size}px`,
             height: `${p.size}px`,
             left: `${p.left}%`,
             top: `${p.top}%`,
-            boxShadow: "0 0 6px rgba(13,148,136,0.6)",
+            boxShadow: "0 0 6px rgba(0, 168, 120,0.6)",
           }}
         />
       ))}

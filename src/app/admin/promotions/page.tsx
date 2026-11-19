@@ -41,7 +41,7 @@ export default async function PromotionsPage() {
                   <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5">
                     <div className="min-w-0">
                       <p className="flex items-center gap-2 text-sm font-medium">
-                        <Tag className="size-3.5 text-[#0d9488]" />
+                        <Tag className="size-3.5 text-[#00a878]" />
                         <span className="font-mono tracking-wide">{c.code}</span>
                         <Pill tone={c.active && !expired ? 'positive' : 'neutral'}>
                           {expired ? 'Expired' : c.active ? 'Live' : 'Paused'}

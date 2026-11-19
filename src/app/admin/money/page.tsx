@@ -27,6 +27,7 @@ import {
   humanise,
 } from '@/components/admin/ui'
 import { ConfirmPaymentButton } from './confirm-button'
+import { IssueReceiptDialog } from './issue-receipt-dialog'
 import { RefundPaymentButton } from './refund-button'
 import { gatewayIsSimulated } from '@/lib/payments/gateway'
 
@@ -35,7 +36,14 @@ export default async function MoneyPage() {
   const period = currentMonthPeriod()
   const scope = propertyWhere(actor)
 
-  const [pending, recent, monthTotals, byChannel] = await Promise.all([
+  const [receiptProperties, pending, recent, monthTotals, byChannel] = await Promise.all([
+    // Buildings this person may take money for — the manual receipt dialog
+    // must not offer a property they have no access to.
+    db.property.findMany({
+      where: { active: true, ...scope },
+      select: { id: true, name: true },
+      orderBy: { name: 'asc' },
+    }),
     db.payment.findMany({
       where: { syncState: 'PENDING', status: 'PENDING', ...scope },
       include: {
@@ -84,7 +92,8 @@ export default async function MoneyPage() {
     <>
       <PageHeader
         title="Payments"
-        description="Every payment, every channel. Receipt numbers are sequential and never reused."
+        description="Every payment, every channel. Receipt numbers are sequential and never reused — tap one to open the receipt."
+        actions={<IssueReceiptDialog properties={receiptProperties} />}
       />
 
       {gatewayIsSimulated() && (
@@ -132,7 +141,15 @@ export default async function MoneyPage() {
               <tbody className="divide-y divide-black/6">
                 {pending.map((payment) => (
                   <tr key={payment.id}>
-                    <td className="px-4 py-2.5 font-mono text-xs">{payment.receiptNumber}</td>
+                    <td className="px-4 py-2.5">
+                      <Link
+                        href={`/receipt/${payment.id}`}
+                        target="_blank"
+                        className="font-mono text-xs underline decoration-dotted underline-offset-2 hover:text-[var(--accent-deep)]"
+                      >
+                        {payment.receiptNumber}
+                      </Link>
+                    </td>
                     <td className="px-4 py-2.5">
                       {payment.party.name}
                       {payment.party.phone && (
@@ -191,7 +208,15 @@ export default async function MoneyPage() {
 
                     return (
                       <tr key={payment.id} className="hover:bg-black/[0.02]">
-                        <td className="px-4 py-2.5 font-mono text-xs">{payment.receiptNumber}</td>
+                        <td className="px-4 py-2.5">
+                      <Link
+                        href={`/receipt/${payment.id}`}
+                        target="_blank"
+                        className="font-mono text-xs underline decoration-dotted underline-offset-2 hover:text-[var(--accent-deep)]"
+                      >
+                        {payment.receiptNumber}
+                      </Link>
+                    </td>
                         <td className="px-4 py-2.5">
                           {payment.party.name}
                           <span className="block text-xs text-muted-foreground">

@@ -114,6 +114,36 @@ export async function createReservation(input: CreateReservationInput) {
     checkOut: input.checkOut,
   })
 
+  const result = await bookingTransaction(input)
+
+  /**
+   * Portal access is granted AFTER the booking is committed, for two reasons.
+   *
+   * It reads the reservation back through its own connection, so called from
+   * inside the transaction it cannot see a row that has not committed yet —
+   * which made every "confirm immediately" booking fail outright.
+   *
+   * And it is not part of the booking's atomicity. A stay that is paid for and
+   * recorded must not be rolled back because a six-character code could not be
+   * minted; the code can be issued later from the booking screen.
+   */
+  let portalCode: string | null = null
+  if (result.created && result.reservation.status === 'CONFIRMED') {
+    try {
+      portalCode = await ensurePortalAccess(result.reservation.id)
+    } catch (error) {
+      console.error(
+        '[reservations] booking %s was created but portal access failed',
+        result.reservation.code,
+        error
+      )
+    }
+  }
+
+  return { ...result, portalCode }
+}
+
+async function bookingTransaction(input: CreateReservationInput) {
   return db.$transaction(async (tx) => {
     const unit = await tx.unit.findUniqueOrThrow({
       where: { id: input.unitId },
@@ -293,12 +323,7 @@ export async function createReservation(input: CreateReservationInput) {
       data: { status: status === 'CONFIRMED' ? 'RESERVED' : unit.status },
     })
 
-    // A booking the desk creates as already-confirmed (walk-in paying at the
-    // desk) gets portal access on the same terms as one confirmed later.
-    const portalCode =
-      reservation.status === 'CONFIRMED' ? await ensurePortalAccess(reservation.id) : null
-
-    return { reservation, quote, created: true as const, portalCode }
+    return { reservation, quote, created: true as const }
   }, TX_OPTS)
 }
 

@@ -92,7 +92,7 @@ export function PortalAccessCard({
       description="The guest signs in at /portal with the email or phone they booked with, plus this code."
     >
       <div className="space-y-3 p-4">
-        <div className="flex items-center justify-between gap-3 rounded border border-black/10 bg-[#faf8f3] px-4 py-3">
+        <div className="flex items-center justify-between gap-3 rounded border border-black/10 bg-[#f5f7f5] px-4 py-3">
           <span className="font-mono text-xl font-semibold tracking-[0.14em]">{portalCode}</span>
           <Button variant="ghost" size="sm" onClick={copy} aria-label="Copy portal code">
             {copied ? <Check className="size-4 text-emerald-600" /> : <Copy className="size-4" />}

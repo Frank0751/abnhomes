@@ -55,12 +55,12 @@ export function PayForm({
                 key={c.value}
                 onClick={() => setChannel(c.value)}
                 className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition ${
-                  active ? 'border-[#0d9488] bg-[#0d9488]/[0.06] ring-1 ring-[#0d9488]' : 'border-black/10 hover:border-black/20'
+                  active ? 'border-[#00a878] bg-[#00a878]/[0.06] ring-1 ring-[#00a878]' : 'border-black/10 hover:border-black/20'
                 }`}
               >
-                <Icon className={`size-4 shrink-0 ${active ? 'text-[#0d9488]' : 'text-[#8a93a5]'}`} />
+                <Icon className={`size-4 shrink-0 ${active ? 'text-[#00a878]' : 'text-[#8a93a5]'}`} />
                 <span className="min-w-0">
-                  <span className="block text-sm font-medium text-[#0a0e1a]">{c.label}</span>
+                  <span className="block text-sm font-medium text-[#0c1a16]">{c.label}</span>
                   <span className="block text-xs text-[#8a93a5]">{c.hint}</span>
                 </span>
               </button>
@@ -80,7 +80,7 @@ export function PayForm({
             required
             defaultValue={needsPhone ? '' : suggestedPhone}
             placeholder="e.g. 024 123 4567"
-            className="w-full rounded-lg border border-black/10 px-3 py-2.5 text-sm focus:border-[#0d9488] focus:outline-none focus:ring-1 focus:ring-[#0d9488]"
+            className="w-full rounded-lg border border-black/10 px-3 py-2.5 text-sm focus:border-[#00a878] focus:outline-none focus:ring-1 focus:ring-[#00a878]"
           />
         </label>
       )}
@@ -91,28 +91,28 @@ export function PayForm({
             Amount
           </legend>
           <div className="grid grid-cols-2 gap-2">
-            <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-black/10 px-3.5 py-3 has-checked:border-[#0d9488] has-checked:bg-[#0d9488]/[0.06] has-checked:ring-1 has-checked:ring-[#0d9488]">
+            <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-black/10 px-3.5 py-3 has-checked:border-[#00a878] has-checked:bg-[#00a878]/[0.06] has-checked:ring-1 has-checked:ring-[#00a878]">
               <input
                 type="radio"
                 name="mode"
                 value="FULL"
                 checked={mode === 'FULL'}
                 onChange={() => setMode('FULL')}
-                className="mt-0.5 accent-[#0d9488]"
+                className="mt-0.5 accent-[#00a878]"
               />
               <span>
                 <span className="block text-sm font-medium">Pay in full</span>
                 <span className="block text-xs text-[#8a93a5]">{formatMinor(balanceMinor, currency)}</span>
               </span>
             </label>
-            <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-black/10 px-3.5 py-3 has-checked:border-[#0d9488] has-checked:bg-[#0d9488]/[0.06] has-checked:ring-1 has-checked:ring-[#0d9488]">
+            <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-black/10 px-3.5 py-3 has-checked:border-[#00a878] has-checked:bg-[#00a878]/[0.06] has-checked:ring-1 has-checked:ring-[#00a878]">
               <input
                 type="radio"
                 name="mode"
                 value="DEPOSIT"
                 checked={mode === 'DEPOSIT'}
                 onChange={() => setMode('DEPOSIT')}
-                className="mt-0.5 accent-[#0d9488]"
+                className="mt-0.5 accent-[#00a878]"
               />
               <span>
                 <span className="block text-sm font-medium">Deposit only</span>
@@ -132,7 +132,7 @@ export function PayForm({
       <button
         type="submit"
         disabled={pending}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0d9488] px-4 py-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-[#0f8578] disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#00a878] px-4 py-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-[#00916a] disabled:opacity-60"
       >
         <Lock className="size-4" />
         {pending ? 'Starting secure checkout…' : `Pay ${formatMinor(payingMinor, currency)} securely`}

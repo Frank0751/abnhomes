@@ -126,15 +126,15 @@ export default async function TenantPortal() {
 
       {/* The headline. Deliberately the largest thing on the page. */}
       <div
-        className="shadow-lifted relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a0e1a] via-[#101c2b] to-[#134e4a] px-6 py-7 text-white sm:px-8 sm:py-9"
+        className="shadow-lifted relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-[#0c1a16] via-[#101c2b] to-[#0a3d30] px-6 py-7 text-white sm:px-8 sm:py-9"
       >
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-16 -top-24 size-64 rounded-full bg-[#14b8a6]/20 blur-3xl"
+          className="pointer-events-none absolute -right-16 -top-24 size-64 rounded-full bg-[#1fd39a]/20 blur-3xl"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -bottom-28 -left-12 size-56 rounded-full bg-[#14b8a6]/10 blur-3xl"
+          className="pointer-events-none absolute -bottom-28 -left-12 size-56 rounded-full bg-[#1fd39a]/10 blur-3xl"
         />
         <div className="relative">
           <div className="flex items-center gap-2">
@@ -158,7 +158,7 @@ export default async function TenantPortal() {
                 amountMinor={balanceMinor}
                 currency={displayCurrency}
                 propertyId={lease?.unit.property.id ?? openCharges[0]?.propertyId ?? ''}
-                className="w-full bg-white text-[#0a0e1a] hover:bg-[#e7f1ef] sm:w-auto"
+                className="w-full bg-white text-[#0c1a16] hover:bg-[#e7f1ef] sm:w-auto"
               />
             )}
             {lease && (
@@ -174,7 +174,7 @@ export default async function TenantPortal() {
       </div>
 
       {showArrival && nextStay && (
-        <section className="shadow-lifted mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#134e4a] via-[#0f3d38] to-[#0a0e1a] px-6 py-6 text-white sm:px-8">
+        <section className="shadow-lifted mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a3d30] via-[#0f3d38] to-[#0c1a16] px-6 py-6 text-white sm:px-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
             {hoursToCheckIn <= 24 ? 'Your check-in is tomorrow' : 'Your check-in is coming up'}
           </p>
@@ -228,7 +228,7 @@ export default async function TenantPortal() {
                 <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
                   <div className="min-w-0">
                     <p className="flex items-center gap-2 text-[15px] font-medium">
-                      <Home className="size-4 shrink-0 text-[#0d9488]" aria-hidden />
+                      <Home className="size-4 shrink-0 text-[#00a878]" aria-hidden />
                       <span className="truncate">{stay.unit.name}</span>
                     </p>
                     <p className="mt-0.5 pl-6 text-xs text-muted-foreground">
@@ -315,7 +315,7 @@ export default async function TenantPortal() {
                     {item.unit.property.name} · {item.unit.property.city}
                   </p>
                 </div>
-                <span className="text-xs font-medium text-[#0d9488]">View →</span>
+                <span className="text-xs font-medium text-[#00a878]">View →</span>
               </a>
             ))}
           </div>
@@ -470,7 +470,7 @@ export default async function TenantPortal() {
             {tickets.map((ticket) => (
               <li key={ticket.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
                 <div className="flex min-w-0 items-start gap-2.5">
-                  <Wrench className="mt-0.5 size-4 shrink-0 text-[#0d9488]" aria-hidden />
+                  <Wrench className="mt-0.5 size-4 shrink-0 text-[#00a878]" aria-hidden />
                   <div className="min-w-0">
                     <p className="text-sm">{ticket.title}</p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
@@ -496,7 +496,7 @@ export default async function TenantPortal() {
                 href="https://wa.me/233541704048"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-[#0a0e1a] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#1a1f2e]"
+                className="inline-flex items-center gap-2 rounded-full bg-[#0c1a16] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#16271f]"
               >
                 <MessageCircle className="size-4" aria-hidden />
                 Message the office on WhatsApp
@@ -511,7 +511,7 @@ export default async function TenantPortal() {
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="rounded-lg bg-[#faf8f3] px-3.5 py-3 ring-1 ring-black/[0.04]">
+    <div className="rounded-lg bg-[#f5f7f5] px-3.5 py-3 ring-1 ring-black/[0.04]">
       <dt className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
         {label}
       </dt>

@@ -31,7 +31,7 @@ export function Newsletter() {
   };
 
   return (
-    <section className="relative py-16 lg:py-20 bg-[#0a0e1a] text-white overflow-hidden">
+    <section className="relative py-16 lg:py-20 bg-[#0c1a16] text-white overflow-hidden">
 
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10 relative">
         <div className="grid lg:grid-cols-[1fr_1fr] gap-8 lg:gap-16 items-center">
@@ -62,10 +62,10 @@ export function Newsletter() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="p-8 border border-[#0d9488]/40 bg-[#0d9488]/5 flex items-center gap-4"
+                  className="p-8 border border-[#00a878]/40 bg-[#00a878]/5 flex items-center gap-4"
                 >
-                  <div className="w-12 h-12 rounded-full bg-[#0d9488] flex items-center justify-center shrink-0">
-                    <Check className="h-6 w-6 text-[#0a0e1a]" strokeWidth={2.5} />
+                  <div className="w-12 h-12 rounded-full bg-[#00a878] flex items-center justify-center shrink-0">
+                    <Check className="h-6 w-6 text-[#0c1a16]" strokeWidth={2.5} />
                   </div>
                   <div>
                     <div className="font-serif text-xl mb-1">You are on the list.</div>
@@ -90,7 +90,7 @@ export function Newsletter() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Ama Owusu"
-                      className="w-full px-4 py-3.5 bg-white/5 border border-white/15 text-white focus:border-[#0d9488] focus:outline-none transition-colors font-sans text-sm placeholder:text-white/30"
+                      className="w-full px-4 py-3.5 bg-white/5 border border-white/15 text-white focus:border-[#00a878] focus:outline-none transition-colors font-sans text-sm placeholder:text-white/30"
                     />
                   </div>
                   <div>
@@ -104,12 +104,12 @@ export function Newsletter() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@email.com"
-                        className="flex-1 px-4 py-3.5 bg-white/5 border border-white/15 text-white focus:border-[#0d9488] focus:outline-none transition-colors font-sans text-sm placeholder:text-white/30"
+                        className="flex-1 px-4 py-3.5 bg-white/5 border border-white/15 text-white focus:border-[#00a878] focus:outline-none transition-colors font-sans text-sm placeholder:text-white/30"
                       />
                       <button
                         type="submit"
                         disabled={status === "loading"}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0d9488] hover:bg-[#14b8a6] disabled:opacity-60 text-[#0a0e1a] font-semibold tracking-[0.2em] uppercase text-xs transition-colors"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00a878] hover:bg-[#1fd39a] disabled:opacity-60 text-[#0c1a16] font-semibold tracking-[0.2em] uppercase text-xs transition-colors"
                       >
                         {status === "loading" ? (
                           <Loader2 className="h-4 w-4 animate-spin" />

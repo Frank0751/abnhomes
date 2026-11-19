@@ -118,7 +118,7 @@ export default async function SaleDetailPage({ params }: { params: Promise<{ id:
                           <td className="px-5 py-2.5">{c.description.replace(` — ${purchase.code}`, '')}</td>
                           <td className="px-3 py-2.5 text-muted-foreground">{formatDate(c.dueDate)}</td>
                           <td className="px-3 py-2.5 text-right tabular-nums">{formatMinor(c.amountMinor, c.currency)}</td>
-                          <td className="px-3 py-2.5 text-right tabular-nums text-[#0f766e]">{formatMinor(cPaid, c.currency)}</td>
+                          <td className="px-3 py-2.5 text-right tabular-nums text-[#06684c]">{formatMinor(cPaid, c.currency)}</td>
                           <td className="px-5 py-2.5">
                             <Pill tone={cPaid >= c.amountMinor ? 'positive' : cPaid > 0 ? 'warning' : 'neutral'}>
                               {cPaid >= c.amountMinor ? 'SETTLED' : cPaid > 0 ? 'PART_PAID' : humanise(c.status)}
@@ -173,8 +173,8 @@ export default async function SaleDetailPage({ params }: { params: Promise<{ id:
             <Panel title="Contracted plan" description="Frozen at signing — the schedule the charges were posted from.">
               <ul className="grid grid-cols-2 gap-2 px-5 py-4 sm:grid-cols-3">
                 {plan.map((line, i) => (
-                  <li key={i} className="rounded-lg border border-black/8 bg-[#faf8f3] px-3 py-2 text-xs">
-                    <p className="font-medium text-[#1a1f2e]">{line.label}</p>
+                  <li key={i} className="rounded-lg border border-black/8 bg-[#f5f7f5] px-3 py-2 text-xs">
+                    <p className="font-medium text-[#16271f]">{line.label}</p>
                     <p className="mt-0.5 tabular-nums text-muted-foreground">
                       {formatMinor(line.amountMinor, purchase.currency)} · due {line.dueDate}
                     </p>
@@ -190,11 +190,11 @@ export default async function SaleDetailPage({ params }: { params: Promise<{ id:
           <Panel title="The buyer">
             <div className="px-5 py-4 text-sm">
               <div className="flex items-center gap-3">
-                <div className="relative size-14 shrink-0 overflow-hidden rounded-lg border border-black/8 bg-[#e8e3d8]">
+                <div className="relative size-14 shrink-0 overflow-hidden rounded-lg border border-black/8 bg-[#dce5e0]">
                   {purchase.unit.images[0] && <Image src={purchase.unit.images[0]} alt="" fill sizes="56px" className="object-cover" />}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-medium text-[#1a1f2e]">{purchase.buyerName}</p>
+                  <p className="font-medium text-[#16271f]">{purchase.buyerName}</p>
                   <p className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Phone className="size-3" />{purchase.buyerPhone}
                   </p>

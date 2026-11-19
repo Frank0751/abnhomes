@@ -31,7 +31,7 @@ export function Hero() {
     <section
       id="home"
       ref={ref}
-      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#0a0e1a] [@media(min-height:640px)]:h-[100svh]"
+      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#0c1a16] [@media(min-height:640px)]:h-[100svh]"
     >
       {/* Background film + poster with slow Ken Burns drift */}
       <motion.div
@@ -51,9 +51,9 @@ export function Hero() {
           <source src="/videos/hero-loop.mp4" type="video/mp4" />
         </video>
         {/* Multi-layer gradient overlays for depth and legibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e1a]/80 via-[#0a0e1a]/55 to-[#0a0e1a]/95" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0e1a]/80 via-transparent to-[#0a0e1a]/45" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(10,14,26,0.55)_100%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0c1a16]/80 via-[#0c1a16]/55 to-[#0c1a16]/95" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a16]/80 via-transparent to-[#0c1a16]/45" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(12, 26, 22,0.55)_100%)]" />
       </motion.div>
 
       {/* Animated particle field */}
@@ -106,7 +106,7 @@ export function Hero() {
                     backgroundSize: "200% 100%",
                     WebkitTextFillColor: "transparent",
                     backgroundImage:
-                      "linear-gradient(90deg, transparent 0%, rgba(20,184,166,0.85) 50%, transparent 100%)",
+                      "linear-gradient(90deg, transparent 0%, rgba(31, 211, 154,0.85) 50%, transparent 100%)",
                     backgroundClip: "text",
                     animation: `shimmer 3.5s ease-in-out ${2 + i * 0.1}s infinite`,
                   }}
@@ -147,11 +147,11 @@ export function Hero() {
         >
           <button
             onClick={() => document.querySelector("#residences")?.scrollIntoView({ behavior: "smooth" })}
-            className="group relative px-8 py-4 bg-[#0d9488] text-[#0a0e1a] font-semibold tracking-wide text-sm uppercase overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_-15px_rgba(13,148,136,0.8)]"
+            className="group relative px-8 py-4 bg-[#00a878] text-[#0c1a16] font-semibold tracking-wide text-sm uppercase overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_-15px_rgba(0, 168, 120,0.8)]"
           >
             <span className="relative z-10">{t("cta.exploreResidences")}</span>
-            <span className="absolute inset-0 bg-[#14b8a6] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            <span className="absolute inset-0 flex items-center justify-center text-[#0a0e1a] font-semibold tracking-wide text-sm uppercase translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <span className="absolute inset-0 bg-[#1fd39a] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <span className="absolute inset-0 flex items-center justify-center text-[#0c1a16] font-semibold tracking-wide text-sm uppercase translate-y-full group-hover:translate-y-0 transition-transform duration-300">
               {t("cta.exploreResidences")}
             </span>
           </button>
@@ -170,7 +170,7 @@ export function Hero() {
           transition={{ delay: 3.2, duration: 0.8 }}
           className="mt-8 flex items-center gap-2 text-white/60 text-[11px] sm:text-xs tracking-[0.2em]"
         >
-          <MapPin className="h-3.5 w-3.5 text-[#0d9488] shrink-0" />
+          <MapPin className="h-3.5 w-3.5 text-[#00a878] shrink-0" />
           <span>8 Asiko Street, Tantra Hill, Accra, Ghana</span>
         </motion.div>
       </motion.div>
@@ -180,7 +180,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 3.6, duration: 0.8 }}
-        className="absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-[#0a0e1a]/60 backdrop-blur-sm overflow-hidden"
+        className="absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-[#0c1a16]/60 backdrop-blur-sm overflow-hidden"
       >
         <div className="flex whitespace-nowrap animate-marquee py-3">
           {Array.from({ length: 2 }).map((_, set) => (
@@ -200,7 +200,7 @@ export function Hero() {
                 "marquee.security",
               ].map((item, i) => (
                 <span key={`${set}-${i}`} className="flex items-center gap-3 text-xs tracking-[0.2em] text-white/55 uppercase">
-                  <span className="w-1 h-1 rounded-full bg-[#0d9488]" />
+                  <span className="w-1 h-1 rounded-full bg-[#00a878]" />
                   {t(item)}
                 </span>
               ))}
@@ -248,13 +248,13 @@ function ParticleField() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute rounded-full bg-[#0d9488]"
+          className="absolute rounded-full bg-[#00a878]"
           style={{
             width: `${p.size}px`,
             height: `${p.size}px`,
             left: `${p.left}%`,
             top: `${p.top}%`,
-            boxShadow: "0 0 6px rgba(13,148,136,0.6)",
+            boxShadow: "0 0 6px rgba(0, 168, 120,0.6)",
           }}
         />
       ))}

@@ -46,7 +46,7 @@ export function Gallery() {
   const prev = () => setLightbox((i) => (i === null ? null : (i - 1 + filtered.length) % filtered.length));
 
   return (
-    <section id="gallery" className="relative py-24 lg:py-32 bg-[#0a0e1a] text-white overflow-hidden">
+    <section id="gallery" className="relative py-24 lg:py-32 bg-[#0c1a16] text-white overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
@@ -75,7 +75,7 @@ export function Gallery() {
                 onClick={() => setFilter(c)}
                 className={`px-4 py-2 text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 ${
                   filter === c
-                    ? "bg-[#0d9488] text-[#0a0e1a]"
+                    ? "bg-[#00a878] text-[#0c1a16]"
                     : "border border-white/15 text-white/60 hover:text-white hover:border-white/40"
                 }`}
               >
@@ -101,13 +101,13 @@ export function Gallery() {
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-[1200ms] ease-out group-hover:scale-110"
                 style={{ backgroundImage: `url(${shot.src})` }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/80 via-transparent to-transparent opacity-70 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute top-3 left-3 text-[10px] tracking-[0.3em] uppercase text-[#0d9488] font-medium bg-[#0a0e1a]/60 px-2 py-1">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a16]/80 via-transparent to-transparent opacity-70 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute top-3 left-3 text-[10px] tracking-[0.3em] uppercase text-[#00a878] font-medium bg-[#0c1a16]/60 px-2 py-1">
                 {shot.category}
               </div>
               <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
                 <span className="font-serif text-lg text-white">{shot.title}</span>
-                <ZoomIn className="h-4 w-4 text-[#0d9488] shrink-0" />
+                <ZoomIn className="h-4 w-4 text-[#00a878] shrink-0" />
               </div>
             </motion.button>
           ))}
@@ -121,25 +121,25 @@ export function Gallery() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#0a0e1a]/95 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-[#0c1a16]/95 backdrop-blur-md flex items-center justify-center p-4"
             onClick={closeLightbox}
           >
             <button
-              className="absolute top-6 right-6 text-white/70 hover:text-[#0d9488] p-2"
+              className="absolute top-6 right-6 text-white/70 hover:text-[#00a878] p-2"
               onClick={closeLightbox}
               aria-label="Close"
             >
               <X className="h-7 w-7" />
             </button>
             <button
-              className="absolute left-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-[#0d9488] p-3 border border-white/20 hover:border-[#0d9488] transition-colors"
+              className="absolute left-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-[#00a878] p-3 border border-white/20 hover:border-[#00a878] transition-colors"
               onClick={(e) => { e.stopPropagation(); prev(); }}
               aria-label="Previous"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
             <button
-              className="absolute right-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-[#0d9488] p-3 border border-white/20 hover:border-[#0d9488] transition-colors"
+              className="absolute right-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-[#00a878] p-3 border border-white/20 hover:border-[#00a878] transition-colors"
               onClick={(e) => { e.stopPropagation(); next(); }}
               aria-label="Next"
             >
@@ -161,7 +161,7 @@ export function Gallery() {
               />
               <div className="mt-4 text-center">
                 <div className="font-serif text-xl text-white">{filtered[lightbox].title}</div>
-                <div className="text-xs tracking-[0.3em] uppercase text-[#0d9488] mt-1">
+                <div className="text-xs tracking-[0.3em] uppercase text-[#00a878] mt-1">
                   {filtered[lightbox].category}  -  {lightbox + 1} / {filtered.length}
                 </div>
               </div>

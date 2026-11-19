@@ -51,7 +51,7 @@ export function GuidebookButton({ data }: { data: GuidebookData }) {
 
             <section className="mt-4 space-y-3 text-sm">
               {(data.doorCode || data.accessNotes) && (
-                <div className="rounded-xl bg-[#0a0e1a] px-4 py-3 text-white">
+                <div className="rounded-xl bg-[#0c1a16] px-4 py-3 text-white">
                   <p className="flex items-center gap-2 text-xs uppercase tracking-wider text-white/60">
                     <DoorOpen className="size-3.5" /> Door access
                   </p>
@@ -63,7 +63,7 @@ export function GuidebookButton({ data }: { data: GuidebookData }) {
               )}
 
               <div className="flex items-start gap-3">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                <MapPin className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                 <div>
                   <p className="font-medium">Address</p>
                   <p className="text-muted-foreground">{data.address}</p>
@@ -72,7 +72,7 @@ export function GuidebookButton({ data }: { data: GuidebookData }) {
 
               {(data.wifiName || data.wifiPassword) && (
                 <div className="flex items-start gap-3">
-                  <Wifi className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                  <Wifi className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                   <div>
                     <p className="font-medium">Wi-Fi</p>
                     <p className="text-muted-foreground">
@@ -84,7 +84,7 @@ export function GuidebookButton({ data }: { data: GuidebookData }) {
 
               {data.backupPower && data.backupPower !== 'none' && (
                 <div className="flex items-start gap-3">
-                  <Zap className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                  <Zap className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                   <div>
                     <p className="font-medium">Power cuts</p>
                     <p className="text-muted-foreground">
@@ -98,7 +98,7 @@ export function GuidebookButton({ data }: { data: GuidebookData }) {
 
               {data.waterStorageLitres ? (
                 <div className="flex items-start gap-3">
-                  <Droplets className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                  <Droplets className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                   <div>
                     <p className="font-medium">Water</p>
                     <p className="text-muted-foreground">
@@ -110,7 +110,7 @@ export function GuidebookButton({ data }: { data: GuidebookData }) {
               ) : null}
 
               <div className="flex items-start gap-3">
-                <ScrollText className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                <ScrollText className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                 <div>
                   <p className="font-medium">House rules</p>
                   <ul className="mt-1 space-y-0.5 text-muted-foreground">
@@ -122,7 +122,7 @@ export function GuidebookButton({ data }: { data: GuidebookData }) {
               </div>
 
               <div className="flex items-start gap-3">
-                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#0d9488]" />
+                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#00a878]" />
                 <div>
                   <p className="font-medium">Safety &amp; security</p>
                   <ul className="mt-1 space-y-0.5 text-muted-foreground">
@@ -145,7 +145,7 @@ export function GuidebookButton({ data }: { data: GuidebookData }) {
 
             <button
               onClick={() => setOpen(false)}
-              className="mt-4 w-full rounded-lg bg-[#0a0e1a] px-4 py-2.5 text-sm font-medium text-white"
+              className="mt-4 w-full rounded-lg bg-[#0c1a16] px-4 py-2.5 text-sm font-medium text-white"
             >
               Done
             </button>

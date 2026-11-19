@@ -12,7 +12,7 @@ export function AvailabilityPreview({ days }: { days: CalendarDay[] }) {
     <div className="grid gap-8 sm:grid-cols-2">
       {months.map((month) => (
         <div key={month.label}>
-          <p className="mb-2 text-center text-sm font-medium text-[#0a0e1a]">{month.label}</p>
+          <p className="mb-2 text-center text-sm font-medium text-[#0c1a16]">{month.label}</p>
           <div className="grid grid-cols-7 gap-y-1 text-center text-[11px] text-[#8a93a5]">
             {firstWeekday.map((d) => (
               <span key={d}>{d[0]}</span>
@@ -26,7 +26,7 @@ export function AvailabilityPreview({ days }: { days: CalendarDay[] }) {
                   title={day.available ? 'Available' : 'Booked'}
                   className={`mx-auto flex size-8 items-center justify-center rounded-full text-[13px] ${
                     day.available
-                      ? 'bg-[#0d9488]/10 text-[#0a0e1a]'
+                      ? 'bg-[#00a878]/10 text-[#0c1a16]'
                       : 'text-black/25 line-through decoration-black/20'
                   }`}
                 >

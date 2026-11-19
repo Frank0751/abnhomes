@@ -17,7 +17,7 @@ function Stars({ n }: { n: number }) {
   return (
     <span className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className={`size-3.5 ${i < n ? 'fill-[#0d9488] text-[#0d9488]' : 'text-black/15'}`} />
+        <Star key={i} className={`size-3.5 ${i < n ? 'fill-[#00a878] text-[#00a878]' : 'text-black/15'}`} />
       ))}
     </span>
   )
@@ -117,7 +117,7 @@ export default async function AdminReviewsPage() {
                       </p>
                     )}
                     {r.hostResponse && (
-                      <p className="mt-1.5 rounded-lg bg-[#f7f5f0] px-3 py-2 text-xs text-foreground/80">
+                      <p className="mt-1.5 rounded-lg bg-[#eff3f0] px-3 py-2 text-xs text-foreground/80">
                         <MessageSquare className="mr-1 inline size-3" />
                         Host replied: {r.hostResponse}
                       </p>

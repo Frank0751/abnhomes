@@ -82,8 +82,8 @@ const listings: Listing[] = [
 
 export function AvailableHomes() {
   return (
-    <section id="available" className="relative overflow-hidden bg-[#faf8f3] py-24 lg:py-32">
-      <div className="pointer-events-none absolute -right-40 top-0 h-[500px] w-[500px] rounded-full bg-[#0d9488]/5 blur-3xl" />
+    <section id="available" className="relative overflow-hidden bg-[#f5f7f5] py-24 lg:py-32">
+      <div className="pointer-events-none absolute -right-40 top-0 h-[500px] w-[500px] rounded-full bg-[#00a878]/5 blur-3xl" />
 
       <div className="relative mx-auto max-w-[1400px] px-5 lg:px-10">
         {/* Header */}
@@ -94,7 +94,7 @@ export function AvailableHomes() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="max-w-2xl font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-[#0a0e1a] md:text-5xl lg:text-6xl">
+            <h2 className="max-w-2xl font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-[#0c1a16] md:text-5xl lg:text-6xl">
               Homes available today, straight from ABN.
             </h2>
           </motion.div>
@@ -104,7 +104,7 @@ export function AvailableHomes() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="max-w-md text-base leading-relaxed text-[#3a3530]"
+            className="max-w-md text-base leading-relaxed text-[#2d433b]"
           >
             Real properties on the market right now across Accra. Slide through
             every room, then reach out to arrange a viewing the same day.
@@ -147,11 +147,11 @@ function ListingCard({ listing, index }: { listing: Listing; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.7, delay: index * 0.1 }}
-      className="group flex flex-col overflow-hidden border border-[#e8e3d8] bg-white shadow-[0_10px_40px_-24px_rgba(10,14,26,0.35)]"
+      className="group flex flex-col overflow-hidden border border-[#dce5e0] bg-white shadow-[0_10px_40px_-24px_rgba(12, 26, 22,0.35)]"
     >
       {/* Media slideshow */}
       <div
-        className="relative aspect-[4/5] overflow-hidden bg-[#0a0e1a]"
+        className="relative aspect-[4/5] overflow-hidden bg-[#0c1a16]"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
@@ -189,22 +189,22 @@ function ListingCard({ listing, index }: { listing: Listing; index: number }) {
           </motion.div>
         </AnimatePresence>
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/70 via-transparent to-[#0a0e1a]/10" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0c1a16]/70 via-transparent to-[#0c1a16]/10" />
 
         {/* Status + purpose */}
         <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-          <span className="bg-[#0d9488] px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-[#0a0e1a]">
+          <span className="bg-[#00a878] px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-[#0c1a16]">
             {listing.purpose}
           </span>
-          <span className="bg-[#0a0e1a]/70 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-white backdrop-blur-sm">
+          <span className="bg-[#0c1a16]/70 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-white backdrop-blur-sm">
             {listing.status}
           </span>
         </div>
 
         {/* Video badge */}
         {current.type === "video" && (
-          <span className="absolute right-4 top-4 flex items-center gap-1.5 bg-[#0a0e1a]/70 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-white backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#0d9488]" />
+          <span className="absolute right-4 top-4 flex items-center gap-1.5 bg-[#0c1a16]/70 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-white backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#00a878]" />
             Video
           </span>
         )}
@@ -213,14 +213,14 @@ function ListingCard({ listing, index }: { listing: Listing; index: number }) {
         <button
           onClick={() => go(-1)}
           aria-label="Previous image"
-          className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center bg-[#0a0e1a]/45 text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 hover:bg-[#0d9488] hover:text-[#0a0e1a] group-hover:opacity-100"
+          className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center bg-[#0c1a16]/45 text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 hover:bg-[#00a878] hover:text-[#0c1a16] group-hover:opacity-100"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
         <button
           onClick={() => go(1)}
           aria-label="Next image"
-          className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center bg-[#0a0e1a]/45 text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 hover:bg-[#0d9488] hover:text-[#0a0e1a] group-hover:opacity-100"
+          className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center bg-[#0c1a16]/45 text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 hover:bg-[#00a878] hover:text-[#0c1a16] group-hover:opacity-100"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -233,7 +233,7 @@ function ListingCard({ listing, index }: { listing: Listing; index: number }) {
               onClick={() => setActive(d)}
               aria-label={`Go to slide ${d + 1}`}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                d === active ? "w-6 bg-[#0d9488]" : "w-1.5 bg-white/60 hover:bg-white"
+                d === active ? "w-6 bg-[#00a878]" : "w-1.5 bg-white/60 hover:bg-white"
               }`}
             />
           ))}
@@ -242,28 +242,28 @@ function ListingCard({ listing, index }: { listing: Listing; index: number }) {
 
       {/* Details */}
       <div className="flex flex-1 flex-col p-6">
-        <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#6b6253]">
-          <MapPin className="h-3.5 w-3.5 text-[#0d9488]" />
+        <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#5a6b64]">
+          <MapPin className="h-3.5 w-3.5 text-[#00a878]" />
           {listing.location}
         </div>
-        <h3 className="mb-3 font-serif text-2xl leading-tight text-[#0a0e1a]">
+        <h3 className="mb-3 font-serif text-2xl leading-tight text-[#0c1a16]">
           {listing.name}
         </h3>
-        <p className="mb-5 flex-1 text-sm leading-relaxed text-[#3a3530]">
+        <p className="mb-5 flex-1 text-sm leading-relaxed text-[#2d433b]">
           {listing.blurb}
         </p>
 
-        <div className="mb-5 flex items-center gap-5 border-y border-[#e8e3d8] py-3 text-sm text-[#0a0e1a]">
+        <div className="mb-5 flex items-center gap-5 border-y border-[#dce5e0] py-3 text-sm text-[#0c1a16]">
           <span className="flex items-center gap-2">
-            <BedDouble className="h-4 w-4 text-[#0d9488]" strokeWidth={1.5} />
+            <BedDouble className="h-4 w-4 text-[#00a878]" strokeWidth={1.5} />
             {listing.specs.beds} Bed
           </span>
           <span className="flex items-center gap-2">
-            <Bath className="h-4 w-4 text-[#0d9488]" strokeWidth={1.5} />
+            <Bath className="h-4 w-4 text-[#00a878]" strokeWidth={1.5} />
             {listing.specs.baths} Bath
           </span>
           <span className="flex items-center gap-2">
-            <Maximize className="h-4 w-4 text-[#0d9488]" strokeWidth={1.5} />
+            <Maximize className="h-4 w-4 text-[#00a878]" strokeWidth={1.5} />
             {listing.specs.area}
           </span>
         </div>
@@ -274,7 +274,7 @@ function ListingCard({ listing, index }: { listing: Listing; index: number }) {
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="group/btn inline-flex items-center justify-center gap-2 bg-[#0a0e1a] px-6 py-3.5 text-sm font-semibold uppercase tracking-wide text-white transition-colors duration-300 hover:bg-[#0d9488] hover:text-[#0a0e1a]"
+          className="group/btn inline-flex items-center justify-center gap-2 bg-[#0c1a16] px-6 py-3.5 text-sm font-semibold uppercase tracking-wide text-white transition-colors duration-300 hover:bg-[#00a878] hover:text-[#0c1a16]"
         >
           Enquire About This Home
           <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />

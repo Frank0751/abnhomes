@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-[#faf8f3]">
+    <main className="min-h-screen bg-[#f5f7f5]">
       <PageHero
         title="Building Dreams in Every Home."
         subtitle="ABN Homes Company Limited is a Ghanaian real estate and construction company headquartered at 8 Asiko Street, Tantra Hill, Accra. We build, sell, rent and renovate homes, and we buy and sell lands across Greater Accra."

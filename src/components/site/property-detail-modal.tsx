@@ -144,12 +144,12 @@ export function PropertyDetailModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#0a0e1a]/95 backdrop-blur-md overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[#0c1a16]/95 backdrop-blur-md overflow-y-auto"
           onClick={onClose}
         >
           <button
             onClick={onClose}
-            className="fixed top-5 right-5 z-10 w-11 h-11 border border-white/20 hover:border-[#0d9488] text-white hover:bg-[#0d9488] hover:text-[#0a0e1a] flex items-center justify-center transition-all"
+            className="fixed top-5 right-5 z-10 w-11 h-11 border border-white/20 hover:border-[#00a878] text-white hover:bg-[#00a878] hover:text-[#0c1a16] flex items-center justify-center transition-all"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -167,11 +167,11 @@ export function PropertyDetailModal({
             {/* Header */}
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1.5 text-[10px] tracking-[0.3em] uppercase font-medium bg-[#0d9488] text-[#0a0e1a]">
+                <span className="px-3 py-1.5 text-[10px] tracking-[0.3em] uppercase font-medium bg-[#00a878] text-[#0c1a16]">
                   {property.status}
                 </span>
                 <span className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase text-white/60">
-                  <MapPin className="h-3.5 w-3.5 text-[#0d9488]" />
+                  <MapPin className="h-3.5 w-3.5 text-[#00a878]" />
                   {property.location}
                 </span>
               </div>
@@ -185,7 +185,7 @@ export function PropertyDetailModal({
 
             {/* Image gallery */}
             <div className="grid lg:grid-cols-[2fr_1fr] gap-3 mb-10">
-              <div className="relative h-80 lg:h-[540px] overflow-hidden bg-[#141826]">
+              <div className="relative h-80 lg:h-[540px] overflow-hidden bg-[#0f1e19]">
                 <motion.div
                   key={activeImage}
                   initial={{ opacity: 0, scale: 1.05 }}
@@ -194,8 +194,8 @@ export function PropertyDetailModal({
                   className="absolute inset-0 bg-cover bg-center"
                   style={{ backgroundImage: `url(${property.images[activeImage]})` }}
                 />
-                <div className="absolute bottom-3 left-3 flex items-center gap-2 text-xs tracking-[0.2em] uppercase text-white/80 bg-[#0a0e1a]/60 backdrop-blur-sm px-3 py-1.5">
-                  <Camera className="h-3.5 w-3.5 text-[#0d9488]" />
+                <div className="absolute bottom-3 left-3 flex items-center gap-2 text-xs tracking-[0.2em] uppercase text-white/80 bg-[#0c1a16]/60 backdrop-blur-sm px-3 py-1.5">
+                  <Camera className="h-3.5 w-3.5 text-[#00a878]" />
                   {activeImage + 1} / {property.images.length}
                 </div>
               </div>
@@ -204,8 +204,8 @@ export function PropertyDetailModal({
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
-                    className={`relative overflow-hidden bg-[#141826] ${
-                      activeImage === i ? "ring-2 ring-[#0d9488]" : "opacity-60 hover:opacity-100"
+                    className={`relative overflow-hidden bg-[#0f1e19] ${
+                      activeImage === i ? "ring-2 ring-[#00a878]" : "opacity-60 hover:opacity-100"
                     } transition-all`}
                   >
                     <div
@@ -219,18 +219,18 @@ export function PropertyDetailModal({
 
             {/* Specs and price */}
             <div className="grid lg:grid-cols-3 gap-px bg-white/10 border border-white/10 mb-10">
-              <div className="bg-[#0a0e1a] p-6 text-center">
-                <BedDouble className="h-6 w-6 text-[#0d9488] mx-auto mb-2" strokeWidth={1.5} />
+              <div className="bg-[#0c1a16] p-6 text-center">
+                <BedDouble className="h-6 w-6 text-[#00a878] mx-auto mb-2" strokeWidth={1.5} />
                 <div className="font-serif text-2xl">{property.specs.beds}</div>
                 <div className="text-[10px] tracking-[0.2em] uppercase text-white/50">Bedrooms</div>
               </div>
-              <div className="bg-[#0a0e1a] p-6 text-center">
-                <Bath className="h-6 w-6 text-[#0d9488] mx-auto mb-2" strokeWidth={1.5} />
+              <div className="bg-[#0c1a16] p-6 text-center">
+                <Bath className="h-6 w-6 text-[#00a878] mx-auto mb-2" strokeWidth={1.5} />
                 <div className="font-serif text-2xl">{property.specs.baths}</div>
                 <div className="text-[10px] tracking-[0.2em] uppercase text-white/50">Bathrooms</div>
               </div>
-              <div className="bg-[#0a0e1a] p-6 text-center">
-                <Maximize className="h-6 w-6 text-[#0d9488] mx-auto mb-2" strokeWidth={1.5} />
+              <div className="bg-[#0c1a16] p-6 text-center">
+                <Maximize className="h-6 w-6 text-[#00a878] mx-auto mb-2" strokeWidth={1.5} />
                 <div className="font-serif text-2xl">{property.specs.size}</div>
                 <div className="text-[10px] tracking-[0.2em] uppercase text-white/50">Floor Area</div>
               </div>
@@ -243,7 +243,7 @@ export function PropertyDetailModal({
                 <ul className="space-y-3">
                   {property.highlights.map((h, i) => (
                     <li key={i} className="flex items-start gap-3 text-white/75">
-                      <Check className="h-4 w-4 text-[#0d9488] mt-1 shrink-0" strokeWidth={2} />
+                      <Check className="h-4 w-4 text-[#00a878] mt-1 shrink-0" strokeWidth={2} />
                       <span className="leading-relaxed">{h}</span>
                     </li>
                   ))}
@@ -265,30 +265,30 @@ export function PropertyDetailModal({
             </div>
 
             {/* Price block */}
-            <div className="bg-gradient-to-br from-[#141826] to-[#0a0e1a] border border-[#0d9488]/30 p-8 lg:p-10 mb-8">
+            <div className="bg-gradient-to-br from-[#0f1e19] to-[#0c1a16] border border-[#00a878]/30 p-8 lg:p-10 mb-8">
               <div className="grid md:grid-cols-[1fr_auto] gap-6 items-center">
                 <div>
-                  <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d9488] mb-2">
+                  <div className="text-[10px] tracking-[0.3em] uppercase text-[#00a878] mb-2">
                     Pricing
                   </div>
                   <div className="font-serif text-3xl lg:text-4xl text-white mb-2">
                     {property.price}
                   </div>
                   <div className="text-sm text-white/60">
-                    Purchase from <span className="text-[#0d9488] font-medium">USD ${property.priceUsd.toLocaleString()}</span>  -  rent to own plans available.
+                    Purchase from <span className="text-[#00a878] font-medium">USD ${property.priceUsd.toLocaleString()}</span>  -  rent to own plans available.
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 md:items-end">
                   <button
                     onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0d9488] hover:bg-[#14b8a6] text-[#0a0e1a] font-semibold tracking-[0.2em] uppercase text-xs transition-colors"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00a878] hover:bg-[#1fd39a] text-[#0c1a16] font-semibold tracking-[0.2em] uppercase text-xs transition-colors"
                   >
                     Book a Tour
                     <ArrowRight className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setShowCalculator(!showCalculator)}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-white/30 hover:border-[#0d9488] text-white text-xs tracking-[0.2em] uppercase transition-colors"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-white/30 hover:border-[#00a878] text-white text-xs tracking-[0.2em] uppercase transition-colors"
                   >
                     <Calendar className="h-3.5 w-3.5" />
                     Estimate Mortgage
@@ -363,7 +363,7 @@ function PropertyCalculator({ priceUsd }: { priceUsd: number }) {
             step={1}
             value={downPaymentPct}
             onChange={(e) => setDownPaymentPct(parseInt(e.target.value))}
-            className="w-full accent-[#0d9488]"
+            className="w-full accent-[#00a878]"
           />
         </div>
         <div>
@@ -377,7 +377,7 @@ function PropertyCalculator({ priceUsd }: { priceUsd: number }) {
             step={1}
             value={termYears}
             onChange={(e) => setTermYears(parseInt(e.target.value))}
-            className="w-full accent-[#0d9488]"
+            className="w-full accent-[#00a878]"
           />
         </div>
         <div>
@@ -391,14 +391,14 @@ function PropertyCalculator({ priceUsd }: { priceUsd: number }) {
             step={0.1}
             value={interestRate}
             onChange={(e) => setInterestRate(parseFloat(e.target.value))}
-            className="w-full accent-[#0d9488]"
+            className="w-full accent-[#00a878]"
           />
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4 text-center">
         <div>
           <div className="text-[10px] tracking-[0.2em] uppercase text-white/50">Monthly</div>
-          <div className="font-serif text-xl text-[#0d9488]">{fmt(monthlyPayment)}</div>
+          <div className="font-serif text-xl text-[#00a878]">{fmt(monthlyPayment)}</div>
         </div>
         <div>
           <div className="text-[10px] tracking-[0.2em] uppercase text-white/50">Principal</div>

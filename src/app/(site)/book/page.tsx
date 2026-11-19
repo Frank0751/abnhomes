@@ -169,7 +169,7 @@ export default async function BookPage({
             </select>
           </div>
           <div className="flex items-end">
-            <button className="w-full rounded-lg bg-[#0a0e1a] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#1a2233] sm:w-auto">
+            <button className="w-full rounded-lg bg-[#0c1a16] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#1a2233] sm:w-auto">
               Search
             </button>
           </div>
@@ -181,7 +181,7 @@ export default async function BookPage({
             <SlidersHorizontal className="size-4" />
             Filters
             {(filters.amenities?.length ?? 0) + (filters.instantOnly ? 1 : 0) + (params.hood ? 1 : 0) + (params.bedrooms ? 1 : 0) + (params.type ? 1 : 0) + (params.maxPrice ? 1 : 0) > 0 && (
-              <span className="rounded-full bg-[#0d9488] px-2 py-0.5 text-[11px] font-semibold text-white">
+              <span className="rounded-full bg-[#00a878] px-2 py-0.5 text-[11px] font-semibold text-white">
                 {(filters.amenities?.length ?? 0) + (filters.instantOnly ? 1 : 0) + (params.hood ? 1 : 0) + (params.bedrooms ? 1 : 0) + (params.type ? 1 : 0) + (params.maxPrice ? 1 : 0)}
               </span>
             )}
@@ -254,7 +254,7 @@ export default async function BookPage({
                       href={`/book?${next.toString()}`}
                       className={`rounded-full border px-3 py-1.5 text-xs transition ${
                         active
-                          ? 'border-[#0d9488] bg-[#0d9488]/10 font-medium text-[#0d9488]'
+                          ? 'border-[#00a878] bg-[#00a878]/10 font-medium text-[#00a878]'
                           : 'border-black/12 text-foreground/75 hover:border-black/25'
                       }`}
                     >
@@ -270,7 +270,7 @@ export default async function BookPage({
                 href={filters.instantOnly ? relaxed({ instant: null }) : relaxed({ instant: '1' })}
                 className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
                   filters.instantOnly
-                    ? 'border-[#0d9488] bg-[#0d9488]/10 font-medium text-[#0d9488]'
+                    ? 'border-[#00a878] bg-[#00a878]/10 font-medium text-[#00a878]'
                     : 'border-black/12 text-foreground/75 hover:border-black/25'
                 }`}
               >
@@ -280,7 +280,7 @@ export default async function BookPage({
               <a href={`/book?checkIn=${toISODate(checkIn)}&checkOut=${toISODate(checkOut)}&guests=${guests}`} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
                 Clear all filters
               </a>
-              <button className="rounded-lg bg-[#0a0e1a] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
+              <button className="rounded-lg bg-[#0c1a16] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
                 Apply filters
               </button>
             </div>
@@ -329,12 +329,12 @@ export default async function BookPage({
                       />
                     )}
                     {rating && rating.average >= 4.8 && (
-                      <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-[#0a0e1a] shadow">
+                      <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-[#0c1a16] shadow">
                         ★ Guest favourite
                       </span>
                     )}
                     {unit.instantBook && (
-                      <span className="absolute right-3 top-3 rounded-full bg-[#0a0e1a]/85 px-2.5 py-1 text-[11px] font-medium text-white">
+                      <span className="absolute right-3 top-3 rounded-full bg-[#0c1a16]/85 px-2.5 py-1 text-[11px] font-medium text-white">
                         <Zap className="mr-1 inline size-3" />
                         Instant
                       </span>
@@ -355,7 +355,7 @@ export default async function BookPage({
                       </div>
                       {rating && (
                         <span className="flex shrink-0 items-center gap-1 text-sm tabular-nums">
-                          <Star className="size-3.5 fill-[#0d9488] text-[#0d9488]" />
+                          <Star className="size-3.5 fill-[#00a878] text-[#00a878]" />
                           {rating.average.toFixed(1)}
                         </span>
                       )}
@@ -384,7 +384,7 @@ export default async function BookPage({
                       </div>
                       <Link
                         href={`/book/confirm?unitId=${unit.id}&checkIn=${toISODate(checkIn)}&checkOut=${toISODate(checkOut)}&guests=${guests}`}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-[#0d9488] px-3.5 py-2 text-[13px] font-semibold text-white transition hover:bg-[#0f8578]"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-[#00a878] px-3.5 py-2 text-[13px] font-semibold text-white transition hover:bg-[#00916a]"
                       >
                         Book
                         <ArrowRight className="size-3.5" />

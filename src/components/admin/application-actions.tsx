@@ -27,7 +27,7 @@ import {
 } from '@/app/admin/applications/actions'
 
 const noteCls =
-  'w-full rounded-lg border border-black/12 px-3 py-2 text-sm outline-none transition focus:border-[#0d9488] focus:ring-2 focus:ring-[#0d9488]/20'
+  'w-full rounded-lg border border-black/12 px-3 py-2 text-sm outline-none transition focus:border-[#00a878] focus:ring-2 focus:ring-[#00a878]/20'
 
 function ToastResult(result: ApplicationActionResult, refresh: () => void) {
   if (result.ok) {
@@ -63,7 +63,7 @@ export function PurchaseReviewActions({ purchaseId }: { purchaseId: string }) {
           size="sm"
           disabled={pending}
           onClick={() => run(approvePurchaseAction)}
-          className="flex-1 bg-[#0d9488] hover:bg-[#0f766e]"
+          className="flex-1 bg-[#00a878] hover:bg-[#06684c]"
         >
           {pending ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />}
           Approve offer
@@ -123,7 +123,7 @@ export function PurchaseContractForm({
         <Input value={firstDue} onChange={(e) => setFirstDue(e.target.value)} type="date" required />
       </label>
       <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Contract note (optional)…" className={noteCls} />
-      <Button onClick={submit} disabled={pending} className="w-full bg-[#0a0e1a] hover:bg-[#1a2233]">
+      <Button onClick={submit} disabled={pending} className="w-full bg-[#0c1a16] hover:bg-[#1a2233]">
         {pending ? <Loader2 className="size-4 animate-spin" /> : <FileSignature className="size-4" />}
         Freeze plan &amp; post installments
       </Button>
@@ -180,7 +180,7 @@ export function TenancyReviewActions({
             size="sm"
             disabled={pending}
             onClick={() => run(approveApplicationAction)}
-            className="flex-1 bg-[#0d9488] hover:bg-[#0f766e]"
+            className="flex-1 bg-[#00a878] hover:bg-[#06684c]"
           >
             {pending ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />}
             Approve
@@ -192,13 +192,13 @@ export function TenancyReviewActions({
         </div>
       )}
       {status === 'APPROVED' && (
-        <div className="rounded-lg bg-[#0d9488]/5 p-3">
+        <div className="rounded-lg bg-[#00a878]/5 p-3">
           <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             Monthly rent for the lease (GHS)
           </span>
           <div className="flex gap-2">
             <Input value={rent} onChange={(e) => setRent(e.target.value)} type="number" min={1} step={50} />
-            <Button size="sm" disabled={pending} onClick={convert} className="shrink-0 bg-[#0d9488] hover:bg-[#0f766e]">
+            <Button size="sm" disabled={pending} onClick={convert} className="shrink-0 bg-[#00a878] hover:bg-[#06684c]">
               {pending ? <Loader2 className="size-4 animate-spin" /> : <FileSignature className="size-4" />}
               Create lease
             </Button>

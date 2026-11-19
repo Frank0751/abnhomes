@@ -104,13 +104,13 @@ async function TenancyQueue() {
       {applications.map((a) => (
         <Panel key={a.id} title={a.code} description={`${a.applicantName} · applied ${formatDate(a.createdAt)}`}>
           <div className="flex gap-4 px-5">
-            <div className="relative size-20 shrink-0 overflow-hidden rounded-lg border border-black/8 bg-[#e8e3d8]">
+            <div className="relative size-20 shrink-0 overflow-hidden rounded-lg border border-black/8 bg-[#dce5e0]">
               {a.unit.images[0] && <Image src={a.unit.images[0]} alt="" fill sizes="80px" className="object-cover" />}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <Pill tone={TENANCY_TONE[a.status] ?? 'neutral'}>{humanise(a.status)}</Pill>
-                <span className="text-sm font-medium text-[#1a1f2e]">{a.unit.name}</span>
+                <span className="text-sm font-medium text-[#16271f]">{a.unit.name}</span>
               </div>
               <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                 <Building2 className="size-3" /> {a.unit.property.name} ·{' '}
@@ -165,13 +165,13 @@ async function PurchaseQueue() {
       {purchases.map((p) => (
         <Panel key={p.id} title={p.code} description={`${p.buyerName} · applied ${formatDate(p.createdAt)}`}>
           <div className="flex gap-4 px-5">
-            <div className="relative size-20 shrink-0 overflow-hidden rounded-lg border border-black/8 bg-[#e8e3d8]">
+            <div className="relative size-20 shrink-0 overflow-hidden rounded-lg border border-black/8 bg-[#dce5e0]">
               {p.unit.images[0] && <Image src={p.unit.images[0]} alt="" fill sizes="80px" className="object-cover" />}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <Pill tone={p.status === 'APPLICATION' ? 'warning' : 'positive'}>{humanise(p.status)}</Pill>
-                <span className="text-sm font-medium text-[#1a1f2e]">{p.unit.name}</span>
+                <span className="text-sm font-medium text-[#16271f]">{p.unit.name}</span>
               </div>
               <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                 <Building2 className="size-3" /> {p.unit.property.name} · asking{' '}
@@ -189,7 +189,7 @@ async function PurchaseQueue() {
               <PurchaseReviewActions purchaseId={p.id} />
             ) : (
               <div>
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-[#0f766e]">
+                <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-[#06684c]">
                   <ShieldQuestion className="size-3.5" />
                   Approved — agree the plan below to contract this sale
                 </p>

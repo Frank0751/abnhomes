@@ -93,7 +93,7 @@ export function Navigation() {
                 menu drops straight down from its edge. */}
             <button
               ref={toggleRef}
-              className="flex h-11 w-11 items-center justify-center border border-white/20 text-white transition-colors hover:border-[#14b8a6]/60 hover:text-[#14b8a6] focus-visible:ring-1 focus-visible:ring-[#14b8a6]"
+              className="flex h-11 w-11 items-center justify-center border border-white/20 text-white transition-colors hover:border-[#1fd39a]/60 hover:text-[#1fd39a] focus-visible:ring-1 focus-visible:ring-[#1fd39a]"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
@@ -114,14 +114,14 @@ export function Navigation() {
             <LanguageSwitcher />
             <a
               href={`tel:${COMPANY.phoneIntl}`}
-              className="hidden md:flex items-center gap-2 text-sm text-white/80 hover:text-[#0d9488] transition-colors"
+              className="hidden md:flex items-center gap-2 text-sm text-white/80 hover:text-[#00a878] transition-colors"
             >
               <Phone className="h-4 w-4" />
               <span className="font-medium">{COMPANY.phone}</span>
             </a>
             <Link
               href="/book"
-              className="hidden md:inline-flex items-center px-5 py-2.5 bg-[#0d9488] hover:bg-[#14b8a6] text-white text-sm font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_10px_30px_-10px_rgba(13,148,136,0.7)]"
+              className="hidden md:inline-flex items-center px-5 py-2.5 bg-[#00a878] hover:bg-[#1fd39a] text-white text-sm font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_10px_30px_-10px_rgba(0, 168, 120,0.7)]"
             >
               {t("cta.bookStay")}
             </Link>
@@ -144,7 +144,7 @@ export function Navigation() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute top-full start-0 z-20 mt-2 w-[min(28rem,calc(100vw-2.5rem))] max-h-[calc(100dvh-5rem)] overflow-y-auto bg-[#0a0e1a]/95 backdrop-blur-xl border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.6)] outline-none"
+                  className="absolute top-full start-0 z-20 mt-2 w-[min(28rem,calc(100vw-2.5rem))] max-h-[calc(100dvh-5rem)] overflow-y-auto bg-[#0c1a16]/95 backdrop-blur-xl border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.6)] outline-none"
                 >
                   {/* This dropdown is the primary nav on every viewport. */}
                   <nav aria-label="Primary" className="px-7 pt-5 pb-2">
@@ -162,10 +162,10 @@ export function Navigation() {
                             onClick={() => setMenuOpen(false)}
                             aria-current={active ? "page" : undefined}
                             className={`flex items-baseline gap-4 py-3 border-b border-white/5 transition-colors ${
-                              active ? "text-[#14b8a6]" : "text-white/90 hover:text-[#14b8a6]"
+                              active ? "text-[#1fd39a]" : "text-white/90 hover:text-[#1fd39a]"
                             }`}
                           >
-                            <span className={`text-[10px] font-mono tracking-widest ${active ? "text-[#14b8a6]/70" : "text-white/30"}`} aria-hidden="true">
+                            <span className={`text-[10px] font-mono tracking-widest ${active ? "text-[#1fd39a]/70" : "text-white/30"}`} aria-hidden="true">
                               {String(i + 1).padStart(2, "0")}
                             </span>
                             <span className="text-2xl font-serif">{t(item.key)}</span>
@@ -178,23 +178,23 @@ export function Navigation() {
                   {/* Contact + CTA at the foot of the panel, always reachable. */}
                   <div className="px-7 py-5 border-t border-white/10 bg-white/[0.02]">
                     <div className="flex flex-col gap-3">
-                      <a href={`tel:${COMPANY.phoneIntl}`} className="flex items-center gap-3 text-white/80 hover:text-[#14b8a6] transition-colors">
-                        <Phone className="h-4.5 w-4.5 text-[#0d9488]" />
+                      <a href={`tel:${COMPANY.phoneIntl}`} className="flex items-center gap-3 text-white/80 hover:text-[#1fd39a] transition-colors">
+                        <Phone className="h-4.5 w-4.5 text-[#00a878]" />
                         <span className="font-medium">{COMPANY.phone}</span>
                       </a>
                       <a
                         href={COMPANY.whatsapp}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-3 text-white/80 hover:text-[#14b8a6] transition-colors"
+                        className="flex items-center gap-3 text-white/80 hover:text-[#1fd39a] transition-colors"
                       >
-                        <MessageCircle className="h-4.5 w-4.5 text-[#0d9488]" />
+                        <MessageCircle className="h-4.5 w-4.5 text-[#00a878]" />
                         <span className="font-medium">WhatsApp</span>
                       </a>
                       <Link
                         href="/book"
                         onClick={() => setMenuOpen(false)}
-                        className="mt-2 px-6 py-3.5 bg-[#0d9488] hover:bg-[#14b8a6] text-white font-semibold tracking-wide text-center transition-colors"
+                        className="mt-2 px-6 py-3.5 bg-[#00a878] hover:bg-[#1fd39a] text-white font-semibold tracking-wide text-center transition-colors"
                       >
                         {t("cta.bookStay")}
                       </Link>

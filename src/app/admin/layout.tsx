@@ -15,10 +15,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const actor = await currentActor()
   if (!actor) redirect('/signin?callbackUrl=/admin')
 
-  const user = await db.user.findUniqueOrThrow({
+  // A session can outlive the account it belongs to: a staff member is
+  // deactivated or removed while their cookie is still valid. Throwing here
+  // would 500 every admin page for them instead of simply asking them to sign
+  // in again, so a missing or disabled account is treated as signed out.
+  const user = await db.user.findUnique({
     where: { id: actor.id },
-    select: { name: true, role: true },
+    select: { name: true, role: true, active: true },
   })
+  if (!user || !user.active) redirect('/signin?callbackUrl=/admin')
 
   // Say plainly which buildings this person can see. A manager who thinks they
   // are looking at the whole portfolio when they are not will misread every

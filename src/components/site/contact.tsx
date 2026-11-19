@@ -46,8 +46,8 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="relative py-24 lg:py-32 bg-[#faf8f3] overflow-hidden">
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#0d9488]/8 blur-3xl pointer-events-none" />
+    <section id="contact" className="relative py-24 lg:py-32 bg-[#f5f7f5] overflow-hidden">
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#00a878]/8 blur-3xl pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10 relative">
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -57,10 +57,10 @@ export function Contact() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em] mb-6">
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0c1a16] leading-[1.05] tracking-[-0.02em] mb-6">
               {t("contact.title")}
             </h2>
-            <p className="text-[#3a3530] text-base md:text-lg leading-relaxed">
+            <p className="text-[#2d433b] text-base md:text-lg leading-relaxed">
               {t("contact.intro")}
             </p>
           </motion.div>
@@ -72,11 +72,11 @@ export function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
-            className="bg-[#0a0e1a] text-white p-8 lg:p-12 relative overflow-hidden"
+            className="bg-[#0c1a16] text-white p-8 lg:p-12 relative overflow-hidden"
           >
-            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-[#0d9488]/10 blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-[#00a878]/10 blur-3xl pointer-events-none" />
             <h3 className="font-serif text-3xl mb-2 relative">{t("contact.getInTouch")}</h3>
-            <div className="w-12 h-px bg-[#0d9488] mb-8 relative" />
+            <div className="w-12 h-px bg-[#00a878] mb-8 relative" />
 
             <div className="space-y-7 relative">
               <ContactItem
@@ -110,7 +110,7 @@ export function Contact() {
             </div>
 
             <div className="mt-10 pt-8 border-t border-white/10 relative">
-              <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d9488] mb-3">
+              <div className="text-[10px] tracking-[0.3em] uppercase text-[#00a878] mb-3">
                 {t("contact.otherOffices")}
               </div>
               <ul className="space-y-1.5 text-sm text-white/65">
@@ -125,7 +125,7 @@ export function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
-            className="bg-white border border-[#e8e3d8] p-8 lg:p-12"
+            className="bg-white border border-[#dce5e0] p-8 lg:p-12"
           >
             {submitted ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-20">
@@ -133,14 +133,14 @@ export function Contact() {
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ duration: 0.6, ease: "backOut" }}
-                  className="w-16 h-16 rounded-full bg-[#0d9488] flex items-center justify-center mb-6"
+                  className="w-16 h-16 rounded-full bg-[#00a878] flex items-center justify-center mb-6"
                 >
-                  <Check className="h-8 w-8 text-[#0a0e1a]" strokeWidth={2.5} />
+                  <Check className="h-8 w-8 text-[#0c1a16]" strokeWidth={2.5} />
                 </motion.div>
-                <h3 className="font-serif text-3xl text-[#0a0e1a] mb-3">
+                <h3 className="font-serif text-3xl text-[#0c1a16] mb-3">
                   {t("form.successTitle")}
                 </h3>
-                <p className="text-[#6b6253] max-w-md">
+                <p className="text-[#5a6b64] max-w-md">
                   {t("form.successBody")}
                 </p>
               </div>
@@ -184,13 +184,13 @@ export function Contact() {
                     placeholder="+233 ..."
                   />
                   <div>
-                    <label className="block text-[11px] tracking-[0.2em] uppercase text-[#6b6253] mb-2 font-medium">
+                    <label className="block text-[11px] tracking-[0.2em] uppercase text-[#5a6b64] mb-2 font-medium">
                       {t("form.interestedIn")}
                     </label>
                     <select
                       value={form.interest}
                       onChange={(e) => setForm({ ...form, interest: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-[#faf8f3] border border-[#e8e3d8] text-[#0a0e1a] focus:border-[#0d9488] focus:outline-none transition-colors font-sans text-sm"
+                      className="w-full px-4 py-3.5 bg-[#f5f7f5] border border-[#dce5e0] text-[#0c1a16] focus:border-[#00a878] focus:outline-none transition-colors font-sans text-sm"
                     >
                       <option>Tantra Hill</option>
                       <option>Achimota Petroleum Estate</option>
@@ -201,7 +201,7 @@ export function Contact() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] tracking-[0.2em] uppercase text-[#6b6253] mb-2 font-medium">
+                  <label className="block text-[11px] tracking-[0.2em] uppercase text-[#5a6b64] mb-2 font-medium">
                     {t("form.message")}
                   </label>
                   <textarea
@@ -210,7 +210,7 @@ export function Contact() {
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     placeholder={t("form.messagePlaceholder")}
-                    className="w-full px-4 py-3.5 bg-[#faf8f3] border border-[#e8e3d8] text-[#0a0e1a] focus:border-[#0d9488] focus:outline-none transition-colors font-sans text-sm resize-none"
+                    className="w-full px-4 py-3.5 bg-[#f5f7f5] border border-[#dce5e0] text-[#0c1a16] focus:border-[#00a878] focus:outline-none transition-colors font-sans text-sm resize-none"
                   />
                 </div>
 
@@ -223,7 +223,7 @@ export function Contact() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="group w-full inline-flex items-center justify-center gap-3 px-7 py-4 bg-[#0a0e1a] hover:bg-[#1a1f2e] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold tracking-[0.2em] uppercase text-sm transition-all duration-300"
+                  className="group w-full inline-flex items-center justify-center gap-3 px-7 py-4 bg-[#0c1a16] hover:bg-[#16271f] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold tracking-[0.2em] uppercase text-sm transition-all duration-300"
                 >
                   {submitting ? (
                     <>
@@ -237,7 +237,7 @@ export function Contact() {
                     </>
                   )}
                 </button>
-                <p className="text-xs text-[#6b6253] text-center">
+                <p className="text-xs text-[#5a6b64] text-center">
                   {t("form.privacyNote")}
                 </p>
               </form>
@@ -262,14 +262,14 @@ function ContactItem({
 }) {
   const content = (
     <div className="flex items-start gap-4 group">
-      <div className="shrink-0 w-11 h-11 border border-[#0d9488]/40 group-hover:border-[#0d9488] group-hover:bg-[#0d9488]/5 flex items-center justify-center transition-all">
-        <Icon className="h-5 w-5 text-[#0d9488]" strokeWidth={1.5} />
+      <div className="shrink-0 w-11 h-11 border border-[#00a878]/40 group-hover:border-[#00a878] group-hover:bg-[#00a878]/5 flex items-center justify-center transition-all">
+        <Icon className="h-5 w-5 text-[#00a878]" strokeWidth={1.5} />
       </div>
       <div>
-        <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d9488] mb-1">
+        <div className="text-[10px] tracking-[0.3em] uppercase text-[#00a878] mb-1">
           {label}
         </div>
-        <div className="font-serif text-lg text-white group-hover:text-[#0d9488] transition-colors">
+        <div className="font-serif text-lg text-white group-hover:text-[#00a878] transition-colors">
           {value}
         </div>
       </div>
@@ -301,8 +301,8 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-[11px] tracking-[0.2em] uppercase text-[#6b6253] mb-2 font-medium">
-        {label}{required && <span className="text-[#0d9488]"> *</span>}
+      <label className="block text-[11px] tracking-[0.2em] uppercase text-[#5a6b64] mb-2 font-medium">
+        {label}{required && <span className="text-[#00a878]"> *</span>}
       </label>
       <input
         type={type}
@@ -310,7 +310,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="w-full px-4 py-3.5 bg-[#faf8f3] border border-[#e8e3d8] text-[#0a0e1a] focus:border-[#0d9488] focus:outline-none transition-colors font-sans text-sm placeholder:text-[#94a3b8]"
+        className="w-full px-4 py-3.5 bg-[#f5f7f5] border border-[#dce5e0] text-[#0c1a16] focus:border-[#00a878] focus:outline-none transition-colors font-sans text-sm placeholder:text-[#90a49c]"
       />
     </div>
   );

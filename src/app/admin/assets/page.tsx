@@ -70,7 +70,7 @@ export default async function AssetsPage() {
                     <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5">
                       <div className="min-w-0">
                         <p className="flex items-center gap-2 text-sm font-medium">
-                          <CalendarClock className="size-3.5 text-[#0d9488]" />
+                          <CalendarClock className="size-3.5 text-[#00a878]" />
                           {s.name}
                           {!s.active && <Pill tone="neutral">Paused</Pill>}
                         </p>

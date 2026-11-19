@@ -90,7 +90,7 @@ export default async function ReportsPage({
             ))}
           </select>
         </label>
-        <button className="rounded-lg bg-[#0a0e1a] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
+        <button className="rounded-lg bg-[#0c1a16] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
           Run report
         </button>
       </form>
@@ -141,7 +141,7 @@ export default async function ReportsPage({
                     </span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-black/[0.06]">
-                    <div className="h-full rounded-full bg-[#0d9488]" style={{ width: `${(s.count / maxSource) * 100}%` }} />
+                    <div className="h-full rounded-full bg-[#00a878]" style={{ width: `${(s.count / maxSource) * 100}%` }} />
                   </div>
                 </li>
               ))}
@@ -165,7 +165,7 @@ export default async function ReportsPage({
                       </span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-black/[0.06]">
-                      <div className="h-full rounded-full bg-[#0a0e1a]" style={{ width: `${(m.revenueMinor / max) * 100}%` }} />
+                      <div className="h-full rounded-full bg-[#0c1a16]" style={{ width: `${(m.revenueMinor / max) * 100}%` }} />
                     </div>
                   </li>
                 )

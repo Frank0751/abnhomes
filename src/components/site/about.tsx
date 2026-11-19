@@ -38,10 +38,10 @@ const values = [
 export function About() {
   const { t } = useI18n();
   return (
-    <section id="about" className="relative py-24 lg:py-32 bg-[#faf8f3] overflow-hidden">
+    <section id="about" className="relative py-24 lg:py-32 bg-[#f5f7f5] overflow-hidden">
       {/* Subtle decorative texture */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#0d9488]/5 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-[#0a0e1a]/5 blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#00a878]/5 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-[#0c1a16]/5 blur-3xl pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10 relative">
         {/* Header */}
@@ -52,7 +52,7 @@ export function About() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em]">
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0c1a16] leading-[1.05] tracking-[-0.02em]">
               {t("about.heading")}
             </h2>
           </motion.div>
@@ -62,7 +62,7 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: 0.15 }}
-            className="space-y-5 text-[#3a3530] text-base md:text-lg leading-relaxed"
+            className="space-y-5 text-[#2d433b] text-base md:text-lg leading-relaxed"
           >
             <p>
               ABN Homes Company Limited is the real estate arm of the ABN Group
@@ -88,7 +88,7 @@ export function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#e8e3d8] border border-[#e8e3d8] mb-24"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#dce5e0] border border-[#dce5e0] mb-24"
         >
           {stats.map((stat, i) => (
             <StatCard key={i} {...stat} delay={i * 0.1} />
@@ -107,19 +107,19 @@ export function About() {
               className="relative"
             >
               <div className="flex items-start gap-5">
-                <div className="shrink-0 w-14 h-14 border border-[#0d9488]/40 flex items-center justify-center bg-white">
-                  <value.icon className="h-6 w-6 text-[#0d9488]" strokeWidth={1.5} />
+                <div className="shrink-0 w-14 h-14 border border-[#00a878]/40 flex items-center justify-center bg-white">
+                  <value.icon className="h-6 w-6 text-[#00a878]" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h3 className="font-serif text-2xl md:text-3xl text-[#0a0e1a] mb-3">
+                  <h3 className="font-serif text-2xl md:text-3xl text-[#0c1a16] mb-3">
                     {value.title}
                   </h3>
-                  <p className="text-[#3a3530] text-base leading-relaxed">
+                  <p className="text-[#2d433b] text-base leading-relaxed">
                     {value.body}
                   </p>
                 </div>
               </div>
-              <div className="absolute top-0 -translate-y-3 right-0 font-serif text-[10rem] leading-none text-[#0d9488]/8 select-none pointer-events-none">
+              <div className="absolute top-0 -translate-y-3 right-0 font-serif text-[10rem] leading-none text-[#00a878]/8 select-none pointer-events-none">
                 {String(i + 1).padStart(2, "0")}
               </div>
             </motion.div>
@@ -177,13 +177,13 @@ function StatCard({
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay }}
-      className="bg-[#faf8f3] p-8 lg:p-10 text-center"
+      className="bg-[#f5f7f5] p-8 lg:p-10 text-center"
     >
-      <div className="font-serif text-5xl lg:text-6xl text-[#0a0e1a] font-semibold tracking-tight">
+      <div className="font-serif text-5xl lg:text-6xl text-[#0c1a16] font-semibold tracking-tight">
         {count}
-        <span className="text-[#0d9488]">{suffix}</span>
+        <span className="text-[#00a878]">{suffix}</span>
       </div>
-      <div className="mt-3 text-xs tracking-[0.25em] text-[#6b6253] uppercase font-medium">
+      <div className="mt-3 text-xs tracking-[0.25em] text-[#5a6b64] uppercase font-medium">
         {t(label)}
       </div>
     </motion.div>

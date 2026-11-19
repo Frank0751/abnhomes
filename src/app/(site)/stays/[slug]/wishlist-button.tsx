@@ -28,11 +28,11 @@ export function WishlistButton({ unitId, initiallySaved }: { unitId: string; ini
       aria-label={saved ? 'Remove from saved homes' : 'Save this home'}
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
         saved
-          ? 'border-[#0d9488] bg-[#0d9488]/[0.08] text-[#0d9488]'
+          ? 'border-[#00a878] bg-[#00a878]/[0.08] text-[#00a878]'
           : 'border-black/12 bg-white/90 text-foreground/70 hover:border-black/25'
       }`}
     >
-      <Heart className={`size-3.5 ${saved ? 'fill-[#0d9488]' : ''}`} />
+      <Heart className={`size-3.5 ${saved ? 'fill-[#00a878]' : ''}`} />
       {saved ? 'Saved' : 'Save'}
     </button>
   )

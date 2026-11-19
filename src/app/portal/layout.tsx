@@ -23,15 +23,19 @@ export default async function PortalLayout({ children }: { children: React.React
   const actor = await currentActor()
   if (!actor) redirect('/signin?callbackUrl=/portal')
 
-  const user = await db.user.findUniqueOrThrow({
+  // Same reasoning as the admin shell: a cookie can outlive its account, and a
+  // tenant whose record was removed should be asked to sign in again rather
+  // than shown a server error.
+  const user = await db.user.findUnique({
     where: { id: actor.id },
-    select: { name: true, role: true },
+    select: { name: true, role: true, active: true },
   })
+  if (!user || !user.active) redirect('/signin?callbackUrl=/portal')
 
   return (
     <SessionProvider>
-      <div className="min-h-dvh bg-[#f7f5f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(13,148,136,0.08),transparent)]">
-        <header className="sticky top-0 z-40 border-b border-black/[0.06] bg-[#faf8f3]/85 backdrop-blur-md">
+      <div className="min-h-dvh bg-[#eff3f0] bg-[radial-gradient(1100px_420px_at_50%_-120px,rgba(0, 168, 120,0.08),transparent)]">
+        <header className="sticky top-0 z-40 border-b border-black/[0.06] bg-[#f5f7f5]/85 backdrop-blur-md">
           <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-5 py-3.5">
             <Link href="/" className="flex items-center gap-2.5">
               <Image src="/images/logo/abn-badge.png" alt="" width={30} height={30} />

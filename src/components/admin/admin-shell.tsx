@@ -12,6 +12,7 @@ import {
   CalendarDays,
   ClipboardList,
   Coins,
+  DoorOpen,
   FileText,
   KeyRound,
   LayoutDashboard,
@@ -53,6 +54,7 @@ const NAV: Array<{ group: string; items: NavItem[] }> = [
     group: 'Today',
     items: [
       { href: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
+      { href: '/admin/rooms', label: 'Rooms', icon: DoorOpen, permission: 'units:read' },
       { href: '/admin/analytics', label: 'Analytics', icon: TrendingUp, permission: 'reports:read' },
       { href: '/admin/calendar', label: 'Calendar', icon: CalendarDays, permission: 'bookings:read' },
       { href: '/admin/bookings', label: 'Bookings', icon: BedDouble, permission: 'bookings:read' },
@@ -132,9 +134,9 @@ export function AdminShell({
   )
 
   return (
-    <div className="min-h-dvh bg-[#f7f5f0] text-foreground">
+    <div className="min-h-dvh bg-[#eff3f0] text-foreground">
       {/* Mobile bar. Staff on site are on a phone, not a laptop. */}
-      <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between border-b border-black/8 bg-[#faf8f3]/95 px-4 py-3 backdrop-blur print:hidden">
+      <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between border-b border-black/8 bg-[#f5f7f5]/95 px-4 py-3 backdrop-blur print:hidden">
         <Link href="/admin" className="flex items-center gap-2">
           <Image src="/images/logo/abn-badge.png" alt="" width={26} height={26} />
           <span className="font-serif text-sm">ABN Operations</span>
@@ -152,7 +154,7 @@ export function AdminShell({
       <div className="lg:grid lg:grid-cols-[248px_minmax(0,1fr)] print:block">
         <aside
           className={cn(
-            'border-r border-black/8 bg-[#faf8f3] lg:sticky lg:top-0 lg:h-dvh lg:overflow-y-auto print:hidden',
+            'border-r border-black/8 bg-[#f5f7f5] lg:sticky lg:top-0 lg:h-dvh lg:overflow-y-auto print:hidden',
             open ? 'block' : 'hidden lg:block'
           )}
         >
@@ -220,7 +222,7 @@ export function AdminShell({
         </aside>
 
         <div className="min-w-0">
-          <header className="sticky top-0 z-30 flex items-center justify-between border-b border-black/8 bg-[#f7f5f0]/85 px-4 py-2 backdrop-blur sm:px-8 print:hidden">
+          <header className="sticky top-0 z-30 flex items-center justify-between border-b border-black/8 bg-[#eff3f0]/85 px-4 py-2 backdrop-blur sm:px-8 print:hidden">
             <div className="flex items-center gap-4">
               <span className="hidden text-[11px] uppercase tracking-[0.14em] text-muted-foreground sm:block">
                 Operations console
@@ -229,7 +231,7 @@ export function AdminShell({
                 href="/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#0f766e] hover:underline"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#06684c] hover:underline"
               >
                 <ExternalLink className="size-3.5" />
                 View site

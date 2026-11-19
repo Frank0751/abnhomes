@@ -142,7 +142,7 @@ export default async function AuditPage({
             ))}
           </select>
         </label>
-        <button className="rounded-lg bg-[#0a0e1a] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
+        <button className="rounded-lg bg-[#0c1a16] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
           Filter
         </button>
       </form>
@@ -206,7 +206,7 @@ export default async function AuditPage({
       </Panel>
 
       <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
-        <ShieldCheck className="size-3.5 text-[#0d9488]" />
+        <ShieldCheck className="size-3.5 text-[#00a878]" />
         Events are written by the platform itself on every mutation — they cannot be edited or removed from any
         interface, including this one.
       </p>

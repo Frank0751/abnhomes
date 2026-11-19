@@ -1,28 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display } from "next/font/google";
-import localFont from "next/font/local";
+import { Ubuntu, Ubuntu_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-// Serif display face for headings
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
+// Ubuntu carries the whole interface — body, headings and all. It has enough
+// character at 700 to serve as the display face, so pairing it with a second
+// family would only dilute it.
+const ubuntu = Ubuntu({
+  variable: "--font-ubuntu",
+  subsets: ["latin", "latin-ext"],
   display: "swap",
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "500", "700"],
 });
 
-// Satoshi, self-hosted, as the primary sans / body typeface
-const satoshi = localFont({
-  variable: "--font-satoshi",
+// Ubuntu Mono wherever digits have to line up: receipts, the ledger, booking
+// references, calendar cells.
+const ubuntuMono = Ubuntu_Mono({
+  variable: "--font-ubuntu-mono",
+  subsets: ["latin", "latin-ext"],
   display: "swap",
-  src: [
-    { path: "./fonts/Satoshi-300.woff2", weight: "300", style: "normal" },
-    { path: "./fonts/Satoshi-400.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/Satoshi-500.woff2", weight: "500", style: "normal" },
-    { path: "./fonts/Satoshi-700.woff2", weight: "700", style: "normal" },
-    { path: "./fonts/Satoshi-900.woff2", weight: "900", style: "normal" },
-  ],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -101,8 +98,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf8f3" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0e1a" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f7f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c1a16" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -172,7 +169,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${playfair.variable} ${satoshi.variable} antialiased bg-background text-foreground`}
+        className={`${ubuntu.variable} ${ubuntuMono.variable} antialiased bg-background text-foreground`}
       >
         {/*
           Deliberately bare. The marketing chrome lives in (site)/layout.tsx so

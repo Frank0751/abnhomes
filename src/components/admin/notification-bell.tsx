@@ -59,12 +59,12 @@ export function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative rounded-lg p-2 text-[#5b6472] transition hover:bg-black/5 hover:text-[#0a0e1a]"
+        className="relative rounded-lg p-2 text-[#5b6472] transition hover:bg-black/5 hover:text-[#0c1a16]"
         aria-label={`Notifications${unread ? ` — ${unread} unread` : ''}`}
       >
         <Bell className="size-[18px]" />
         {unread > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-[#0d9488] text-[10px] font-semibold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-[#00a878] text-[10px] font-semibold text-white">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
@@ -77,7 +77,7 @@ export function NotificationBell() {
             <div className="flex items-center justify-between border-b border-black/8 px-4 py-2.5">
               <span className="text-xs font-semibold uppercase tracking-wider text-[#5b6472]">Notifications</span>
               {unread > 0 && (
-                <button onClick={markAll} className="text-xs font-medium text-[#0d9488] hover:underline">
+                <button onClick={markAll} className="text-xs font-medium text-[#00a878] hover:underline">
                   Mark all read
                 </button>
               )}
@@ -92,11 +92,11 @@ export function NotificationBell() {
                   href={item.link ?? '#'}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    'block border-b border-black/5 px-4 py-3 transition last:border-0 hover:bg-[#faf8f3]',
-                    !item.readAt && 'bg-[#0d9488]/[0.05]'
+                    'block border-b border-black/5 px-4 py-3 transition last:border-0 hover:bg-[#f5f7f5]',
+                    !item.readAt && 'bg-[#00a878]/[0.05]'
                   )}
                 >
-                  <p className={cn('text-sm', !item.readAt ? 'font-semibold text-[#0a0e1a]' : 'text-[#3a4354]')}>
+                  <p className={cn('text-sm', !item.readAt ? 'font-semibold text-[#0c1a16]' : 'text-[#3a4354]')}>
                     {item.title}
                   </p>
                   {item.body && <p className="mt-0.5 line-clamp-2 text-xs text-[#5b6472]">{item.body}</p>}

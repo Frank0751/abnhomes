@@ -70,7 +70,7 @@ export default async function SalesPage() {
                   return (
                     <tr key={p.id} className="border-b border-black/5 last:border-0 hover:bg-black/[0.02]">
                       <td className="px-5 py-3">
-                        <Link href={`/admin/sales/${p.id}`} className="font-mono text-[13px] font-medium text-[#0f766e] hover:underline">
+                        <Link href={`/admin/sales/${p.id}`} className="font-mono text-[13px] font-medium text-[#06684c] hover:underline">
                           {p.code}
                         </Link>
                       </td>
@@ -83,7 +83,7 @@ export default async function SalesPage() {
                       <td className="px-3 py-3 text-right tabular-nums">{formatMinor(paid, p.currency)}</td>
                       <td className="px-3 py-3">
                         <div className="h-1.5 w-24 overflow-hidden rounded-full bg-black/8">
-                          <div className="h-full rounded-full bg-[#0d9488]" style={{ width: `${pct}%` }} />
+                          <div className="h-full rounded-full bg-[#00a878]" style={{ width: `${pct}%` }} />
                         </div>
                       </td>
                       <td className="px-3 py-3">
@@ -100,7 +100,7 @@ export default async function SalesPage() {
       </Panel>
 
       <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
-        Fresh applications live in <Link href="/admin/applications?tab=sales" className="font-medium text-[#0f766e] hover:underline">Applications</Link>
+        Fresh applications live in <Link href="/admin/applications?tab=sales" className="font-medium text-[#06684c] hover:underline">Applications</Link>
         <ArrowRight className="size-3" /> approve them there, then manage the money here.
       </p>
     </div>

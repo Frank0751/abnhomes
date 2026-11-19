@@ -35,12 +35,12 @@ import type {
   RevenuePoint,
 } from '@/lib/reporting/dashboard'
 
-const NAVY = '#0a0e1a'
-const TEAL = '#0d9488'
-const TEAL_LIGHT = '#14b8a6'
-const SAND = '#e8e3d8'
+const NAVY = '#0c1a16'
+const TEAL = '#00a878'
+const TEAL_LIGHT = '#1fd39a'
+const SAND = '#dce5e0'
 const MUTED = '#5b6472'
-const PIE_COLORS = [TEAL, NAVY, TEAL_LIGHT, '#5b6472', '#0f766e', '#94a3b8', '#f59e0b']
+const PIE_COLORS = [TEAL, NAVY, TEAL_LIGHT, '#5b6472', '#06684c', '#90a49c', '#f59e0b']
 const AGE_COLORS: Record<string, string> = {
   current: TEAL,
   '1-30': '#fbbf24',
@@ -52,7 +52,7 @@ const AGE_COLORS: Record<string, string> = {
 const tooltipStyle = {
   borderRadius: 10,
   border: '1px solid rgba(0,0,0,0.08)',
-  boxShadow: '0 8px 24px rgba(10,14,26,0.12)',
+  boxShadow: '0 8px 24px rgba(12, 26, 22,0.12)',
   fontSize: 12,
   background: '#fff',
 }
@@ -94,7 +94,7 @@ function Segmented<T extends string>({
           key={o.key}
           onClick={() => onChange(o.key)}
           className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
-            value === o.key ? 'bg-[#0a0e1a] text-white' : 'text-muted-foreground hover:bg-black/5'
+            value === o.key ? 'bg-[#0c1a16] text-white' : 'text-muted-foreground hover:bg-black/5'
           }`}
         >
           {o.label}
@@ -332,7 +332,7 @@ export function ArrearsAgingChart({ data }: { data: ArrearsBucket[] }) {
         <YAxis
           type="category"
           dataKey="label"
-          tick={{ fontSize: 12, fill: '#1a1f2e' }}
+          tick={{ fontSize: 12, fill: '#16271f' }}
           axisLine={false}
           tickLine={false}
           width={110}
@@ -377,7 +377,7 @@ export function FunnelChart({
           <YAxis
             type="category"
             dataKey="stage"
-            tick={{ fontSize: 12, fill: '#1a1f2e' }}
+            tick={{ fontSize: 12, fill: '#16271f' }}
             axisLine={false}
             tickLine={false}
             width={92}

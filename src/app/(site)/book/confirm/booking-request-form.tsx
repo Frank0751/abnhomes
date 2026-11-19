@@ -99,7 +99,7 @@ export function BookingRequestForm({
         </p>
         <Link
           href={state.payUrl}
-          className="mt-5 inline-flex items-center justify-center rounded-lg bg-[#0d9488] px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#0f8578]"
+          className="mt-5 inline-flex items-center justify-center rounded-lg bg-[#00a878] px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#00916a]"
         >
           Pay {formatMinor(state.totalMinor, state.currency as never)} securely →
         </Link>
@@ -140,7 +140,7 @@ export function BookingRequestForm({
               name="name"
               required
               autoComplete="name"
-              className="w-full rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#0d9488] focus:outline-none"
+              className="w-full rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#00a878] focus:outline-none"
             />
           </label>
           <label className="block">
@@ -153,7 +153,7 @@ export function BookingRequestForm({
               required
               autoComplete="tel"
               placeholder="024 170 4048 · or +44 … from abroad"
-              className="w-full rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#0d9488] focus:outline-none"
+              className="w-full rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#00a878] focus:outline-none"
             />
           </label>
         </div>
@@ -167,7 +167,7 @@ export function BookingRequestForm({
             type="email"
             required
             autoComplete="email"
-            className="w-full rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#0d9488] focus:outline-none"
+            className="w-full rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#00a878] focus:outline-none"
           />
         </label>
 
@@ -194,7 +194,7 @@ export function BookingRequestForm({
               {['LEISURE', 'BUSINESS', 'RELOCATION'].map((p, i) => (
                 <label
                   key={p}
-                  className="flex flex-1 cursor-pointer items-center justify-center rounded-lg border border-black/12 px-2 py-2.5 text-xs font-medium has-checked:border-[#0d9488] has-checked:bg-[#0d9488]/[0.07] has-checked:text-[#0d9488]"
+                  className="flex flex-1 cursor-pointer items-center justify-center rounded-lg border border-black/12 px-2 py-2.5 text-xs font-medium has-checked:border-[#00a878] has-checked:bg-[#00a878]/[0.07] has-checked:text-[#00a878]"
                 >
                   <input
                     type="radio"
@@ -218,7 +218,7 @@ export function BookingRequestForm({
             name="notes"
             rows={2}
             placeholder="Flight number, dietary needs, a friend joining late…"
-            className="w-full resize-none rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#0d9488] focus:outline-none"
+            className="w-full resize-none rounded-lg border border-black/12 px-3 py-2.5 text-sm focus:border-[#00a878] focus:outline-none"
           />
         </label>
       </fieldset>
@@ -237,7 +237,7 @@ export function BookingRequestForm({
                 <div
                   key={a.id}
                   className={`flex items-start gap-3 rounded-xl border px-4 py-3 transition ${
-                    qty > 0 ? 'border-[#0d9488] bg-[#0d9488]/[0.05]' : 'border-black/10'
+                    qty > 0 ? 'border-[#00a878] bg-[#00a878]/[0.05]' : 'border-black/10'
                   }`}
                 >
                   <div className="min-w-0 flex-1">
@@ -275,7 +275,7 @@ export function BookingRequestForm({
                         type="button"
                         onClick={() => bump(a.id, qty > 0 ? -1 : 1, 1)}
                         className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
-                          qty > 0 ? 'bg-[#0d9488] text-white' : 'border border-black/15 hover:bg-black/5'
+                          qty > 0 ? 'bg-[#00a878] text-white' : 'border border-black/15 hover:bg-black/5'
                         }`}
                       >
                         {qty > 0 ? 'Added ✓' : 'Add'}
@@ -299,14 +299,14 @@ export function BookingRequestForm({
               value={couponCode}
               onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
               placeholder="e.g. WELCOME10"
-              className="w-full rounded-lg border border-black/12 py-2.5 pl-9 pr-3 text-sm uppercase tracking-wide focus:border-[#0d9488] focus:outline-none"
+              className="w-full rounded-lg border border-black/12 py-2.5 pl-9 pr-3 text-sm uppercase tracking-wide focus:border-[#00a878] focus:outline-none"
             />
           </div>
           <button
             type="button"
             onClick={applyCoupon}
             disabled={checkingCoupon || !couponCode.trim()}
-            className="rounded-lg bg-[#0a0e1a] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1a2233] disabled:opacity-50"
+            className="rounded-lg bg-[#0c1a16] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1a2233] disabled:opacity-50"
           >
             {checkingCoupon ? <Loader2 className="size-4 animate-spin" /> : 'Apply'}
           </button>
@@ -349,14 +349,14 @@ export function BookingRequestForm({
       {/* ------------------------------------------------------------ consents */}
       <fieldset className="space-y-2.5 rounded-xl border border-black/[0.08] bg-white p-5 text-sm shadow-soft">
         <label className="flex cursor-pointer items-start gap-2.5">
-          <input type="checkbox" name="consentRules" className="mt-0.5 accent-[#0d9488]" />
+          <input type="checkbox" name="consentRules" className="mt-0.5 accent-[#00a878]" />
           <span className="text-foreground/85">
             I accept the house rules of the home (no smoking indoors, quiet hours 22:00–06:00,
             registered guests only).
           </span>
         </label>
         <label className="flex cursor-pointer items-start gap-2.5">
-          <input type="checkbox" name="consentTerms" className="mt-0.5 accent-[#0d9488]" />
+          <input type="checkbox" name="consentTerms" className="mt-0.5 accent-[#00a878]" />
           <span className="text-foreground/85">
             I accept the terms of service and cancellation policy — free cancellation until 7 days
             before arrival, 50% until 48 hours, non-refundable after.
@@ -373,7 +373,7 @@ export function BookingRequestForm({
       <button
         type="submit"
         disabled={pending}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0d9488] px-4 py-4 text-[15px] font-semibold text-white shadow-soft transition hover:bg-[#0f8578] disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#00a878] px-4 py-4 text-[15px] font-semibold text-white shadow-soft transition hover:bg-[#00916a] disabled:opacity-60"
       >
         {pending && <Loader2 className="size-4 animate-spin" />}
         {pending ? 'Holding your dates…' : `Hold these dates — pay ${formatMinor(total, currency)}`}

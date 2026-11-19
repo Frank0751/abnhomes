@@ -9,17 +9,28 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // The main call to action wears the brand accent. Reserving jade for
+        // things that actually do something is what lets it carry weight.
         default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+          "bg-accent text-accent-foreground shadow-sm hover:bg-[var(--accent-hover)] active:translate-y-px",
+        // Ink: for a strong action that is not the primary one on the screen,
+        // so two buttons never compete for the same emphasis.
+        ink: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:translate-y-px",
+        // Saffron: draws the eye without implying an error — "issue receipt",
+        // "needs attention".
+        gold:
+          "bg-[var(--gold)] text-[var(--gold-foreground)] shadow-sm hover:bg-[var(--gold-deep)] hover:text-white active:translate-y-px",
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white shadow-sm hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 active:translate-y-px",
+        // Outline and ghost hover to a quiet surface rather than flooding with
+        // accent — otherwise every toolbar flashes jade and the accent stops
+        // meaning anything.
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border border-border bg-background shadow-xs hover:bg-secondary hover:border-[var(--accent)]/40 active:translate-y-px dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/70 active:translate-y-px",
+        ghost: "hover:bg-secondary hover:text-foreground dark:hover:bg-secondary/60",
+        link: "text-[var(--accent-deep)] underline-offset-4 hover:underline dark:text-[var(--accent)]",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

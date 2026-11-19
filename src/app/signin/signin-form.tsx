@@ -24,10 +24,27 @@ export function SignInForm() {
 
   return (
     <Tabs defaultValue="staff" className="mt-8">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="staff">Staff</TabsTrigger>
-        <TabsTrigger value="phone">Tenant, owner or vendor</TabsTrigger>
-        <TabsTrigger value="portal">Booking code</TabsTrigger>
+      {/* Three ways in, and the labels have to survive a 360px screen — so the
+          triggers wrap rather than run into one another. */}
+      <TabsList className="grid h-auto w-full grid-cols-3 gap-1 p-1">
+        <TabsTrigger
+          value="staff"
+          className="h-auto whitespace-normal px-2 py-2 text-[12px] leading-tight"
+        >
+          Staff
+        </TabsTrigger>
+        <TabsTrigger
+          value="phone"
+          className="h-auto whitespace-normal px-2 py-2 text-[12px] leading-tight"
+        >
+          Tenant or owner
+        </TabsTrigger>
+        <TabsTrigger
+          value="portal"
+          className="h-auto whitespace-normal px-2 py-2 text-[12px] leading-tight"
+        >
+          Booking code
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="staff" className="mt-6">

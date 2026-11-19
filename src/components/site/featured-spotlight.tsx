@@ -46,9 +46,9 @@ export function FeaturedSpotlight() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 lg:py-32 bg-[#0a0e1a] text-white overflow-hidden"
+      className="relative py-24 lg:py-32 bg-[#0c1a16] text-white overflow-hidden"
     >
-      <div className="absolute top-1/4 -right-32 w-[500px] h-[500px] rounded-full bg-[#0d9488]/8 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 -right-32 w-[500px] h-[500px] rounded-full bg-[#00a878]/8 blur-3xl pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10 relative">
         {/* Header */}
@@ -79,14 +79,14 @@ export function FeaturedSpotlight() {
               <button
                 onClick={prev}
                 aria-label="Previous"
-                className="w-11 h-11 border border-white/20 hover:border-[#0d9488] hover:bg-[#0d9488]/5 flex items-center justify-center transition-all"
+                className="w-11 h-11 border border-white/20 hover:border-[#00a878] hover:bg-[#00a878]/5 flex items-center justify-center transition-all"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <button
                 onClick={next}
                 aria-label="Next"
-                className="w-11 h-11 border border-white/20 hover:border-[#0d9488] hover:bg-[#0d9488]/5 flex items-center justify-center transition-all"
+                className="w-11 h-11 border border-white/20 hover:border-[#00a878] hover:bg-[#00a878]/5 flex items-center justify-center transition-all"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
@@ -102,7 +102,7 @@ export function FeaturedSpotlight() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="relative h-[420px] lg:h-[640px] overflow-hidden bg-[#141826]"
+            className="relative h-[420px] lg:h-[640px] overflow-hidden bg-[#0f1e19]"
           >
             <motion.div
               style={{ y: imageY }}
@@ -113,11 +113,11 @@ export function FeaturedSpotlight() {
                 style={{ backgroundImage: `url(${slides[active].image})` }}
               />
             </motion.div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/60 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a16]/60 via-transparent to-transparent" />
 
             {/* Top label */}
             <div className="absolute top-6 left-6 flex items-center gap-3">
-              <span className="font-serif text-4xl text-[#0d9488]">
+              <span className="font-serif text-4xl text-[#00a878]">
                 {String(active + 1).padStart(2, "0")}
               </span>
               <div>
@@ -154,7 +154,7 @@ export function FeaturedSpotlight() {
                   aria-label={`Slide ${i + 1}`}
                 >
                   <span
-                    className={`absolute left-0 top-0 h-full bg-[#0d9488] transition-all duration-500 ${
+                    className={`absolute left-0 top-0 h-full bg-[#00a878] transition-all duration-500 ${
                       i === active ? "w-full" : "w-0 group-hover:w-1/3"
                     }`}
                   />
@@ -182,7 +182,7 @@ export function FeaturedSpotlight() {
 
             <button
               onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="group inline-flex items-center gap-2 mt-6 text-sm font-medium tracking-[0.2em] uppercase text-[#0d9488] hover:text-white transition-colors self-start"
+              className="group inline-flex items-center gap-2 mt-6 text-sm font-medium tracking-[0.2em] uppercase text-[#00a878] hover:text-white transition-colors self-start"
             >
               Book an in person tour
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />

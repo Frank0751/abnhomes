@@ -54,7 +54,7 @@ export function Gallery({ images, name }: { images: string[]; name: string }) {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-[#0a0e1a]/97" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-50 flex flex-col bg-[#0c1a16]/97" role="dialog" aria-modal="true">
           <div className="flex items-center justify-between px-5 py-4">
             <p className="text-sm text-white/80">
               {name} — {index + 1} / {images.length}
@@ -89,7 +89,7 @@ export function Gallery({ images, name }: { images: string[]; name: string }) {
               <button
                 key={src + i}
                 onClick={() => setIndex(i)}
-                className={`relative h-14 w-20 shrink-0 overflow-hidden rounded ${i === index ? 'ring-2 ring-[#14b8a6]' : 'opacity-60'}`}
+                className={`relative h-14 w-20 shrink-0 overflow-hidden rounded ${i === index ? 'ring-2 ring-[#1fd39a]' : 'opacity-60'}`}
                 aria-label={`Photo ${i + 1}`}
               >
                 <Image src={src} alt="" fill sizes="80px" className="object-cover" />

@@ -83,7 +83,7 @@ const amenities = [
 export function Amenities() {
   const { t } = useI18n();
   return (
-    <section id="amenities" className="relative py-24 lg:py-32 bg-[#faf8f3] overflow-hidden">
+    <section id="amenities" className="relative py-24 lg:py-32 bg-[#f5f7f5] overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10">
         {/* Header */}
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-end mb-16">
@@ -93,7 +93,7 @@ export function Amenities() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0a0e1a] leading-[1.05] tracking-[-0.02em]">
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0c1a16] leading-[1.05] tracking-[-0.02em]">
               {t("amenities.heading")}
             </h2>
           </motion.div>
@@ -103,14 +103,14 @@ export function Amenities() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: 0.15 }}
-            className="text-[#3a3530] text-base md:text-lg leading-relaxed"
+            className="text-[#2d433b] text-base md:text-lg leading-relaxed"
           >
             {t("amenities.sub")}
           </motion.p>
         </div>
 
         {/* Amenities grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-[#e8e3d8] border border-[#e8e3d8]">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-[#dce5e0] border border-[#dce5e0]">
           {amenities.map((amenity, i) => (
             <motion.div
               key={amenity.titleKey}
@@ -118,18 +118,18 @@ export function Amenities() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: (i % 4) * 0.08 }}
-              className="group bg-[#faf8f3] hover:bg-white p-7 lg:p-8 transition-colors duration-300 relative"
+              className="group bg-[#f5f7f5] hover:bg-white p-7 lg:p-8 transition-colors duration-300 relative"
             >
-              <div className="w-12 h-12 border border-[#0d9488]/30 group-hover:border-[#0d9488] group-hover:bg-[#0d9488]/5 flex items-center justify-center mb-5 transition-all duration-300">
+              <div className="w-12 h-12 border border-[#00a878]/30 group-hover:border-[#00a878] group-hover:bg-[#00a878]/5 flex items-center justify-center mb-5 transition-all duration-300">
                 <amenity.icon
-                  className="h-6 w-6 text-[#0a0e1a] group-hover:text-[#0d9488] transition-colors duration-300"
+                  className="h-6 w-6 text-[#0c1a16] group-hover:text-[#00a878] transition-colors duration-300"
                   strokeWidth={1.5}
                 />
               </div>
-              <h3 className="font-serif text-xl text-[#0a0e1a] mb-2.5">
+              <h3 className="font-serif text-xl text-[#0c1a16] mb-2.5">
                 {t(amenity.titleKey)}
               </h3>
-              <p className="text-sm text-[#6b6253] leading-relaxed">
+              <p className="text-sm text-[#5a6b64] leading-relaxed">
                 {amenity.body}
               </p>
             </motion.div>
