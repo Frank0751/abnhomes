@@ -26,6 +26,7 @@ import { formatMinor } from '@/lib/core/money'
 import { RoomCalendar } from '@/components/admin/room-calendar'
 import { RoomRevenueChart } from '@/components/admin/room-revenue-chart'
 import { AssignManager } from './assign-manager'
+import { BaseRateEditor, RatePlans } from './rate-editor'
 import {
   EmptyState,
   PageHeader,
@@ -61,7 +62,7 @@ export default async function RoomPage({
     include: {
       property: { select: { id: true, name: true, addressLine: true, city: true } },
       manager: { select: { id: true, name: true } },
-      ratePlans: { where: { active: true }, orderBy: { priority: 'desc' } },
+      ratePlans: { orderBy: [{ active: 'desc' }, { priority: 'desc' }, { name: 'asc' }] },
       leases: {
         where: { status: 'ACTIVE' },
         include: { tenant: { select: { name: true, phone: true } } },
@@ -316,6 +317,67 @@ export default async function RoomPage({
               )}
             </div>
           </Panel>
+
+          {/* Rates. Reading them is money, so it is gated on money:read the
+              same as every other figure on this page; changing them is
+              units:write, the same capability that assigns the manager. */}
+          {!unit.isAmenity && showMoney && (
+            <Panel
+              title="Rates"
+              description="What this room costs, and when."
+            >
+              <dl className="space-y-2.5 border-b border-border p-4 text-sm">
+                <Field
+                  label="Base nightly"
+                  value={
+                    unit.baseNightlyMinor == null
+                      ? 'Not set'
+                      : formatMinor(unit.baseNightlyMinor, unit.currency)
+                  }
+                />
+                <Field
+                  label="Base monthly rent"
+                  value={
+                    unit.baseRentMinor == null
+                      ? 'Not set'
+                      : formatMinor(unit.baseRentMinor, unit.currency)
+                  }
+                />
+                <Field
+                  label="Paid bookings"
+                  value={unit.instantBook ? 'Confirm automatically' : 'Wait for approval'}
+                />
+              </dl>
+
+              {can(actor, 'units:write') && (
+                <div className="p-4">
+                  <BaseRateEditor
+                    unitId={unit.id}
+                    currency={unit.currency}
+                    baseNightlyMinor={unit.baseNightlyMinor}
+                    baseRentMinor={unit.baseRentMinor}
+                    instantBook={unit.instantBook}
+                  />
+                </div>
+              )}
+
+              {can(actor, 'units:write') ? (
+                <RatePlans unitId={unit.id} currency={unit.currency} plans={unit.ratePlans} />
+              ) : (
+                <dl className="space-y-2.5 p-4 text-sm">
+                  {unit.ratePlans
+                    .filter((plan) => plan.active)
+                    .map((plan) => (
+                      <Field
+                        key={plan.id}
+                        label={plan.name}
+                        value={formatMinor(plan.nightlyMinor, plan.currency)}
+                      />
+                    ))}
+                </dl>
+              )}
+            </Panel>
+          )}
 
           {lease && (
             <Panel title="Sitting tenant">
