@@ -1,0 +1,33 @@
+# The morning digest.
+#
+# One message a day gathering everything that was not urgent enough to
+# interrupt anyone: maintenance tickets, new tenancies, reviews, arrears.
+# The urgent events — bookings, payments, cancellations — have already been
+# sent as they happened by the alert dispatcher.
+#
+# 07:00 UTC. Ghana keeps GMT all year, so that is 07:00 in Accra and stays
+# there; there is no daylight saving to shift it twice a year.
+#
+# Lives in GitHub Actions rather than vercel.json because Vercel's cron
+# allowance is limited and already spent on the outbox, the rent run and the
+# iCal sync. Needs the PROD_SITE_URL and CRON_SECRET repository secrets, the
+# same two the sweeper uses.
+
+name: Morning digest
+
+on:
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch: # lets us send one by hand from the Actions tab
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send the morning digest
+        env:
+          SITE_URL: ${{ secrets.PROD_SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -fsS --max-time 120 "$SITE_URL/api/cron/digest" \
+            -H "Authorization: Bearer $CRON_SECRET"

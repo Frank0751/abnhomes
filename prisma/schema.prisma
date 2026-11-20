@@ -36,6 +36,24 @@ enum Currency {
 }
 
 /// Staff roles are internal; portal roles are external.
+/// How much of the business a staff member hears about, over and above what
+/// their role already shows them in the console. "The boss" is EVERYTHING:
+/// someone who wants the whole picture without opening the admin at all.
+enum AlertLevel {
+  /// Only the in-app notifications their role already produces.
+  NONE
+  /// Money and bookings, the moment they happen, on their chosen channels.
+  IMPORTANT
+  /// The above, plus a digest each morning of everything else.
+  EVERYTHING
+}
+
+/// Whether an event interrupts someone or waits for the morning.
+enum AlertUrgency {
+  INSTANT
+  DIGEST
+}
+
 enum Role {
   SUPER_ADMIN
   PROPERTY_MANAGER
@@ -366,6 +384,12 @@ model User {
   suspendedAt      DateTime?
   suspensionReason String?
 
+  /// What this person is told about, and where. Defaults to NONE so adding a
+  /// member of staff never silently starts messaging them.
+  alertLevel AlertLevel @default(NONE)
+  alertEmail Boolean    @default(true)
+  alertSms   Boolean    @default(false)
+
   notifications      Notification[]
   wishlistItems      WishlistItem[]
   referralsMade      Referral[]
@@ -529,6 +553,7 @@ model Property {
   payments      Payment[]
   tickets       Ticket[]
   statements    OwnerStatement[]
+  alerts        AlertLog[]
   access        UserPropertyAccess[]
   assets        Asset[]
   expenses      Expense[]
@@ -1629,6 +1654,36 @@ model ReservationAddOn {
 }
 
 /// In-app notification centre rows for staff and guests.
+/// One row per business event worth telling somebody about.
+///
+/// Separate from Notification, which is one row per PERSON per event for the
+/// in-app bell. This is the event itself, recorded once: it is what the
+/// morning digest reads, and it leaves a record of what the system decided
+/// was worth raising, whether or not anyone was listening at the time.
+model AlertLog {
+  id         String       @id @default(cuid())
+  /// Dotted name from the registry, e.g. "payment.received".
+  event      String
+  urgency    AlertUrgency
+  title      String
+  body       String?
+  link       String?
+
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  /// Amounts, codes and names, for rendering the digest without re-querying.
+  metadata   Json?
+
+  occurredAt DateTime  @default(now())
+  /// Set once this event has been carried in a digest, so it is sent once.
+  digestedAt DateTime?
+
+  @@index([urgency, digestedAt])
+  @@index([occurredAt])
+  @@index([event])
+}
+
 model Notification {
   id      String  @id @default(cuid())
   userId  String?

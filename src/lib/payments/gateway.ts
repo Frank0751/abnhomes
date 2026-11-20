@@ -15,6 +15,8 @@ import { shortCode } from '@/lib/core/ids'
 import { afterPaymentRecorded } from './after-payment'
 import { notifyRefundProcessed, APP_URL } from '@/lib/notify'
 import * as paystack from './paystack'
+import { raiseAlert } from '@/lib/alerts/dispatch'
+import { formatMinor } from '@/lib/core/money'
 
 export type SupportedChannel = {
   channel: PaymentChannel
@@ -298,6 +300,14 @@ export async function refundPayment(args: {
   }
 
   await db.payment.update({ where: { id: payment.id }, data: { status: 'REVERSED' } })
+
+  await raiseAlert('refund.processed', {
+    title: `Refund issued — ${payment.receiptNumber ?? payment.id.slice(0, 8)}`,
+    body: `${formatMinor(amountMinor, payment.currency)} back to ${payment.payerName ?? 'the payer'}.`,
+    link: '/admin/money',
+    propertyId: payment.propertyId,
+    metadata: { ref: payment.receiptNumber ?? payment.id, amountMinor, currency: payment.currency },
+  })
 
   await notifyRefundProcessed({
     partyId: payment.partyId,

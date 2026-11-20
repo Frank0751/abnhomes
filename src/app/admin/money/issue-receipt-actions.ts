@@ -22,6 +22,7 @@ import { recordPayment } from '@/lib/core/ledger'
 import { afterPaymentRecorded } from '@/lib/payments/after-payment'
 import { toMinor } from '@/lib/core/money'
 import { normalisePhone } from '@/lib/core/phone'
+import { raiseAlert } from '@/lib/alerts/dispatch'
 
 export type IssueResult =
   | { ok: true; receiptNumber: string; receiptUrl: string; message: string }
@@ -135,6 +136,14 @@ export async function issueReceiptAction(
         channel: input.channel,
         payer: party.name,
       },
+    })
+
+    await raiseAlert('receipt.issued', {
+      title: `Receipt ${payment.receiptNumber} — ${party.name}`,
+      body: `${input.amount} ${input.currency} by ${input.channel.replace(/_/g, ' ').toLowerCase()}, entered by hand${input.provisional === 'on' ? ', awaiting confirmation' : ''}.`,
+      link: `/receipt/${payment.id}`,
+      propertyId: input.propertyId,
+      metadata: { ref: payment.receiptNumber },
     })
 
     revalidatePath('/admin/money')

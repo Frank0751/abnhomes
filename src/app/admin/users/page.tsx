@@ -6,6 +6,7 @@ import { ROLE_LABELS } from '@/lib/rbac'
 import { formatDate } from '@/lib/core/dates'
 import { suspendUserAction, restoreUserAction, toggleUserActiveAction } from './actions'
 import { UserActionButtons } from './user-buttons'
+import { AlertSettings } from './alert-settings'
 import type { Role } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
@@ -34,6 +35,29 @@ export default async function UsersPage() {
         <StatCard label="Guest & portal accounts" value={String(external.length)} sublabel="tenants, owners, vendors" />
         <StatCard label="Suspended" value={String(suspended.length)} tone={suspended.length > 0 ? 'critical' : 'default'} sublabel="trust & safety holds" />
       </StatGrid>
+
+      <Panel
+        className="mt-7"
+        title="Who hears what"
+        description="Separate from the role. A role says what someone may do; this says how much they want to be told. Someone set to hear everything does not need admin powers to get it."
+      >
+        {staff.length === 0 ? (
+          <p className="px-4 py-5 text-sm text-muted-foreground">No staff accounts yet.</p>
+        ) : (
+          <AlertSettings
+            people={staff.map((u) => ({
+              id: u.id,
+              name: u.name,
+              email: u.email,
+              phone: u.phone,
+              roleLabel: ROLE_LABELS[u.role],
+              alertLevel: u.alertLevel,
+              alertEmail: u.alertEmail,
+              alertSms: u.alertSms,
+            }))}
+          />
+        )}
+      </Panel>
 
       {(['staff', 'portal'] as const).map((group) => {
         const list = group === 'staff' ? staff : external

@@ -14,6 +14,8 @@
 import { db } from '@/lib/db'
 import { notifyPaymentReceived } from '@/lib/notify'
 import { confirmReservation } from '@/lib/short-stay/reservations'
+import { raiseAlert } from '@/lib/alerts/dispatch'
+import { formatMinor } from '@/lib/core/money'
 
 export async function afterPaymentRecorded(paymentId: string): Promise<void> {
   try {
@@ -36,6 +38,14 @@ export async function afterPaymentRecorded(paymentId: string): Promise<void> {
       channel: payment.channel,
       propertyName,
       provisional: payment.status !== 'CONFIRMED',
+    })
+
+    await raiseAlert('payment.received', {
+      title: `${formatMinor(payment.amountMinor, payment.currency)} received${propertyName ? ` — ${propertyName}` : ''}`,
+      body: `${payment.payerName ?? 'A payer'} via ${payment.channel.replace(/_/g, ' ').toLowerCase()}. Receipt ${payment.receiptNumber ?? '—'}.`,
+      link: '/admin/money',
+      propertyId: payment.propertyId,
+      metadata: { ref: payment.id, amountMinor: payment.amountMinor, currency: payment.currency },
     })
 
     // Auto-confirm: find the reservation this payment settled against.

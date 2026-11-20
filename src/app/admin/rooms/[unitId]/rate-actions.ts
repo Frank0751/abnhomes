@@ -25,7 +25,8 @@ import { db } from '@/lib/db'
 import { requireActor } from '@/lib/session'
 import { AccessError, assertCanOnProperty } from '@/lib/rbac'
 import { logAudit } from '@/lib/audit'
-import { toMinor } from '@/lib/core/money'
+import { toMinor, formatMinor } from '@/lib/core/money'
+import { raiseAlert } from '@/lib/alerts/dispatch'
 import type { Currency } from '@prisma/client'
 
 /**
@@ -195,6 +196,14 @@ export async function updateRoomRatesAction(
         baseRentMinor,
         instantBook: input.instantBook === 'on',
       },
+    })
+
+    await raiseAlert('rates.changed', {
+      title: `${unit.name}: rate changed to ${baseNightlyMinor == null ? 'none' : formatMinor(baseNightlyMinor, currency)} a night`,
+      body: `Was ${unit.baseNightlyMinor == null ? 'not set' : formatMinor(unit.baseNightlyMinor, unit.currency)}. The audit trail records who changed it.`,
+      link: `/admin/rooms/${unitId}`,
+      propertyId: unit.propertyId,
+      metadata: { ref: `rate:${unitId}`, beforeMinor: unit.baseNightlyMinor, afterMinor: baseNightlyMinor },
     })
 
     revalidatePath(`/admin/rooms/${unitId}`)
