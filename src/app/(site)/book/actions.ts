@@ -18,6 +18,7 @@ import { validateCoupon } from '@/lib/marketplace/coupons'
 import { notifyBookingRequested } from '@/lib/notify'
 import { normalisePhone } from '@/lib/core/phone'
 import { logAudit } from '@/lib/audit'
+import { raiseAlert } from '@/lib/alerts/dispatch'
 
 export type BookingResult =
   | {
@@ -128,6 +129,14 @@ export async function requestBookingAction(
     // either way — and give the team an in-app nudge. Never blocks the booking.
     try {
       await notifyBookingRequested(reservation.id)
+
+      await raiseAlert('booking.requested', {
+        title: `New booking request — ${reservation.code}`,
+        body: `${reservation.nights} night${reservation.nights === 1 ? '' : 's'} from ${reservation.checkIn.toISOString().slice(0, 10)}. Awaiting confirmation.`,
+        link: `/admin/bookings/${reservation.id}`,
+        propertyId: unit.propertyId,
+        metadata: { ref: reservation.code },
+      })
     } catch (notifyError) {
       console.error('[booking] notification failed', notifyError)
     }

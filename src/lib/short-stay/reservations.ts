@@ -20,6 +20,7 @@ import { validateCoupon, recordRedemption } from '@/lib/marketplace/coupons'
 import { notifyBookingCancelled, notifyBookingConfirmed } from '@/lib/notify'
 import { formatMinor } from '@/lib/core/money'
 import { formatDate } from '@/lib/core/dates'
+import { raiseAlert } from '@/lib/alerts/dispatch'
 
 export type GuestInput = {
   partyId?: string
@@ -464,6 +465,14 @@ export async function confirmReservation(
 
   await notifyBookingConfirmed(reservation.id)
 
+  await raiseAlert('booking.confirmed', {
+    title: `${reservation.unit.name} confirmed — ${reservation.guest.name}`,
+    body: `${reservation.code} · ${reservation.nights} night${reservation.nights === 1 ? '' : 's'} from ${reservation.checkIn.toISOString().slice(0, 10)}`,
+    link: `/admin/bookings/${reservation.id}`,
+    propertyId: reservation.unit.propertyId,
+    metadata: { ref: reservation.code, totalMinor: reservation.totalMinor, currency: reservation.currency },
+  })
+
   return { ...reservation, portalCode }
 }
 
@@ -519,6 +528,22 @@ export async function cancelReservation(
   }, TX_OPTS)
 
   await notifyBookingCancelled(reservationId, args.reason)
+
+  // The transaction returns the bare reservation, so the room and building
+  // the alert names are fetched here rather than widening the write above.
+  const forAlert = await db.reservation.findUnique({
+    where: { id: reservationId },
+    select: { code: true, unit: { select: { name: true, propertyId: true } } },
+  })
+
+  await raiseAlert('booking.cancelled', {
+    title: `Cancelled: ${forAlert?.unit.name ?? 'a room'} — ${forAlert?.code ?? reservationId.slice(0, 8)}`,
+    body: args.reason ? `Reason: ${args.reason}` : 'No reason given.',
+    link: `/admin/bookings/${reservationId}`,
+    propertyId: forAlert?.unit.propertyId ?? null,
+    metadata: { ref: forAlert?.code },
+  })
+
   return result
 }
 

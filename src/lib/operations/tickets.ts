@@ -14,6 +14,7 @@ import { ticketCode } from '@/lib/core/ids'
 import { postCharge, postExpense } from '@/lib/core/ledger'
 import { propertyWhere, type Actor } from '@/lib/rbac'
 import { sendSms, templates } from '@/lib/messaging'
+import { raiseAlert } from '@/lib/alerts/dispatch'
 
 /** Response targets, in hours. An emergency is same-day by definition. */
 const SLA_HOURS: Record<TicketPriority, number> = {
@@ -66,6 +67,17 @@ export async function createTicket(input: CreateTicketInput) {
       idempotencyKey: input.idempotencyKey ?? null,
     },
     include: { reporter: true },
+  })
+
+  await raiseAlert(priority === 'EMERGENCY' ? 'maintenance.urgent' : 'maintenance.raised', {
+    title:
+      priority === 'EMERGENCY'
+        ? `EMERGENCY: ${ticket.title}`
+        : `Maintenance: ${ticket.title}`,
+    body: `${ticket.code}${ticket.unitId ? '' : ' (building-wide)'} · ${ticket.category.replace(/_/g, ' ').toLowerCase()}`,
+    link: `/admin/maintenance/${ticket.id}`,
+    propertyId: ticket.propertyId,
+    metadata: { ref: ticket.code, priority },
   })
 
   if (ticket.reporter?.phone) {
