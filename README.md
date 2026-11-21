@@ -169,3 +169,8 @@ Stated plainly, because a half-built feature you do not know about is worse than
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the reasoning behind the money model, and
 [`docs/OPERATIONS.md`](docs/OPERATIONS.md) for running it day to day.
+
+---
+
+Designed and built by **[KoomBei](https://koombei.com)** for ABN Homes Company Limited,
+8 Asiko Street, Tantra Hill, Accra.

@@ -61,6 +61,17 @@ export default async function PortalLayout({ children }: { children: React.React
               054 170 4048
             </a>
           </p>
+          <p className="mt-2 text-[11px] text-muted-foreground/70">
+            Built by{' '}
+            <a
+              href="https://koombei.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium underline-offset-2 hover:text-foreground hover:underline"
+            >
+              KoomBei
+            </a>
+          </p>
         </footer>
       </div>
     </SessionProvider>

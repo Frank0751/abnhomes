@@ -172,7 +172,29 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-xs text-white/45 text-center md:text-left">
-            (c) {new Date().getFullYear()} {COMPANY.fullName}, {t("footer.rights")}
+            <p>
+              (c) {new Date().getFullYear()} {COMPANY.fullName}, {t("footer.rights")}
+            </p>
+            {/* Studio credit. Split on the placeholder rather than
+                concatenated, so each language puts the name where its own
+                grammar wants it — Chinese and Arabic do not put it last. */}
+            <p className="mt-1.5 text-white/35">
+              {t("footer.builtBy").split("{studio}").map((part, i) => (
+                <span key={i}>
+                  {part}
+                  {i === 0 && (
+                    <a
+                      href="https://koombei.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-white/55 underline-offset-4 transition-colors hover:text-[#00a878] hover:underline"
+                    >
+                      KoomBei
+                    </a>
+                  )}
+                </span>
+              ))}
+            </p>
           </div>
           <div className="flex items-center gap-6 text-xs text-white/45">
             <a href="#" className="hover:text-[#00a878] transition-colors">{t("footer.privacy")}</a>

@@ -218,6 +218,18 @@ export function AdminShell({
               <LogOut className="mr-2 size-3.5" />
               Sign out
             </Button>
+
+            <p className="mt-3 border-t border-black/5 pt-3 text-[10px] text-muted-foreground/70">
+              Built by{' '}
+              <a
+                href="https://koombei.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium underline-offset-2 hover:text-foreground hover:underline"
+              >
+                KoomBei
+              </a>
+            </p>
           </div>
         </aside>
 

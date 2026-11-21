@@ -97,5 +97,7 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
-  }
+  },
+  "author": "KoomBei (https://koombei.com)",
+  "homepage": "https://koombei.com"
 }
