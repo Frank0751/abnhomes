@@ -75,3 +75,8 @@ worklog.md
 # stray sandbox artifact — this project installs with npm
 bun.lock
 scripts/shots/
+
+# Cloudflare / OpenNext build output and local secrets
+.open-next
+.wrangler
+.dev.vars*
