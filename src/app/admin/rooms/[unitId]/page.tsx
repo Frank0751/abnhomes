@@ -37,7 +37,7 @@ import {
   StatusPill,
 } from '@/components/admin/ui'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, CalendarPlus, Users, Wrench } from 'lucide-react'
+import { ArrowLeft, CalendarPlus, Pencil, Users, Wrench } from 'lucide-react'
 
 /** Parse `?m=` into a whole number of months within ±120 of this one. */
 function clampOffset(raw: string | undefined): number {
@@ -145,6 +145,14 @@ export default async function RoomPage({
         actions={
           <>
             <StatusPill status={unit.status} />
+            {can(actor, 'units:write') && (
+              <Button asChild size="sm" variant="outline">
+                <Link href={`/admin/rooms/${unit.id}/edit`}>
+                  <Pencil className="mr-1.5 size-4" />
+                  Edit details & photos
+                </Link>
+              </Button>
+            )}
             {!unit.isAmenity && can(actor, 'bookings:write') && (
               <Button asChild size="sm">
                 <Link href={`/admin/bookings/new?unitId=${unit.id}`}>

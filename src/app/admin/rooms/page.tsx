@@ -31,6 +31,7 @@ import { cn } from '@/lib/utils'
 import {
   ArrowRight,
   BedDouble,
+  Plus,
   CalendarDays,
   Sparkles,
   UserRound,
@@ -95,12 +96,22 @@ export default async function RoomsPage({
         title="Rooms"
         description={`${formatDate(today())} — every room, its state right now, and what it has earned this month. The rooftop is shared space and is left out of the figures.`}
         actions={
-          <Button asChild size="sm">
-            <Link href="/admin/calendar">
-              <CalendarDays className="mr-1.5 size-4" />
-              Full calendar
-            </Link>
-          </Button>
+          <>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/admin/calendar">
+                <CalendarDays className="mr-1.5 size-4" />
+                Full calendar
+              </Link>
+            </Button>
+            {can(actor, 'units:write') && (
+              <Button asChild size="sm">
+                <Link href="/admin/rooms/new">
+                  <Plus className="mr-1.5 size-4" />
+                  Add a room
+                </Link>
+              </Button>
+            )}
+          </>
         }
       />
 

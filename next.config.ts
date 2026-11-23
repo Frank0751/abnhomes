@@ -26,10 +26,20 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      // Room photos uploaded from the admin console, in Supabase Storage.
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion"],
+    // Room photos are resized in the browser to about 2000px before upload,
+    // which lands well under this; the default 1 MB was too tight for a
+    // detailed photo. Kept under the 4.5 MB a Vercel function accepts.
+    serverActions: { bodySizeLimit: "4mb" },
   },
 };
 
