@@ -24,12 +24,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
-      # Placeholders for the build only. `prisma generate` insists they are set;
-      # the sitemap's one build-time database read falls back to static routes
-      # when it cannot connect. Nothing here can reach the real database.
-      DATABASE_URL: postgresql://build:build@127.0.0.1:5432/build
-      DIRECT_URL: postgresql://build:build@127.0.0.1:5432/build
-      NEXT_PUBLIC_APP_URL: https://abnhomes.vercel.app
+      # Deliberately NO database settings and no site address. The build must
+      # not need credentials: `prisma generate` does not connect, the sitemap
+      # is rendered per request, and the site address is read at runtime. This
+      # job proving that is what lets Cloudflare's own build run with nothing
+      # secret in its build settings.
       NEXT_TELEMETRY_DISABLED: '1'
 
     steps:
@@ -80,6 +79,9 @@ jobs:
           check /robots.txt 200
           check /signin 200
           check /contact 200
+          # Now rendered per request. With no database here it falls back to
+          # the static routes — but it must still answer.
+          check /sitemap.xml 200
           # A route handler executing in workerd: no bearer token -> 401.
           check /api/cron/outbox 401
 

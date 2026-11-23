@@ -4,6 +4,18 @@ import { unitSlug } from "@/lib/marketplace/units";
 
 const BASE = "https://abnhomes.com.gh";
 
+/**
+ * Rendered per request, from the live database.
+ *
+ * It used to be rendered once at build time, which had two costs. A newly
+ * published room did not reach search engines until the next deploy. And the
+ * build needed working database credentials just for this one read — on
+ * Cloudflare that would mean storing the connection string in the build
+ * settings as well as the runtime ones. Crawlers fetch a sitemap a few times
+ * a day; one query each time is nothing.
+ */
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },

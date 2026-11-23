@@ -13,8 +13,8 @@
 import { db } from '@/lib/db'
 import { queueMessage, emailHtml } from '@/lib/notify'
 import { DIGEST_ORDER, ALERTS, type AlertEvent } from './registry'
+import { siteUrl } from '@/lib/site-url'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://abnhomes.vercel.app'
 
 export type DigestResult = {
   events: number
@@ -88,7 +88,7 @@ export async function sendDailyDigest(now = new Date()): Promise<DigestResult> {
   const html = emailHtml({
     heading: `Yesterday at ABN Homes`,
     lines,
-    cta: { label: 'Open the console', url: `${APP_URL}/admin` },
+    cta: { label: 'Open the console', url: `${siteUrl()}/admin` },
     footer: 'Urgent items — bookings, payments, cancellations — were sent as they happened.',
   })
 

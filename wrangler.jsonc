@@ -52,6 +52,12 @@
     "SMS_SENDER_ID": "ABNHomes",
     "DATABASE_ENV": "production",
 
+    // The public address used in receipts, pay links and alert emails. Read
+    // at runtime, so moving to the real domain is a change here, not a
+    // rebuild. Set to the workers.dev address after the first deploy, then to
+    // https://abnhomes.com.gh when the domain is connected.
+    // "APP_URL": "https://abnhomes.<your-subdomain>.workers.dev",
+
     // OFF until the day Cloudflare becomes the live site. Before then Vercel
     // is production and its crons and the GitHub workflows do this work;
     // running both would have a staging deployment acting on live data.

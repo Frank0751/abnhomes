@@ -21,8 +21,8 @@
 import { db } from '@/lib/db'
 import { queueMessage, emailHtml } from '@/lib/notify'
 import { definitionFor, type AlertEvent } from './registry'
+import { siteUrl } from '@/lib/site-url'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://abnhomes.vercel.app'
 
 export type RaiseArgs = {
   /** One-line heading. Reads on a phone's lock screen, so keep it short. */
@@ -153,7 +153,7 @@ async function ring(people: Recipient[], category: string, args: RaiseArgs): Pro
 // ---------------------------------------------------------------- channels
 
 async function reach(people: Recipient[], event: AlertEvent, args: RaiseArgs): Promise<void> {
-  const url = args.link ? `${APP_URL}${args.link}` : `${APP_URL}/admin`
+  const url = args.link ? `${siteUrl()}${args.link}` : `${siteUrl()}/admin`
 
   await Promise.allSettled(
     people.flatMap((person) => {
