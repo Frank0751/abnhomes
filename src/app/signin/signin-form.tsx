@@ -179,7 +179,7 @@ function StaffForm({
           name="email"
           type="email"
           autoComplete="username"
-          placeholder="you@abnhomes.com.gh"
+          placeholder="you@abnhomesltd.com"
           required
         />
       </div>

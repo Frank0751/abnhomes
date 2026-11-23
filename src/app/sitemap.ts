@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { unitSlug } from "@/lib/marketplace/units";
 
-const BASE = "https://abnhomes.com.gh";
+const BASE = "https://abnhomesltd.com";
 
 /**
  * Rendered per request, from the live database.

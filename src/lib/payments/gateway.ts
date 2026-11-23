@@ -157,7 +157,7 @@ export async function startPayment(args: StartPaymentArgs): Promise<StartPayment
   const reference = `ABN${Date.now().toString(36).toUpperCase()}${shortCode(4)}`
 
   const party = await db.party.findUniqueOrThrow({ where: { id: args.partyId } })
-  const email = args.email ?? party.email ?? `${party.id}@guests.abnhomes.com.gh`
+  const email = args.email ?? party.email ?? `${party.id}@guests.abnhomesltd.com`
 
   await storeIntent(reference, {
     propertyId: args.propertyId,

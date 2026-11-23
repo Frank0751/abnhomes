@@ -94,8 +94,8 @@ export function Contact() {
               <ContactItem
                 icon={Mail}
                 label={t("contact.email")}
-                value="hello@abnhomes.com.gh"
-                href="mailto:hello@abnhomes.com.gh"
+                value="hello@abnhomesltd.com"
+                href="mailto:hello@abnhomesltd.com"
               />
               <ContactItem
                 icon={MapPin}

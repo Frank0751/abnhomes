@@ -23,7 +23,7 @@ const ubuntuMono = Ubuntu_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://abnhomes.com.gh"),
+  metadataBase: new URL("https://abnhomesltd.com"),
   title: {
     default: "ABN Homes Company Limited | Luxury Apartments & Real Estate in Accra, Ghana",
     template: "%s | ABN Homes Company Limited",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     title: "ABN Homes Company Limited | Luxury Real Estate in Accra, Ghana",
     description:
       "Discover thoughtfully designed luxury apartments and homes across Accra. Tantra Hill, Sakumono and Nii Ayi Mensah residences with world-class amenities.",
-    url: "https://abnhomes.com.gh",
+    url: "https://abnhomesltd.com",
     siteName: "ABN Homes",
     images: [
       {
@@ -87,10 +87,10 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://abnhomes.com.gh",
+    canonical: "https://abnhomesltd.com",
     languages: {
-      "en-US": "https://abnhomes.com.gh",
-      "fr-FR": "https://abnhomes.com.gh/?lang=fr",
+      "en-US": "https://abnhomesltd.com",
+      "fr-FR": "https://abnhomesltd.com/?lang=fr",
     },
   },
   category: "real estate",
@@ -113,11 +113,11 @@ const jsonLd = {
   name: "ABN Homes Company Limited",
   description:
     "Luxury apartments and homes developer in Accra, Ghana. Part of ABN Group of Companies.",
-  url: "https://abnhomes.com.gh",
-  logo: "https://abnhomes.com.gh/images/logo/abn-homes-logo-real.png",
-  image: "https://abnhomes.com.gh/images/abn-real/abn-ig-11-hd.jpg",
+  url: "https://abnhomesltd.com",
+  logo: "https://abnhomesltd.com/images/logo/abn-homes-logo-real.png",
+  image: "https://abnhomesltd.com/images/abn-real/abn-ig-11-hd.jpg",
   telephone: "+233541704048",
-  email: "hello@abnhomes.com.gh",
+  email: "hello@abnhomesltd.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "8 Asiko Street, Tantra Hill",

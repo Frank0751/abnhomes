@@ -59,7 +59,7 @@ async function main() {
       value: {
         name: 'ABN Homes Company Limited',
         phone: '+233541704048',
-        email: 'hello@abnhomes.com.gh',
+        email: 'hello@abnhomesltd.com',
         address: '8 Asiko Street, Tantra Hill, Accra, Ghana',
         hours: 'Mon to Sat, 8:00 AM to 6:00 PM GMT',
       },
@@ -93,7 +93,7 @@ async function main() {
       id: 'party-abn-homes',
       type: 'COMPANY',
       name: 'ABN Homes Company Limited',
-      email: 'hello@abnhomes.com.gh',
+      email: 'hello@abnhomesltd.com',
       phone: '+233541704048',
       address: '8 Asiko Street, Tantra Hill, Accra',
       isOwner: true,

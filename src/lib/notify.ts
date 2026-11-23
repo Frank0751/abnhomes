@@ -37,7 +37,7 @@ export function channelConfig(): ChannelConfig {
   return {
     email: {
       configured: Boolean(process.env.RESEND_API_KEY),
-      from: process.env.EMAIL_FROM ?? 'ABN Homes <bookings@abnhomes.com.gh>',
+      from: process.env.EMAIL_FROM ?? 'ABN Homes <bookings@abnhomesltd.com>',
     },
     whatsapp: {
       configured: Boolean(process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID),
@@ -329,7 +329,7 @@ export function emailHtml(opts: { heading: string; lines: string[]; cta?: { labe
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}${cta}</table>
     </td></tr>
     <tr><td style="padding:18px 32px 28px;border-top:1px solid #dce5e0;">
-      <p style="margin:0;color:#7d8f87;font-size:12px;line-height:1.7;">${opts.footer ?? 'Questions? Call or WhatsApp +233 54 170 4048 · abnhomes.com.gh'}</p>
+      <p style="margin:0;color:#7d8f87;font-size:12px;line-height:1.7;">${opts.footer ?? 'Questions? Call or WhatsApp +233 54 170 4048 · abnhomesltd.com'}</p>
     </td></tr>
   </table></body></html>`
 }

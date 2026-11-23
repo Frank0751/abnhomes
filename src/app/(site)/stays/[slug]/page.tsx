@@ -484,7 +484,7 @@ export default async function StayPage({
             <p className="mt-6 text-xs text-muted-foreground">
               <Flag className="mr-1 inline size-3" />
               Something wrong with this listing?{' '}
-              <a href="mailto:care@abnhomes.com.gh" className="underline underline-offset-2">
+              <a href="mailto:care@abnhomesltd.com" className="underline underline-offset-2">
                 Report it
               </a>{' '}
               — we take every report seriously.

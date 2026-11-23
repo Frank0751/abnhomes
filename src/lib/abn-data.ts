@@ -19,7 +19,7 @@ export const COMPANY = {
   phone: "054 170 4048",
   phoneIntl: "+233541704048",
   whatsapp: "https://wa.me/233541704048",
-  email: "hello@abnhomes.com.gh",
+  email: "hello@abnhomesltd.com",
   address: "8 Asiko Street, Tantra Hill, Accra, Ghana",
   instagram: "https://www.instagram.com/abn_homes/",
   tiktok: "https://www.tiktok.com/@greatpuffy",
