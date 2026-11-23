@@ -27,6 +27,17 @@ jobs:
   sweep:
     runs-on: ubuntu-latest
     steps:
+      # First, so a booking just taken on Airbnb or Booking.com blocks our
+      # calendar as soon as possible. Its own step, so a booking site being
+      # down never stops guest messages going out.
+      - name: Pull Airbnb and Booking.com calendars
+        continue-on-error: true
+        env:
+          SITE_URL: ${{ secrets.PROD_SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -fsS --max-time 120 "$SITE_URL/api/cron/ical-sync" -H "Authorization: Bearer $CRON_SECRET"
+
       - name: Drain outbox, expire holds, send reminders
         env:
           SITE_URL: ${{ secrets.PROD_SITE_URL }}
