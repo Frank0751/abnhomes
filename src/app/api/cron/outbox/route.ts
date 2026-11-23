@@ -3,6 +3,7 @@ import { processOutbox } from '@/lib/notify'
 import {
   expirePendingReservations,
   sendCheckInReminders,
+  sendCheckoutReminders,
   sendReviewRequests,
   generatePreventiveTickets,
 } from '@/lib/short-stay/sweeper'
@@ -24,17 +25,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const outbox = await processOutbox()
   const expiredReservations = await expirePendingReservations()
   const checkInReminders = await sendCheckInReminders()
+  const checkoutReminders = await sendCheckoutReminders()
   const reviewRequests = await sendReviewRequests()
   const reviewsRevealed = await revealExpiredWindows()
   const maintenanceRaised = await generatePreventiveTickets()
+  // Last, so the reminders queued just above go out in this same run.
+  const outbox = await processOutbox(60)
   return NextResponse.json({
     ok: true,
     outbox,
     expiredReservations,
     checkInReminders,
+    checkoutReminders,
     reviewRequests,
     reviewsRevealed,
     maintenanceRaised,

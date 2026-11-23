@@ -17,6 +17,7 @@
  */
 
 import type { MessageChannel, Party, Reservation } from '@prisma/client'
+import { after } from 'next/server'
 import { db } from '@/lib/db'
 import { formatMinor } from '@/lib/core/money'
 import { normalisePhone } from '@/lib/core/phone'
@@ -99,6 +100,20 @@ export async function queueMessage(args: QueueMessageArgs): Promise<string | nul
     },
     select: { id: true },
   })
+
+  // Send it now rather than waiting for the next sweep. The scheduled sweep
+  // only runs a few times a day in practice, which left booking confirmations
+  // and receipts sitting for hours. `after` runs once the response has gone,
+  // so the guest's page never waits on Resend or the SMS gateway. If this is
+  // not inside a request (a script, a test) it throws, and the sweep still
+  // delivers it. A failure here is retried by the sweep with backoff.
+  if (!args.scheduledFor || args.scheduledFor.getTime() <= Date.now()) {
+    try {
+      after(() => deliverMessage(row.id).then(() => undefined))
+    } catch {
+      // Outside a request: left for the sweep.
+    }
+  }
   return row.id
 }
 
@@ -587,7 +602,35 @@ export async function notifyPaymentReceived(args: {
   }
 }
 
-/** Day-before check-in message with door code and address. */
+/**
+ * The room's own arrival details, read fresh. Wi-Fi is only ever put in a
+ * message to a guest with a confirmed booking, which is the only caller.
+ */
+async function stayDetails(reservationId: string) {
+  const r = await db.reservation.findUnique({
+    where: { id: reservationId },
+    select: {
+      unit: {
+        select: {
+          checkInFrom: true,
+          checkOutUntil: true,
+          selfCheckIn: true,
+          wifiName: true,
+          wifiPassword: true,
+        },
+      },
+    },
+  })
+  const u = r?.unit
+  return {
+    checkInFrom: u?.checkInFrom || '14:00',
+    checkOutUntil: u?.checkOutUntil || '11:00',
+    selfCheckIn: Boolean(u?.selfCheckIn),
+    wifi: u?.wifiName ? `${u.wifiName}${u.wifiPassword ? ` / password ${u.wifiPassword}` : ''}` : null,
+  }
+}
+
+/** Day-before check-in message: address, time, door code and Wi-Fi. */
 export async function notifyCheckInReminder(reservationId: string): Promise<void> {
   const loaded = await loadReservation(reservationId)
   if (!loaded) return
@@ -595,10 +638,21 @@ export async function notifyCheckInReminder(reservationId: string): Promise<void
   if (reservation.checkInNoticeSentAt) return
   const where = reservation.unit?.name ?? 'your apartment'
   const address = reservation.unit?.property?.addressLine ?? ''
-  const body = `Hello ${splitName(guest.name)}, we look forward to welcoming you to ${where} tomorrow (${dateLabel(reservation.checkIn)}). Address: ${address}.${reservation.doorCode ? ` Door code: ${reservation.doorCode}.` : ''} Arriving late or need airport pickup? Reply to this message or call 054 170 4048. ABN Homes.`
+  const stay = await stayDetails(reservation.id)
+  const arrival = stay.selfCheckIn
+    ? `Self check-in from ${stay.checkInFrom}.`
+    : `Check-in from ${stay.checkInFrom}; our team will meet you.`
 
   if (guest.phone) {
-    await queueMessage({ channel: 'SMS', to: guest.phone, template: 'check_in_reminder', entityType: 'Reservation', entityId: reservation.id, dedupe: true, body })
+    await queueMessage({
+      channel: 'SMS',
+      to: guest.phone,
+      template: 'check_in_reminder',
+      entityType: 'Reservation',
+      entityId: reservation.id,
+      dedupe: true,
+      body: `Hello ${splitName(guest.name)}, see you tomorrow at ${where}, ${address}. ${arrival}${reservation.doorCode ? ` Door code: ${reservation.doorCode}.` : ''}${stay.wifi ? ` Wi-Fi: ${stay.wifi}.` : ''} Arriving late? Call 054 170 4048. ABN Homes.`,
+    })
     await queueMessage({
       channel: 'WHATSAPP',
       to: guest.phone,
@@ -606,7 +660,16 @@ export async function notifyCheckInReminder(reservationId: string): Promise<void
       entityType: 'Reservation',
       entityId: reservation.id,
       dedupe: true,
-      body: `*Check-in tomorrow* 🗝️\n\n${where}\n📍 ${address}\n🕙 From ${reservation.unit && 'checkInFrom' in reservation.unit ? '15:00' : '15:00'}\n${reservation.doorCode ? `🔐 Door code: *${reservation.doorCode}*\n` : ''}\nEverything you need — Wi-Fi, house manual, directions — is in your portal: ${siteUrl()}/portal\n\nSafe travels!`,
+      body: `*Check-in tomorrow* 🗝️
+
+${where}
+📍 ${address}
+🕑 ${arrival}
+${reservation.doorCode ? `🔐 Door code: *${reservation.doorCode}*
+` : ''}${stay.wifi ? `📶 Wi-Fi: ${stay.wifi}
+` : ''}
+Arriving late or need an airport pickup? Reply here or call 054 170 4048.
+Your portal: ${siteUrl()}/portal`,
     })
   }
   if (guest.email) {
@@ -619,13 +682,81 @@ export async function notifyCheckInReminder(reservationId: string): Promise<void
       dedupe: true,
       subject: `Check-in tomorrow · ${reservation.code}`,
       body: emailHtml({
-        heading: `Tomorrow you check in`,
-        lines: [`${where} · ${dateLabel(reservation.checkIn)}`, `Address: ${address}`, reservation.doorCode ? `Door code: <b>${reservation.doorCode}</b>` : 'Door codes are released 24 hours before arrival.', 'Wi-Fi details and the house manual are waiting in your portal.'],
+        heading: `See you tomorrow, ${splitName(guest.name)}`,
+        lines: [
+          `<b>${where}</b> · ${dateLabel(reservation.checkIn)}`,
+          `Address: ${address}`,
+          arrival,
+          reservation.doorCode ? `Door code: <b>${reservation.doorCode}</b>` : '',
+          stay.wifi ? `Wi-Fi: <b>${stay.wifi}</b>` : '',
+          `Check-out is by ${stay.checkOutUntil} on ${dateLabel(reservation.checkOut)}.`,
+          'Arriving late or need an airport pickup? Call or WhatsApp 054 170 4048.',
+        ].filter(Boolean),
         cta: { label: 'Open my portal', url: `${siteUrl()}/portal` },
       }),
     })
   }
   await db.reservation.update({ where: { id: reservation.id }, data: { checkInNoticeSentAt: new Date() } })
+}
+
+/**
+ * The evening before check-out: the time, and a thank-you. Sent the day
+ * before because the sweep's timing on the day itself is not reliable enough
+ * to beat an 11:00 check-out. Once per booking, by the outbox's dedupe.
+ */
+export async function notifyCheckoutReminder(reservationId: string): Promise<void> {
+  const loaded = await loadReservation(reservationId)
+  if (!loaded) return
+  const { reservation, guest } = loaded
+  const where = reservation.unit?.name ?? 'your apartment'
+  const stay = await stayDetails(reservation.id)
+
+  if (guest.phone) {
+    await queueMessage({
+      channel: 'WHATSAPP',
+      to: guest.phone,
+      template: 'checkout_reminder',
+      entityType: 'Reservation',
+      entityId: reservation.id,
+      dedupe: true,
+      body: `Hello ${splitName(guest.name)} 👋
+
+A reminder that check-out from ${where} is tomorrow by *${stay.checkOutUntil}*. Please leave the keys inside and close the windows and door.
+
+Need a late check-out or a ride to the airport? Reply here and we will do our best.
+
+Thank you for staying with ABN Homes.`,
+    })
+    await queueMessage({
+      channel: 'SMS',
+      to: guest.phone,
+      template: 'checkout_reminder',
+      entityType: 'Reservation',
+      entityId: reservation.id,
+      dedupe: true,
+      body: `Hello ${splitName(guest.name)}, check-out from ${where} is tomorrow by ${stay.checkOutUntil}. Late check-out or airport ride? Call 054 170 4048. Thank you for staying with ABN Homes.`,
+    })
+  }
+  if (guest.email) {
+    await queueMessage({
+      channel: 'EMAIL',
+      to: guest.email,
+      template: 'checkout_reminder',
+      entityType: 'Reservation',
+      entityId: reservation.id,
+      dedupe: true,
+      subject: `Check-out tomorrow by ${stay.checkOutUntil}`,
+      body: emailHtml({
+        heading: 'Thank you for staying with us',
+        lines: [
+          `Check-out from <b>${where}</b> is tomorrow, ${dateLabel(reservation.checkOut)}, by <b>${stay.checkOutUntil}</b>.`,
+          'Please leave the keys inside and close the windows and door behind you.',
+          'Need a late check-out or a ride to the airport? Call or WhatsApp 054 170 4048 and we will do our best.',
+        ],
+        cta: { label: 'Book your next stay', url: `${siteUrl()}/book` },
+      }),
+    })
+  }
 }
 
 /** Post-stay review prompt (double-blind window opener). */
