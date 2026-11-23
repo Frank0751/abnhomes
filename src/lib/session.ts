@@ -34,6 +34,11 @@ export async function currentActor(): Promise<Actor | null> {
  *
  * This costs one indexed lookup per action, which is the right trade for
  * "a sacked employee cannot touch the money".
+ *
+ * The role and buildings come from the same lookup rather than the token, so
+ * an administrator who changes someone's role or takes a building away
+ * changes what they can do on their very next click, not whenever their
+ * 30-day session happens to end.
  */
 export async function requireActor(): Promise<Actor> {
   const actor = await currentActor()
@@ -41,13 +46,24 @@ export async function requireActor(): Promise<Actor> {
 
   const account = await db.user.findUnique({
     where: { id: actor.id },
-    select: { active: true },
+    select: {
+      active: true,
+      suspendedAt: true,
+      role: true,
+      partyId: true,
+      propertyAccess: { select: { propertyId: true } },
+    },
   })
-  if (!account || !account.active) {
+  if (!account || !account.active || account.suspendedAt) {
     throw new AccessError('This account is no longer active. Please sign in again.')
   }
 
-  return actor
+  return {
+    id: actor.id,
+    role: account.role,
+    partyId: account.partyId,
+    propertyIds: account.propertyAccess.map((a) => a.propertyId),
+  }
 }
 
 /** Assert a capability and hand back the actor in one step. */

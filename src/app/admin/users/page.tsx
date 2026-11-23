@@ -1,4 +1,6 @@
-import { ShieldAlert, ShieldCheck, UserCog } from 'lucide-react'
+import Link from 'next/link'
+import { Pencil, ShieldAlert, ShieldCheck, UserCog, UserPlus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { db } from '@/lib/db'
 import { requirePermission } from '@/lib/session'
 import { PageHeader, Panel, Pill, StatGrid, StatCard } from '@/components/admin/ui'
@@ -28,6 +30,14 @@ export default async function UsersPage() {
       <PageHeader
         title="Users"
         description="Every account on the platform — staff and guests. Suspension blocks sign-in immediately on every login path."
+        actions={
+          <Button asChild size="sm">
+            <Link href="/admin/users/invite">
+              <UserPlus className="mr-1.5 size-4" />
+              Invite staff
+            </Link>
+          </Button>
+        }
       />
 
       <StatGrid>
@@ -75,8 +85,18 @@ export default async function UsersPage() {
                     <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
                       {u.role === 'VENDOR' ? <UserCog className="size-4 text-[#5b6472]" /> : null}
                       {u.name}
-                      <Pill tone={u.suspendedAt ? 'critical' : u.active ? 'positive' : 'neutral'}>
-                        {u.suspendedAt ? 'Suspended' : u.active ? 'Active' : 'Deactivated'}
+                      <Pill
+                        tone={
+                          u.suspendedAt ? 'critical' : !u.active ? 'neutral' : group === 'staff' && !u.passwordHash ? 'warning' : 'positive'
+                        }
+                      >
+                        {u.suspendedAt
+                          ? 'Suspended'
+                          : !u.active
+                            ? 'Deactivated'
+                            : group === 'staff' && !u.passwordHash
+                              ? 'Invited'
+                              : 'Active'}
                       </Pill>
                       <span className="text-xs font-normal text-muted-foreground">{ROLE_LABELS[u.role as Role]}</span>
                     </p>
@@ -91,12 +111,23 @@ export default async function UsersPage() {
                       </p>
                     )}
                   </div>
-                  <UserActionButtons
-                    userId={u.id}
-                    suspended={Boolean(u.suspendedAt)}
-                    active={u.active}
-                    actions={{ suspendUserAction, restoreUserAction, toggleUserActiveAction }}
-                  />
+                  <div className="flex items-center gap-1.5">
+                    {group === 'staff' && (
+                      <Link
+                        href={`/admin/users/${u.id}`}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-black/10 px-2.5 py-1.5 text-xs font-medium transition hover:bg-black/5"
+                      >
+                        <Pencil className="size-3" />
+                        Edit
+                      </Link>
+                    )}
+                    <UserActionButtons
+                      userId={u.id}
+                      suspended={Boolean(u.suspendedAt)}
+                      active={u.active}
+                      actions={{ suspendUserAction, restoreUserAction, toggleUserActiveAction }}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>
