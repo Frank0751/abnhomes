@@ -5,7 +5,7 @@
  * ABN has already sold. It exposes only that a unit is unavailable — never who
  * is staying, what they paid, or how to contact them.
  *
- *     https://abnhomes.com.gh/api/calendar/<unitId>.ics
+ *     https://abnhomesltd.com/api/calendar/<unitId>.ics
  */
 
 import { NextResponse } from 'next/server'

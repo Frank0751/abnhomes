@@ -55,7 +55,7 @@ export default async function UnitDetail({
   })
   const freeNights = calendar.filter((d) => d.available).length
 
-  const host = (await headers()).get('host') ?? 'abnhomes.com.gh'
+  const host = (await headers()).get('host') ?? 'abnhomesltd.com'
   const protocol = host.startsWith('localhost') ? 'http' : 'https'
   const publicFeedUrl = feedUrlForUnit(unit.id, `${protocol}://${host}`)
 

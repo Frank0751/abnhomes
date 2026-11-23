@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/"],
     },
-    sitemap: "https://abnhomes.com.gh/sitemap.xml",
-    host: "https://abnhomes.com.gh",
+    sitemap: "https://abnhomesltd.com/sitemap.xml",
+    host: "https://abnhomesltd.com",
   };
 }
