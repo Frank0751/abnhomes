@@ -1,0 +1,114 @@
+# Prove the Cloudflare build works — without deploying anything.
+#
+# OpenNext does not support building on Windows (it needs to create symlinks,
+# which Windows refuses without admin rights), so the Cloudflare bundle is built
+# here, on Linux, on every pull request. It needs no Cloudflare account and none
+# of the production secrets.
+#
+# Three checks, each answering a question a deploy would otherwise answer the
+# hard way:
+#   1. Does it build?
+#   2. Does it fit? Workers cap the gzipped upload at 3 MiB on the free plan
+#      and 10 MiB on the paid one.
+#   3. Does it RUN in workerd, Cloudflare's actual runtime — the proxy, the
+#      route handlers, and the scheduled handler that replaces the crons?
+
+name: Cloudflare build
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      # Deliberately NO database settings and no site address. The build must
+      # not need credentials: `prisma generate` does not connect, the sitemap
+      # is rendered per request, and the site address is read at runtime. This
+      # job proving that is what lets Cloudflare's own build run with nothing
+      # secret in its build settings.
+      NEXT_TELEMETRY_DISABLED: '1'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build for Cloudflare
+        run: npx opennextjs-cloudflare build
+
+      - name: Measure the upload
+        run: |
+          npx wrangler deploy --dry-run --outdir .dry-run 2>&1 | tee dry-run.log
+          echo "### Worker size" >> "$GITHUB_STEP_SUMMARY"
+          grep -E "Total Upload" dry-run.log >> "$GITHUB_STEP_SUMMARY" || true
+          echo "Limits: 3 MiB gzipped (free), 10 MiB gzipped (paid)." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Boot in workerd and make requests
+        run: |
+          # Scheduled jobs switched on, with a throwaway secret, so the cron
+          # wiring can be exercised. There is no database, so the job itself is
+          # expected to fail — what matters is that the scheduled handler reaches
+          # the route and gets past its CRON_SECRET check.
+          npx wrangler dev --port 8787 --ip 127.0.0.1 --test-scheduled \
+            --var CRONS_ENABLED:true --var CRON_SECRET:ci-only-secret \
+            --var AUTH_SECRET:ci-only-auth-secret-not-real-0000000000 \
+            > wrangler.log 2>&1 &
+
+          for i in $(seq 1 90); do
+            if curl -s -o /dev/null http://127.0.0.1:8787/robots.txt; then break; fi
+            sleep 2
+          done
+
+          fail=0
+          check() {  # path, expected status
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8787$1")
+            if [ "$code" = "$2" ]; then echo "PASS $1 -> $code"; else echo "FAIL $1 -> $code (expected $2)"; fail=1; fi
+          }
+
+          # Served through the Worker, so the proxy (Next 16 Node middleware,
+          # experimental in OpenNext) runs on each of these.
+          check /robots.txt 200
+          check /signin 200
+          check /contact 200
+          # Now rendered per request. With no database here it falls back to
+          # the static routes — but it must still answer.
+          check /sitemap.xml 200
+          # A route handler executing in workerd: no bearer token -> 401.
+          check /api/cron/outbox 401
+
+          # The proxy itself. proxy.ts (Next 16's Node middleware) is the one
+          # piece OpenNext marks experimental. It guards /admin, so a signed-out
+          # request must be redirected to the sign-in page. A 200 here would
+          # mean the guard never ran and the console was open to anyone.
+          check /admin 307
+          location=$(curl -s -o /dev/null -w '%{redirect_url}' http://127.0.0.1:8787/admin)
+          case "$location" in
+            *"/signin"*) echo "PASS /admin redirects to $location" ;;
+            *) echo "FAIL /admin redirected to '$location', expected the sign-in page"; fail=1 ;;
+          esac
+          # Next's own not-found rendering.
+          check /this-page-does-not-exist 404
+
+          # The scheduled handler: fire the every-minute trigger.
+          curl -s -o /dev/null "http://127.0.0.1:8787/__scheduled?cron=*+*+*+*+*"
+          sleep 8
+          if grep -q "/api/cron/outbox answered 401" wrangler.log; then
+            echo "FAIL scheduled handler reached the route but the CRON_SECRET was rejected"; fail=1
+          elif grep -q "/api/cron/outbox answered" wrangler.log; then
+            echo "PASS scheduled handler reached /api/cron/outbox past its auth check (it then failed for lack of a database, as expected)"
+          else
+            echo "NOTE scheduled handler left no failure line; inspect the log below"
+          fi
+
+          echo "----- wrangler log (tail) -----"
+          tail -40 wrangler.log
+          exit $fail

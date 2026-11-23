@@ -1,0 +1,79 @@
+// Cloudflare Workers deployment for ABN Homes, built by OpenNext.
+//
+// Secrets are NOT in this file and must never be. Set them once with
+//   npx wrangler secret put <NAME>
+// or in the dashboard under Workers & Pages → abnhomes → Settings → Variables:
+//   DATABASE_URL, DIRECT_URL, AUTH_SECRET, CRON_SECRET,
+//   PAYSTACK_SECRET_KEY, PAYSTACK_PUBLIC_KEY, SMS_API_KEY,
+//   and RESEND_API_KEY once email is connected.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "abnhomes",
+
+  // A custom entry rather than OpenNext's generated worker, because the
+  // generated one only answers HTTP. This wraps it and adds the scheduled
+  // handler that replaces the Vercel crons and the GitHub sweeper.
+  "main": "cloudflare-worker.ts",
+
+  "compatibility_date": "2026-11-19",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "abnhomes" }],
+
+  // next/image, served by Cloudflare Images.
+  "images": { "binding": "IMAGES" },
+
+  // Run the Worker near the database rather than near the visitor. A page
+  // makes several queries in sequence, and Supabase is in Ireland: from an
+  // edge location in Accra each one would cross the Sahara and back. Smart
+  // Placement moves the work next to the database once it has seen traffic.
+  "placement": { "mode": "smart" },
+
+  "observability": { "enabled": true },
+
+  // Ghana keeps GMT all year, so these UTC times are Accra times.
+  "triggers": {
+    "crons": [
+      "* * * * *",  // outbox, holds, reminders — every minute, so "instant" alerts are
+      "0 6 * * *",  // rent run
+      "17 6 * * *", // iCal sync with the booking sites
+      "0 7 * * *"   // the morning digest
+    ]
+  },
+
+  // Non-secret settings only.
+  "vars": {
+    // Auth.js trusts the Host header automatically on Vercel and nowhere
+    // else. Without this every sign-in fails with UntrustedHost.
+    "AUTH_TRUST_HOST": "true",
+    "BASE_CURRENCY": "GHS",
+    "SMS_PROVIDER": "log",
+    "SMS_SENDER_ID": "ABNHomes",
+    "DATABASE_ENV": "production",
+
+    // The public address used in receipts, pay links and alert emails. Read
+    // at runtime, so moving to the real domain is a change here, not a
+    // rebuild. Set to the workers.dev address after the first deploy, then to
+    // https://abnhomes.com.gh when the domain is connected.
+    // "APP_URL": "https://abnhomes.<your-subdomain>.workers.dev",
+
+    // OFF until the day Cloudflare becomes the live site. Before then Vercel
+    // is production and its crons and the GitHub workflows do this work;
+    // running both would have a staging deployment acting on live data.
+    // Flip to "true" in the same change that removes the Vercel crons.
+    "CRONS_ENABLED": "false"
+  }
+
+  // Hyperdrive: warm pooled connections to Supabase, held next to the
+  // database. Strongly recommended — without it each request opens its own
+  // TLS connection to Ireland. Create it once, then uncomment:
+  //
+  //   npx wrangler hyperdrive create abnhomes-db --connection-string="<DIRECT_URL>"
+  //
+  // Point it at DIRECT_URL (Supabase's session pooler, port 5432), not at the
+  // transaction pooler: Hyperdrive is itself a pooler, and stacking it on
+  // another one in transaction mode breaks session state.
+  //
+  // ,"hyperdrive": [{ "binding": "HYPERDRIVE", "id": "<id printed by the command above>" }]
+}

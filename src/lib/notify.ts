@@ -21,6 +21,7 @@ import { db } from '@/lib/db'
 import { formatMinor } from '@/lib/core/money'
 import { normalisePhone } from '@/lib/core/phone'
 import { dispatchSms } from '@/lib/messaging'
+import { siteUrl } from '@/lib/site-url'
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -337,8 +338,6 @@ export function emailHtml(opts: { heading: string; lines: string[]; cta?: { labe
 // Domain events
 // ---------------------------------------------------------------------------
 
-const APP_URL = process.env.AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://abnhomes.vercel.app'
-export { APP_URL }
 
 type ReservationLike = Pick<
   Reservation,
@@ -370,7 +369,7 @@ export async function notifyBookingRequested(reservationId: string): Promise<voi
   const { reservation, guest } = loaded
   const where = reservation.unit ? `${reservation.unit.name} · ${reservation.unit.property?.name ?? ''}` : 'your apartment'
   const total = formatMinor(reservation.totalMinor, reservation.currency)
-  const payUrl = `${APP_URL}/pay/${reservation.code}`
+  const payUrl = `${siteUrl()}/pay/${reservation.code}`
 
   if (guest.email) {
     await queueMessage({
@@ -429,7 +428,7 @@ export async function notifyBookingConfirmed(reservationId: string): Promise<voi
   const where = reservation.unit ? `${reservation.unit.name} · ${reservation.unit.property?.name ?? ''}` : 'your apartment'
   const address = reservation.unit?.property?.addressLine ?? 'Address in your portal'
   const total = formatMinor(reservation.totalMinor, reservation.currency)
-  const portalUrl = `${APP_URL}/portal`
+  const portalUrl = `${siteUrl()}/portal`
 
   const portalLine = reservation.portalCode
     ? `Manage your stay, pay balances and download receipts in your portal — sign in with ${guest.email ?? guest.phone ?? 'your contact details'} and code <b>${reservation.portalCode}</b>.`
@@ -501,7 +500,7 @@ export async function notifyBookingCancelled(reservationId: string, reason?: str
           reason ? `Reason: ${reason}` : '',
           'Any amounts you have paid will be refunded per our cancellation policy. We are sorry to miss you — we would love to host you another time.',
         ],
-        cta: { label: 'Browse available stays', url: `${APP_URL}/book` },
+        cta: { label: 'Browse available stays', url: `${siteUrl()}/book` },
       }),
     })
   }
@@ -543,7 +542,7 @@ export async function notifyPaymentReceived(args: {
   // The receipt itself — a real document they can open, print and keep. Keyed
   // on the payment id rather than the receipt number, because receipt numbers
   // run in sequence and anyone could walk them.
-  const receiptUrl = `${APP_URL}/receipt/${args.paymentId}`
+  const receiptUrl = `${siteUrl()}/receipt/${args.paymentId}`
 
   if (guest.email) {
     await queueMessage({
@@ -607,7 +606,7 @@ export async function notifyCheckInReminder(reservationId: string): Promise<void
       entityType: 'Reservation',
       entityId: reservation.id,
       dedupe: true,
-      body: `*Check-in tomorrow* 🗝️\n\n${where}\n📍 ${address}\n🕙 From ${reservation.unit && 'checkInFrom' in reservation.unit ? '15:00' : '15:00'}\n${reservation.doorCode ? `🔐 Door code: *${reservation.doorCode}*\n` : ''}\nEverything you need — Wi-Fi, house manual, directions — is in your portal: ${APP_URL}/portal\n\nSafe travels!`,
+      body: `*Check-in tomorrow* 🗝️\n\n${where}\n📍 ${address}\n🕙 From ${reservation.unit && 'checkInFrom' in reservation.unit ? '15:00' : '15:00'}\n${reservation.doorCode ? `🔐 Door code: *${reservation.doorCode}*\n` : ''}\nEverything you need — Wi-Fi, house manual, directions — is in your portal: ${siteUrl()}/portal\n\nSafe travels!`,
     })
   }
   if (guest.email) {
@@ -622,7 +621,7 @@ export async function notifyCheckInReminder(reservationId: string): Promise<void
       body: emailHtml({
         heading: `Tomorrow you check in`,
         lines: [`${where} · ${dateLabel(reservation.checkIn)}`, `Address: ${address}`, reservation.doorCode ? `Door code: <b>${reservation.doorCode}</b>` : 'Door codes are released 24 hours before arrival.', 'Wi-Fi details and the house manual are waiting in your portal.'],
-        cta: { label: 'Open my portal', url: `${APP_URL}/portal` },
+        cta: { label: 'Open my portal', url: `${siteUrl()}/portal` },
       }),
     })
   }
@@ -636,7 +635,7 @@ export async function notifyReviewRequest(reservationId: string): Promise<void> 
   const { reservation, guest } = loaded
   if (reservation.reviewRequestedAt) return
   const where = reservation.unit?.name ?? 'your apartment'
-  const reviewUrl = `${APP_URL}/portal/tenant?review=${reservation.id}`
+  const reviewUrl = `${siteUrl()}/portal/tenant?review=${reservation.id}`
   if (guest.email) {
     await queueMessage({
       channel: 'EMAIL',
@@ -722,7 +721,7 @@ export async function notifyGuestWelcome(party: Pick<Party, 'id' | 'name' | 'ema
       body: emailHtml({
         heading: `Welcome, ${splitName(party.name)}`,
         lines: ['Your guest portal is ready: trips, payments, receipts, maintenance requests and check-in details, all in one place.', `Sign in with your email or phone and this code: <b>${portalCode}</b>.`],
-        cta: { label: 'Open my portal', url: `${APP_URL}/portal` },
+        cta: { label: 'Open my portal', url: `${siteUrl()}/portal` },
       }),
     })
   }
@@ -734,7 +733,7 @@ export async function notifyGuestWelcome(party: Pick<Party, 'id' | 'name' | 'ema
       entityType: 'Party',
       entityId: party.id,
       dedupe: true,
-      body: `Welcome to ABN Homes, ${splitName(party.name)}! Your portal code is ${portalCode} — sign in at ${APP_URL}/portal. ABN Homes.`,
+      body: `Welcome to ABN Homes, ${splitName(party.name)}! Your portal code is ${portalCode} — sign in at ${siteUrl()}/portal. ABN Homes.`,
     })
   }
 }

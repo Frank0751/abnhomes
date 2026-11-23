@@ -13,10 +13,11 @@ import { db } from '@/lib/db'
 import { recordPayment, reverseEntry } from '@/lib/core/ledger'
 import { shortCode } from '@/lib/core/ids'
 import { afterPaymentRecorded } from './after-payment'
-import { notifyRefundProcessed, APP_URL } from '@/lib/notify'
+import { notifyRefundProcessed } from '@/lib/notify'
 import * as paystack from './paystack'
 import { raiseAlert } from '@/lib/alerts/dispatch'
 import { formatMinor } from '@/lib/core/money'
+import { siteUrl } from '@/lib/site-url'
 
 export type SupportedChannel = {
   channel: PaymentChannel
@@ -168,7 +169,7 @@ export async function startPayment(args: StartPaymentArgs): Promise<StartPayment
     email,
   })
 
-  const callbackUrl = args.callbackUrl ?? `${APP_URL}/payments/callback?reference=${encodeURIComponent(reference)}`
+  const callbackUrl = args.callbackUrl ?? `${siteUrl()}/payments/callback?reference=${encodeURIComponent(reference)}`
 
   // Simulation mode: our own test checkout page carries the full context, so
   // the demo flow settles exactly like the real one will.
