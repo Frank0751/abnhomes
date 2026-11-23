@@ -1,7 +1,9 @@
 'use client'
 
 /**
- * A room's photos: add, reorder, choose the cover, remove.
+ * A gallery's photos — a room's or a building's: add, reorder, choose the
+ * cover, remove. The caller passes the two server actions that do the work,
+ * already bound to the record they belong to.
  *
  * Photos are resized IN THE BROWSER before they are sent. A phone photo is
  * 3–8 MB and 4000+ pixels across; the website never shows one wider than
@@ -15,7 +17,6 @@
 
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { saveRoomPhotosAction, uploadRoomPhotoAction } from '../../room-actions'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
@@ -46,16 +47,23 @@ async function shrink(file: File): Promise<Blob> {
   }
 }
 
+export type PhotoResult = { ok: true; images: string[] } | { ok: false; error: string }
+
 export function PhotoManager({
-  unitId,
-  roomName,
+  name,
   initial,
   published,
+  upload: uploadAction,
+  save: saveAction,
+  kind = 'room',
 }: {
-  unitId: string
-  roomName: string
+  /** Used in each photo's alt text. */
+  name: string
   initial: string[]
   published: boolean
+  upload: (formData: FormData) => Promise<PhotoResult>
+  save: (images: string[]) => Promise<PhotoResult>
+  kind?: 'room' | 'building'
 }) {
   const router = useRouter()
   const input = useRef<HTMLInputElement>(null)
@@ -82,7 +90,7 @@ export function PhotoManager({
         })
         const form = new FormData()
         form.append('photo', blob, 'photo.jpg')
-        const result = await uploadRoomPhotoAction(unitId, form)
+        const result = await uploadAction(form)
         if (!result.ok) throw new Error(result.error)
         setImages(result.images)
       } catch (error) {
@@ -109,7 +117,7 @@ export function PhotoManager({
     const previous = images
     setImages(next) // show it straight away; put it back if the save fails
     startSaving(async () => {
-      const result = await saveRoomPhotosAction(unitId, next)
+      const result = await saveAction(next)
       if (!result.ok) {
         setImages(previous)
         toast({ title: 'Not saved', description: result.error, variant: 'destructive' })
@@ -133,7 +141,7 @@ export function PhotoManager({
     if (published && images.length === 1) {
       toast({
         title: 'This is the last photo',
-        description: 'A room on the website needs at least one. Hide the room first, or add another photo.',
+        description: `A ${kind} on the website needs at least one. Hide it first, or add another photo.`,
         variant: 'destructive',
       })
       return
@@ -210,7 +218,7 @@ export function PhotoManager({
                   optimiser would only add a round trip per thumbnail. */}
               <img
                 src={src}
-                alt={`${roomName}, photo ${index + 1}`}
+                alt={`${name}, photo ${index + 1}`}
                 className="aspect-[4/3] w-full object-cover"
                 loading="lazy"
                 draggable={false}

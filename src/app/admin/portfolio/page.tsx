@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { requirePermission } from '@/lib/session'
-import { propertyWhere } from '@/lib/rbac'
+import { can, propertyWhere } from '@/lib/rbac'
 import { db } from '@/lib/db'
 import { formatMinor, basisPointsToPercent } from '@/lib/core/money'
 import {
@@ -14,7 +14,8 @@ import {
   TableScroll,
   humanise,
 } from '@/components/admin/ui'
-import { Building2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Building2, Pencil, Plus } from 'lucide-react'
 
 export default async function PortfolioPage() {
   const actor = await requirePermission('units:read')
@@ -48,6 +49,16 @@ export default async function PortfolioPage() {
       <PageHeader
         title="Portfolio"
         description="Buildings, units and who owns them. ABN's own properties and those managed for clients run on identical rails."
+        actions={
+          can(actor, 'properties:manage') ? (
+            <Button asChild size="sm">
+              <Link href="/admin/portfolio/new">
+                <Plus className="mr-1.5 size-4" />
+                Add a building
+              </Link>
+            </Button>
+          ) : undefined
+        }
       />
 
       <StatGrid>
@@ -87,6 +98,14 @@ export default async function PortfolioPage() {
                     </Pill>
                   )}
                   {!property.published && <Pill tone="warning">Not listed publicly</Pill>}
+                  {can(actor, 'units:write') && (
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={`/admin/portfolio/buildings/${property.id}`}>
+                        <Pencil className="mr-1.5 size-3.5" />
+                        Edit building
+                      </Link>
+                    </Button>
+                  )}
                 </div>
               }
             >

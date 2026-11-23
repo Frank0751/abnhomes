@@ -135,3 +135,38 @@ export async function deleteStoredPhoto(photoUrl: string): Promise<void> {
     console.error('[storage] delete failed', error)
   }
 }
+
+// ------------------------------------------------------------ uploads
+
+/** The browser resizes before sending; anything bigger did not come from our forms. */
+export const MAX_UPLOAD_BYTES = 4 * 1024 * 1024
+
+const IMAGE_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' } as const
+type ImageType = keyof typeof IMAGE_EXT
+
+/** Trust the bytes, not the name or the declared type. */
+function sniffImage(bytes: Uint8Array): ImageType | null {
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return 'image/jpeg'
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return 'image/png'
+  if (
+    bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
+    bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50
+  ) return 'image/webp'
+  return null
+}
+
+/**
+ * The `photo` field of an upload form, checked: present, small enough, and
+ * really a JPEG, PNG or WebP. Throws a message fit to show the person.
+ */
+export async function readPhotoUpload(
+  formData: FormData
+): Promise<{ bytes: Uint8Array; type: ImageType; ext: (typeof IMAGE_EXT)[ImageType] }> {
+  const file = formData.get('photo')
+  if (!(file instanceof File) || file.size === 0) throw new Error('Choose a photo to upload.')
+  if (file.size > MAX_UPLOAD_BYTES) throw new Error('That photo is too large. Try a smaller one.')
+  const bytes = new Uint8Array(await file.arrayBuffer())
+  const type = sniffImage(bytes)
+  if (!type) throw new Error('That file is not a JPEG, PNG or WebP photo.')
+  return { bytes, type, ext: IMAGE_EXT[type] }
+}

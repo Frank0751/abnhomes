@@ -19,6 +19,8 @@ export type Permission =
   // Portfolio
   | 'units:read'
   | 'units:write'
+  /** Add a building, or change who owns it and the fee ABN charges. */
+  | 'properties:manage'
   | 'parties:read'
   | 'parties:write'
   // Short stay
@@ -62,7 +64,7 @@ export type Permission =
   | 'portal:vendor'
 
 const ALL: Permission[] = [
-  'units:read', 'units:write', 'parties:read', 'parties:write',
+  'units:read', 'units:write', 'properties:manage', 'parties:read', 'parties:write',
   'bookings:read', 'bookings:write', 'calendar:manage', 'rates:write',
   'leases:read', 'leases:write', 'rentrun:execute',
   'sales:read', 'sales:write', 'applications:read', 'applications:write',

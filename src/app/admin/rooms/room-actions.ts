@@ -22,7 +22,8 @@ import { db } from '@/lib/db'
 import { requireActor } from '@/lib/session'
 import { AccessError, assertCanOnProperty } from '@/lib/rbac'
 import { logAudit } from '@/lib/audit'
-import { deleteStoredPhoto, isStoredPhoto, storePhoto, StorageNotConfiguredError } from '@/lib/storage'
+import { lines } from '@/lib/form-lines'
+import { deleteStoredPhoto, isStoredPhoto, readPhotoUpload, storePhoto, StorageNotConfiguredError } from '@/lib/storage'
 
 export type RoomResult =
   | { ok: true; message: string }
@@ -31,8 +32,6 @@ export type RoomResult =
 export type PhotoResult = { ok: true; images: string[] } | { ok: false; error: string }
 
 const MAX_PHOTOS = 30
-/** The browser resizes before sending; anything bigger did not come from our form. */
-const MAX_UPLOAD_BYTES = 4 * 1024 * 1024
 
 const UNIT_TYPES = [
   'STUDIO', 'ONE_BED', 'TWO_BED', 'THREE_BED', 'FOUR_BED',
@@ -59,20 +58,6 @@ function present(error: unknown, fallback: string, values?: Record<string, strin
   if (ours) return { ok: false, error: (error as Error).message, values }
   console.error('[rooms] failed', error)
   return { ok: false, error: fallback, values }
-}
-
-/** One item per line, blank lines and duplicates dropped, order kept. */
-function lines(raw: string | undefined, max: number, label: string): string[] {
-  const items = (raw ?? '')
-    .split(/\r?\n/)
-    .map((s) => s.trim())
-    .filter(Boolean)
-  const unique = [...new Set(items)]
-  if (unique.length > max) throw new Error(`Keep ${label} to ${max} lines or fewer.`)
-  for (const item of unique) {
-    if (item.length > 120) throw new Error(`"${item.slice(0, 40)}…" is too long for ${label} — keep each line under 120 characters.`)
-  }
-  return unique
 }
 
 const optionalInt = (min: number, max: number, label: string) =>
@@ -352,19 +337,6 @@ export async function updateRoomDetailsAction(
 
 // ------------------------------------------------------------------ photos
 
-/** The first bytes of every JPEG, PNG and WebP file. Checked, not trusted from the browser. */
-function sniff(bytes: Uint8Array): 'image/jpeg' | 'image/png' | 'image/webp' | null {
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return 'image/jpeg'
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return 'image/png'
-  if (
-    bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
-    bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50
-  ) return 'image/webp'
-  return null
-}
-
-const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' } as const
-
 /**
  * Add one photo to the end of a room's gallery.
  *
@@ -377,18 +349,11 @@ export async function uploadRoomPhotoAction(unitId: string, formData: FormData):
   try {
     const { actor, unit } = await unitForWrite(unitId)
 
-    const file = formData.get('photo')
-    if (!(file instanceof File) || file.size === 0) throw new Error('Choose a photo to upload.')
-    if (file.size > MAX_UPLOAD_BYTES) throw new Error('That photo is too large. Try a smaller one.')
     if (unit.images.length >= MAX_PHOTOS) {
       throw new Error(`A room can show up to ${MAX_PHOTOS} photos. Remove one first.`)
     }
-
-    const bytes = new Uint8Array(await file.arrayBuffer())
-    const type = sniff(bytes)
-    if (!type) throw new Error('That file is not a JPEG, PNG or WebP photo.')
-
-    const url = await storePhoto(`units/${unit.id}/${randomUUID()}.${EXT[type]}`, bytes, type)
+    const { bytes, type, ext } = await readPhotoUpload(formData)
+    const url = await storePhoto(`units/${unit.id}/${randomUUID()}.${ext}`, bytes, type)
 
     // Append against the current list, not the one read above: another
     // upload may have landed in between.

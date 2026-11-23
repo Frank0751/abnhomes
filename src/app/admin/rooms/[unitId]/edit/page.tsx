@@ -15,7 +15,8 @@ import { PageHeader, Panel, Pill } from '@/components/admin/ui'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
-import { PhotoManager } from './photo-manager'
+import { PhotoManager } from '@/components/admin/photo-manager'
+import { saveRoomPhotosAction, uploadRoomPhotoAction } from '../../room-actions'
 import { RoomDetailsForm } from './details-form'
 
 export const metadata = { title: 'Edit room' }
@@ -82,7 +83,13 @@ export default async function EditRoomPage({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Panel title="Photos" description="What guests see first. Use landscape photos for the cover." className="self-start">
-          <PhotoManager unitId={unit.id} roomName={unit.name} initial={unit.images} published={unit.published} />
+          <PhotoManager
+            name={unit.name}
+            initial={unit.images}
+            published={unit.published}
+            upload={uploadRoomPhotoAction.bind(null, unit.id)}
+            save={saveRoomPhotosAction.bind(null, unit.id)}
+          />
         </Panel>
 
         <Panel title="Details">
