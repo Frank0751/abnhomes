@@ -12,7 +12,7 @@
 
 import { db } from '@/lib/db'
 import { cancelReservation } from './reservations'
-import { notifyCheckInReminder, notifyReviewRequest } from '@/lib/notify'
+import { notifyCheckInReminder, notifyCheckoutReminder, notifyReviewRequest } from '@/lib/notify'
 import { createTicket } from '@/lib/operations/tickets'
 import type { TicketCategory, TicketPriority } from '@prisma/client'
 
@@ -71,6 +71,40 @@ export async function sendCheckInReminders(): Promise<number> {
     }
   }
   return arriving.length
+}
+
+/**
+ * Guests checking out tomorrow get the time and a thank-you. Once each: the
+ * outbox refuses a second message with the same template for the booking.
+ */
+export async function sendCheckoutReminders(): Promise<number> {
+  const tomorrow = new Date()
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const dayStart = new Date(tomorrow)
+  dayStart.setHours(0, 0, 0, 0)
+  const dayEnd = new Date(tomorrow)
+  dayEnd.setHours(23, 59, 59, 999)
+
+  const leaving = await db.reservation.findMany({
+    where: {
+      status: { in: ['CONFIRMED', 'CHECKED_IN'] },
+      checkOut: { gte: dayStart, lte: dayEnd },
+      // A one-night stay's check-out is the day after arrival; its check-in
+      // message already gives the check-out time.
+      nights: { gt: 1 },
+    },
+    select: { id: true },
+    take: 50,
+  })
+
+  for (const { id } of leaving) {
+    try {
+      await notifyCheckoutReminder(id)
+    } catch (error) {
+      console.error('[sweeper] checkout reminder failed', error)
+    }
+  }
+  return leaving.length
 }
 
 /** Ask guests whose stay ended in the last day or two to review it. */

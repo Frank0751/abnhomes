@@ -4,9 +4,13 @@
 # review requests, double-blind review reveals and preventive maintenance
 # tickets.
 #
-# Vercel's Hobby plan only allows cron jobs that run once a day, so the
-# 15-minute heartbeat lives here: scheduled Actions are free on public
-# repositories. The endpoint is idempotent and guarded by an atomic per-row
+# Messages are sent the moment they are queued (see queueMessage), so this
+# sweep is for what is TIME-driven — reminders, expiring holds — and for
+# retrying a send that failed. Hourly is plenty for that, and keeps it to
+# about 750 Actions minutes a month: inside the 2,000 free minutes a private
+# repository gets. (Vercel's Hobby plan only allows daily crons, hence here.)
+# GitHub also delays or drops scheduled runs under load; in practice an
+# hourly schedule runs several times a day, which is still enough. The endpoint is idempotent and guarded by an atomic per-row
 # claim, so overlapping runs are safe. The daily Vercel cron (see vercel.json)
 # stays as a safety net for the rare days when Actions starts jobs late.
 #
@@ -16,7 +20,7 @@ name: Booking sweeper
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '7 * * * *'
   workflow_dispatch: # lets us trigger it by hand from the Actions tab
 
 jobs:
