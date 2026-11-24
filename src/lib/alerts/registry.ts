@@ -53,6 +53,11 @@ export const ALERTS = {
     urgency: 'INSTANT', category: 'booking', roles: MONEY_AND_DESK,
     digestGroup: 'Bookings',
   },
+  /** A guest moved their own dates, or asked for a move that needs the office. */
+  'booking.changed': {
+    urgency: 'INSTANT', category: 'booking', roles: MONEY_AND_DESK,
+    digestGroup: 'Bookings',
+  },
   /** Airbnb or Booking.com shows a guest on nights ABN has already sold. */
   'calendar.conflict': {
     urgency: 'INSTANT', category: 'booking', roles: DESK,

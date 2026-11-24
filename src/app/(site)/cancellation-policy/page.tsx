@@ -101,9 +101,18 @@ export default async function CancellationPolicyPage() {
       <LegalSection title="Changing dates, leaving early">
         <ul>
           <li>
-            Want different dates? Ask us. If the room is free we will move the booking at the price for the new
-            dates; if it costs less, the difference follows the refund rules above.
+            Want different dates? While your booking is still fully refundable you can move it yourself in{' '}
+            <Link href="/portal" className="underline underline-offset-2">
+              your guest portal
+            </Link>
+            : choose “Change dates” and you will see whether the new dates are free and what they cost before you
+            confirm.
           </li>
+          <li>
+            If the new dates cost more, the difference is added to your balance. If they cost less, our team makes
+            the change and the difference follows the refund rules above.
+          </li>
+          <li>Closer to arrival than that, call or WhatsApp us and we will do what we can.</li>
           <li>Nights you do not use after you have checked in are not refunded.</li>
         </ul>
       </LegalSection>
