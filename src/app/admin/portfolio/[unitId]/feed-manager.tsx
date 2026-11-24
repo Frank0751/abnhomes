@@ -80,6 +80,28 @@ export function FeedManager({
           <p className="text-xs text-muted-foreground">
             Shows only that a night is taken — never the guest, the price, or the booking.
           </p>
+          <details className="rounded-md border border-black/8 p-2.5 text-xs">
+            <summary className="cursor-pointer font-medium">How to connect a listing, step by step</summary>
+            <div className="mt-2 space-y-3 text-muted-foreground">
+              <div>
+                <p className="font-medium text-foreground">Airbnb</p>
+                <ol className="mt-1 list-decimal space-y-0.5 pl-4">
+                  <li>Open the listing → Calendar → Availability → Connect calendars (on a computer: Listing → Availability → Sync calendars).</li>
+                  <li>Choose “Connect to another website”, paste the link above, name it “ABN Homes”.</li>
+                  <li>On the same screen, copy Airbnb’s own export link and add it below with “Add feed”.</li>
+                </ol>
+              </div>
+              <div>
+                <p className="font-medium text-foreground">Booking.com</p>
+                <ol className="mt-1 list-decimal space-y-0.5 pl-4">
+                  <li>Extranet → Rates &amp; Availability → Sync calendars → Add calendar connection.</li>
+                  <li>Paste the link above as the calendar to import.</li>
+                  <li>Copy Booking.com’s export link and add it below with “Add feed”.</li>
+                </ol>
+              </div>
+              <p>Do both directions for every listing. One direction only still allows double bookings.</p>
+            </div>
+          </details>
         </div>
       </Panel>
 
@@ -192,8 +214,9 @@ export function FeedManager({
       </Panel>
 
       <p className="px-1 text-xs text-muted-foreground">
-        Feed sync runs hourly and is not instant — the platforms poll on their own schedule. For a
-        same-day direct booking, still glance at the Airbnb app.
+        Their calendars are read every hour, and again the moment a guest books this room on our website.
+        Airbnb and Booking.com read ours on their own schedule, usually every few hours. If they ever show
+        a guest on nights already sold here, the desk is alerted straight away.
       </p>
     </>
   )

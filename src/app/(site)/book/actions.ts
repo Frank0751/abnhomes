@@ -16,6 +16,7 @@ import { quoteFromUnit } from '@/lib/short-stay/pricing'
 import { AvailabilityError } from '@/lib/short-stay/availability'
 import { validateCoupon } from '@/lib/marketplace/coupons'
 import { notifyBookingRequested } from '@/lib/notify'
+import { refreshUnitFeeds } from '@/lib/short-stay/ical'
 import { normalisePhone } from '@/lib/core/phone'
 import { logAudit } from '@/lib/audit'
 import { raiseAlert } from '@/lib/alerts/dispatch'
@@ -98,6 +99,11 @@ export async function requestBookingAction(
         // malformed payload — ignore, the rest of the booking stands
       }
     }
+
+    // Re-read this room's Airbnb and Booking.com calendars first if they are
+    // more than ten minutes old, so a booking taken there since the last sync
+    // blocks these dates before we accept them. Bounded and never throws.
+    await refreshUnitFeeds(unit.id)
 
     const { reservation } = await createReservation({
       unitId: unit.id,

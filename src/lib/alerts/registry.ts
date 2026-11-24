@@ -53,6 +53,16 @@ export const ALERTS = {
     urgency: 'INSTANT', category: 'booking', roles: MONEY_AND_DESK,
     digestGroup: 'Bookings',
   },
+  /** Airbnb or Booking.com shows a guest on nights ABN has already sold. */
+  'calendar.conflict': {
+    urgency: 'INSTANT', category: 'booking', roles: DESK,
+    digestGroup: 'Bookings',
+  },
+  /** A booking-site calendar could not be read; its dates may be out of date. */
+  'calendar.feed_failed': {
+    urgency: 'DIGEST', category: 'system', roles: DESK,
+    digestGroup: 'Changes',
+  },
 
   // ---------------------------------------------------------------- money
   'payment.received': {

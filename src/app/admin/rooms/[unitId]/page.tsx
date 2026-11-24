@@ -37,7 +37,7 @@ import {
   StatusPill,
 } from '@/components/admin/ui'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, CalendarPlus, Pencil, Users, Wrench } from 'lucide-react'
+import { ArrowLeft, CalendarPlus, Pencil, RefreshCw, Users, Wrench } from 'lucide-react'
 
 /** Parse `?m=` into a whole number of months within ±120 of this one. */
 function clampOffset(raw: string | undefined): number {
@@ -62,6 +62,7 @@ export default async function RoomPage({
     include: {
       property: { select: { id: true, name: true, addressLine: true, city: true } },
       manager: { select: { id: true, name: true } },
+      icalFeeds: { where: { active: true }, select: { lastError: true } },
       ratePlans: { orderBy: [{ active: 'desc' }, { priority: 'desc' }, { name: 'asc' }] },
       leases: {
         where: { status: 'ACTIVE' },
@@ -150,6 +151,23 @@ export default async function RoomPage({
                 <Link href={`/admin/rooms/${unit.id}/edit`}>
                   <Pencil className="mr-1.5 size-4" />
                   Edit details & photos
+                </Link>
+              </Button>
+            )}
+            {!unit.isAmenity && can(actor, 'calendar:manage') && (
+              <Button
+                asChild
+                size="sm"
+                variant="outline"
+                className={unit.icalFeeds.some((f) => f.lastError) ? 'border-red-300 text-red-700' : undefined}
+              >
+                <Link href={`/admin/portfolio/${unit.id}`}>
+                  <RefreshCw className="mr-1.5 size-4" />
+                  {unit.icalFeeds.length === 0
+                    ? 'Connect Airbnb / Booking.com'
+                    : unit.icalFeeds.some((f) => f.lastError)
+                      ? 'Calendar sync failing'
+                      : `Synced with ${unit.icalFeeds.length} site${unit.icalFeeds.length === 1 ? '' : 's'}`}
                 </Link>
               </Button>
             )}
