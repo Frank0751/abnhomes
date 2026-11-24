@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CalendarDays, MapPin, Search, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { COMPANY } from "@/lib/abn-data";
@@ -80,23 +81,22 @@ export function BookingHero() {
       // lets a phone keep min-h and grow, which is what it needed all along.
       className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#0c1a16] [@media(min-height:760px)_and_(min-width:768px)]:h-[100svh]"
     >
-      {/* Background film + poster with slow Ken Burns drift */}
+      {/* The building itself, 8 Asiko Street, with a slow Ken Burns drift */}
       <motion.div style={{ scale: bgScale, opacity: bgOpacity }} className="absolute inset-0">
-        <video
-          className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="/images/abn-real/hero-poster.jpg"
-          aria-hidden="true"
-        >
-          <source src="/videos/hero-loop.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0c1a16]/85 via-[#0c1a16]/60 to-[#0c1a16]/95" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0c1a16]/80 via-transparent to-[#0c1a16]/45" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(12,26,22,0.55)_100%)]" />
+        <Image
+          src="/images/building/abn-apartments-tantra-hill.jpg"
+          alt="ABN Apartments at 8 Asiko Street, Tantra Hill, Accra"
+          fill
+          priority
+          sizes="100vw"
+          // Keeps the terraces and upper floors in frame when a wide screen
+          // crops the nearly square photo to a band.
+          className="object-cover object-[50%_32%]"
+        />
+        {/* Lighter than the tint the old film needed: the building is the point,
+            so it has to read. Dark enough still for white type to hold. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0c1a16]/70 via-[#0c1a16]/35 to-[#0c1a16]/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(12,26,22,0.4)_100%)]" />
       </motion.div>
 
       <ParticleField />

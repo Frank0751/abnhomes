@@ -16,8 +16,8 @@ export default function SignInPage() {
           every member of staff sees every morning. */}
       <div className="relative hidden lg:block">
         <Image
-          src="/images/abn-real/abn-ig-2-hd.jpg"
-          alt=""
+          src="/images/building/abn-apartments-tantra-hill.jpg"
+          alt="ABN Apartments at 8 Asiko Street, Tantra Hill, Accra"
           fill
           priority
           sizes="55vw"
