@@ -6,6 +6,7 @@
  * the marketplace read layer; every price is quoted live from rate plans.
  */
 
+import { db } from '@/lib/db'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
@@ -71,10 +72,27 @@ export default async function BookPage({
     sort: (params.sort as SearchFilters['sort']) ?? 'recommended',
   }
 
-  const [results, hoods] = await Promise.all([
+  const [results, hoods, homesThatFit] = await Promise.all([
     nights > 0 ? searchMarketplace(filters) : Promise.resolve([]),
     activeNeighbourhoods(),
+    // Every home on the site that sleeps this many, booked or not. Compared
+    // with what is free, it says whether homes are actually being taken.
+    db.unit.count({
+      where: {
+        published: true,
+        isAmenity: false,
+        property: { published: true, active: true },
+        lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+        maxGuests: { gte: guests },
+      },
+    }),
   ])
+
+  // True when a filter (not the dates or guest count) has hidden some homes.
+  const narrowed = Boolean(
+    filters.minPrice || filters.maxPrice || filters.bedrooms || filters.types?.length ||
+      filters.hoods?.length || filters.amenities?.length || filters.instantOnly
+  )
 
   const relaxed = (over: Record<string, string | null>) => {
     const next = new URLSearchParams(params as Record<string, string>)
@@ -303,6 +321,15 @@ export default async function BookPage({
                 : `${results.length} home${results.length === 1 ? '' : 's'} available`}{' '}
               · {formatDate(checkIn)} to {formatDate(checkOut)} · {nights} night{nights === 1 ? '' : 's'}
             </p>
+
+            {/* Said only when it is true: nothing has been filtered out, and
+                these really are the last homes free for the dates asked. */}
+            {!narrowed && results.length > 0 && results.length <= 2 && results.length < homesThatFit && (
+              <p className="mb-5 inline-flex items-center gap-2 rounded-full bg-amber-50 px-3.5 py-1.5 text-xs font-medium text-amber-900 ring-1 ring-amber-200">
+                Only {results.length === 1 ? '1 home' : '2 homes'} left for these dates: the other{' '}
+                {homesThatFit - results.length} {homesThatFit - results.length === 1 ? 'is' : 'are'} booked
+              </p>
+            )}
 
             {results.length === 0 && (
               <div className="mb-8 rounded-xl border border-dashed border-black/15 bg-white/50 px-6 py-14 text-center">

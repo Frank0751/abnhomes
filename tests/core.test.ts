@@ -399,3 +399,59 @@ describe('rent escalation', () => {
     assert.equal(rentAtDate(flat, utc('2030-01-01')), 320_000)
   })
 })
+
+// ------------------------------------------------------------ cancellation
+
+import {
+  DEFAULT_CANCELLATION,
+  cancellationDates,
+  cancellationSummary,
+  normalisePolicy,
+  refundPercent,
+} from '../src/lib/core/cancellation'
+
+describe('cancellation policy', () => {
+  const checkIn = new Date('2026-12-20T00:00:00Z')
+  const at = (iso: string) => new Date(iso)
+
+  it('refunds in full up to and including the last free day', () => {
+    assert.equal(refundPercent(DEFAULT_CANCELLATION, checkIn, at('2026-12-01T10:00:00Z')), 100)
+    assert.equal(refundPercent(DEFAULT_CANCELLATION, checkIn, at('2026-12-13T23:59:00Z')), 100)
+  })
+
+  it('drops to the part refund the day after, then to nothing', () => {
+    assert.equal(refundPercent(DEFAULT_CANCELLATION, checkIn, at('2026-12-14T00:01:00Z')), 50)
+    assert.equal(refundPercent(DEFAULT_CANCELLATION, checkIn, at('2026-12-18T23:00:00Z')), 50)
+    assert.equal(refundPercent(DEFAULT_CANCELLATION, checkIn, at('2026-12-19T00:01:00Z')), 0)
+    assert.equal(refundPercent(DEFAULT_CANCELLATION, checkIn, at('2026-12-25T00:00:00Z')), 0)
+  })
+
+  it('reports the same last days it enforces', () => {
+    const d = cancellationDates(DEFAULT_CANCELLATION, checkIn)
+    assert.equal(d.fullUntil.toISOString().slice(0, 10), '2026-12-13')
+    assert.equal(d.partialUntil?.toISOString().slice(0, 10), '2026-12-18')
+  })
+
+  it('has no middle tier when the part refund is switched off', () => {
+    const strict = { fullRefundDays: 3, partialRefundDays: 0, partialPercent: 0 }
+    assert.equal(cancellationDates(strict, checkIn).partialUntil, null)
+    assert.equal(refundPercent(strict, checkIn, at('2026-12-17T12:00:00Z')), 100)
+    assert.equal(refundPercent(strict, checkIn, at('2026-12-18T12:00:00Z')), 0)
+    assert.equal(cancellationSummary(strict), 'Free cancellation until 3 days before arrival, non-refundable after.')
+  })
+
+  it('falls back to the default when what is stored makes no sense', () => {
+    assert.deepEqual(normalisePolicy(null), DEFAULT_CANCELLATION)
+    assert.deepEqual(normalisePolicy({ fullRefundDays: 1, partialRefundDays: 5, partialPercent: 50 }), DEFAULT_CANCELLATION)
+    assert.deepEqual(normalisePolicy({ fullRefundDays: 2, partialRefundDays: 1, partialPercent: 30 }), {
+      fullRefundDays: 2, partialRefundDays: 1, partialPercent: 30,
+    })
+  })
+
+  it('words the default the way the site always has', () => {
+    assert.equal(
+      cancellationSummary(DEFAULT_CANCELLATION),
+      'Free cancellation until 7 days before arrival, 50% refund until 48 hours before, non-refundable after.'
+    )
+  })
+})

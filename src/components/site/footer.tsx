@@ -197,8 +197,9 @@ export function Footer() {
             </p>
           </div>
           <div className="flex items-center gap-6 text-xs text-white/45">
-            <a href="#" className="hover:text-[#00a878] transition-colors">{t("footer.privacy")}</a>
-            <a href="#" className="hover:text-[#00a878] transition-colors">{t("footer.terms")}</a>
+            <a href="/privacy" className="hover:text-[#00a878] transition-colors">{t("footer.privacy")}</a>
+            <a href="/terms" className="hover:text-[#00a878] transition-colors">{t("footer.terms")}</a>
+            <a href="/cancellation-policy" className="hover:text-[#00a878] transition-colors">Cancellations</a>
             <button
               onClick={scrollTop}
               className="flex items-center gap-2 hover:text-[#00a878] transition-colors"

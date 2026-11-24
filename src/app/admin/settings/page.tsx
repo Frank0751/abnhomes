@@ -12,6 +12,9 @@ import {
   humanise,
 } from '@/components/admin/ui'
 import { FxRateForm } from './fx-form'
+import { CancellationForm } from './cancellation-form'
+import { getCancellationPolicy } from '@/lib/policies'
+import { cancellationSummary } from '@/lib/core/cancellation'
 
 export default async function SettingsPage() {
   await requirePermission('settings:write')
@@ -33,6 +36,7 @@ export default async function SettingsPage() {
     }),
   ])
 
+  const cancellation = await getCancellationPolicy()
   const channels = supportedChannels()
   const failingFeeds = feeds.filter((f) => f.lastError)
 
@@ -85,6 +89,16 @@ export default async function SettingsPage() {
                 </tbody>
               </table>
             </TableScroll>
+          </Panel>
+
+          <Panel
+            title="Cancellation policy"
+            description="What guests are told on every room page and at checkout, and what their own Cancel button applies."
+          >
+            <div className="space-y-3 p-4">
+              <p className="rounded-md bg-secondary px-3 py-2 text-sm">{cancellationSummary(cancellation)}</p>
+              <CancellationForm policy={cancellation} />
+            </div>
           </Panel>
 
           <Panel

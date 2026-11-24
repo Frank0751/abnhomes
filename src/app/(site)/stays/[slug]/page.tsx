@@ -1,3 +1,5 @@
+import { getCancellationPolicy } from '@/lib/policies'
+import { cancellationDates, cancellationSummary } from '@/lib/core/cancellation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -21,7 +23,9 @@ import {
   Coffee,
   ArrowRight,
   Flag,
+  MessageCircle,
 } from 'lucide-react'
+import { COMPANY } from '@/lib/abn-data'
 import { getListingBySlug, publishedReviewsForUnit, publicCalendar, similarUnits, unitSlug } from '@/lib/marketplace/units'
 import { quoteFromUnit } from '@/lib/short-stay/pricing'
 import { formatMinor } from '@/lib/core/money'
@@ -102,8 +106,22 @@ export default async function StayPage({
     ? Boolean(await db.wishlistItem.findUnique({ where: { userId_unitId: { userId: actor.id, unitId: unit.id } } }))
     : false
 
-  const freeUntil = addDays(checkIn, -7)
-  const halfUntil = addDays(checkIn, -2)
+  const policy = await getCancellationPolicy()
+
+  // The person who runs this home, by first name, when one has been assigned.
+  const hostFirstName = (unit.manager?.name ?? unit.property.manager?.name)?.trim().split(/s+/)[0] || null
+  const hostWhatsApp = `${COMPANY.whatsapp}?text=${encodeURIComponent(
+    `Hello${hostFirstName ? ` ${hostFirstName}` : ''}, I have a question about ${unit.name} (${unit.property.name}) on abnhomesltd.com.`
+  )}`
+
+  // The neighbourhood, not the door: about 1.5 km across, with no marker.
+  // The exact pin stays private until a booking is confirmed.
+  const { latitude, longitude } = unit.property
+  const areaMapUrl =
+    latitude != null && longitude != null
+      ? `https://www.openstreetmap.org/export/embed.html?bbox=${(longitude - 0.008).toFixed(4)}%2C${(latitude - 0.006).toFixed(4)}%2C${(longitude + 0.008).toFixed(4)}%2C${(latitude + 0.006).toFixed(4)}&layer=mapnik`
+      : null
+  const cancelBy = cancellationDates(policy, checkIn)
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -401,7 +419,19 @@ export default async function StayPage({
                   <strong className="font-medium text-foreground/80">Getting around:</strong> {unit.transitNotes}
                 </p>
               )}
+              {areaMapUrl && (
+                <div className="mt-4 overflow-hidden rounded-xl border border-black/[0.08]">
+                  <iframe
+                    title={`Map of the area around ${unit.property.name}`}
+                    src={areaMapUrl}
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    className="block h-72 w-full"
+                  />
+                </div>
+              )}
               <p className="mt-3 text-xs text-muted-foreground">
+                {areaMapUrl ? 'The map shows the neighbourhood, not the door. ' : ''}
                 The exact pin, gate photos and driver directions are shared in your portal once your booking is confirmed.
               </p>
             </section>
@@ -457,7 +487,9 @@ export default async function StayPage({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/logo/abn-badge.png" alt="" className="size-14 rounded-full" />
                 <div>
-                  <p className="font-serif text-lg tracking-tight">Hosted by ABN Homes</p>
+                  <p className="font-serif text-lg tracking-tight">
+                    {hostFirstName ? `Hosted by ${hostFirstName}, ABN Homes` : 'Hosted by ABN Homes'}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     Owner-operated in Accra · {unit.property.owner?.name ? `Managed for ${unit.property.owner.name}` : 'Direct operator'}
                   </p>
@@ -479,6 +511,16 @@ export default async function StayPage({
                   <Coffee className="size-3.5" /> Checkout by {unit.checkOutUntil ?? '12:00'}
                 </span>
               </p>
+              <a
+                href={hostWhatsApp}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-black/12 px-4 py-2 text-sm font-medium transition hover:bg-black/[0.03]"
+              >
+                <MessageCircle className="size-4 text-[#00a878]" />
+                {hostFirstName ? `Message ${hostFirstName} on WhatsApp` : 'Message your host on WhatsApp'}
+              </a>
+              <p className="mt-2 text-xs text-muted-foreground">Ask anything before you book. No booking needed.</p>
             </section>
 
             <p className="mt-6 text-xs text-muted-foreground">
@@ -584,7 +626,17 @@ export default async function StayPage({
               </Link>
 
               <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground">
-                Free cancellation until {formatDate(freeUntil)} · 50% refund until {formatDate(halfUntil)}
+                {hasDates ? (
+                  <>
+                    Free cancellation until {formatDate(cancelBy.fullUntil)}
+                    {cancelBy.partialUntil && ` · ${policy.partialPercent}% refund until ${formatDate(cancelBy.partialUntil)}`}
+                  </>
+                ) : (
+                  cancellationSummary(policy)
+                )}{' '}
+                <Link href="/cancellation-policy" className="underline underline-offset-2">
+                  Details
+                </Link>
               </p>
             </div>
 

@@ -5,6 +5,10 @@ import { db } from '@/lib/db'
 import { requireParty } from '@/lib/session'
 import { createTicket } from '@/lib/operations/tickets'
 import { startPayment } from '@/lib/payments/gateway'
+import { cancelReservation } from '@/lib/short-stay/reservations'
+import { getCancellationPolicy } from '@/lib/policies'
+import { refundPercent } from '@/lib/core/cancellation'
+import { dateOnly } from '@/lib/core/dates'
 import type { Currency, PaymentChannel } from '@prisma/client'
 
 export type ActionResult = { ok: true; message?: string } | { ok: false; error: string }
@@ -109,5 +113,59 @@ export async function startTenantPaymentAction(
       ok: false,
       error: error instanceof Error ? error.message : 'Could not start the payment.',
     }
+  }
+}
+
+/**
+ * A guest cancelling their own confirmed stay.
+ *
+ * The booking is found by the guest's own party, never by an id alone, so
+ * nobody can cancel a stay that is not theirs. The refund share is worked out
+ * here, at the moment of cancelling, from the policy in Settings — not taken
+ * from the browser — and written into the cancellation so the office sees
+ * exactly what is owed. Money is sent back by staff, who are alerted at once;
+ * nothing is refunded automatically.
+ */
+export async function cancelMyStayAction(reservationId: string): Promise<ActionResult> {
+  try {
+    const { actor, partyId } = await requireParty()
+
+    const stay = await db.reservation.findFirst({
+      where: { id: reservationId, guestPartyId: partyId },
+      select: { id: true, code: true, status: true, checkIn: true },
+    })
+    if (!stay) return { ok: false, error: 'That booking was not found on your account.' }
+    if (stay.status !== 'CONFIRMED' && stay.status !== 'PENDING') {
+      return { ok: false, error: 'This booking can no longer be cancelled online. Please call us on 054 170 4048.' }
+    }
+    if (dateOnly(stay.checkIn) <= dateOnly(new Date())) {
+      return { ok: false, error: 'Your stay has started. Please call us on 054 170 4048 so we can help.' }
+    }
+
+    const policy = await getCancellationPolicy()
+    const percent = refundPercent(policy, stay.checkIn)
+    const refundLine =
+      percent === 100
+        ? 'Full refund of the amount paid is due under the cancellation policy.'
+        : percent > 0
+          ? `${percent}% of the amount paid is due as a refund under the cancellation policy.`
+          : 'No refund is due under the cancellation policy.'
+
+    await cancelReservation(stay.id, {
+      reason: `Cancelled online by the guest. ${refundLine}`,
+      actorUserId: actor.id,
+    })
+
+    revalidatePath('/portal/tenant')
+    return {
+      ok: true,
+      message:
+        percent > 0
+          ? `Booking ${stay.code} is cancelled. ${percent === 100 ? 'A full refund' : `A ${percent}% refund`} will be sent to the way you paid; we start it within 2 working days.`
+          : `Booking ${stay.code} is cancelled.`,
+    }
+  } catch (error) {
+    console.error('[portal] guest cancellation failed', error)
+    return { ok: false, error: 'We could not cancel that just now. Please call us on 054 170 4048.' }
   }
 }

@@ -32,6 +32,7 @@ export function BookingRequestForm({
   guests,
   currency,
   baseTotalMinor,
+  cancellationText,
   addOns,
 }: {
   unitId: string
@@ -40,6 +41,8 @@ export function BookingRequestForm({
   guests: number
   currency: Currency
   baseTotalMinor: number
+  /** The cancellation policy in one sentence, from Settings. */
+  cancellationText: string
   addOns: AddOnOption[]
 }) {
   const [state, formAction, pending] = useActionState<BookingResult | null, FormData>(
@@ -358,8 +361,19 @@ export function BookingRequestForm({
         <label className="flex cursor-pointer items-start gap-2.5">
           <input type="checkbox" name="consentTerms" className="mt-0.5 accent-[#00a878]" />
           <span className="text-foreground/85">
-            I accept the terms of service and cancellation policy — free cancellation until 7 days
-            before arrival, 50% until 48 hours, non-refundable after.
+            I accept the{' '}
+            <Link href="/terms" target="_blank" className="underline underline-offset-2">
+              terms of service
+            </Link>
+            ,{' '}
+            <Link href="/privacy" target="_blank" className="underline underline-offset-2">
+              privacy policy
+            </Link>{' '}
+            and{' '}
+            <Link href="/cancellation-policy" target="_blank" className="underline underline-offset-2">
+              cancellation policy
+            </Link>
+            . {cancellationText}
           </span>
         </label>
       </fieldset>
