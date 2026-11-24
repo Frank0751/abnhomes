@@ -27,6 +27,7 @@ import { PayNowButton } from './pay-now'
 import { ReviewStayButton } from './review-stay'
 import { GuidebookButton } from './guidebook'
 import { CancelStayButton } from './cancel-stay'
+import { ChangeDatesButton } from './change-dates'
 import { getCancellationPolicy } from '@/lib/policies'
 import { refundPercent } from '@/lib/core/cancellation'
 import { dateOnly } from '@/lib/core/dates'
@@ -277,7 +278,15 @@ export default async function TenantPortal() {
                 </div>
 
                 {stay.status === 'CONFIRMED' && dateOnly(stay.checkIn) > dateOnly(new Date()) && (
-                  <div className="mt-3 pl-6">
+                  <div className="mt-3 flex flex-wrap items-start gap-x-5 gap-y-3 pl-6">
+                    {refundPercent(cancellation, stay.checkIn) === 100 && stay.discountMinor === 0 && (
+                      <ChangeDatesButton
+                        reservationId={stay.id}
+                        homeName={stay.unit.name}
+                        checkIn={stay.checkIn.toISOString().slice(0, 10)}
+                        checkOut={stay.checkOut.toISOString().slice(0, 10)}
+                      />
+                    )}
                     <CancelStayButton
                       reservationId={stay.id}
                       homeName={stay.unit.name}
