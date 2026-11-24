@@ -624,7 +624,7 @@ async function stayDetails(reservationId: string) {
   const u = r?.unit
   return {
     checkInFrom: u?.checkInFrom || '14:00',
-    checkOutUntil: u?.checkOutUntil || '11:00',
+    checkOutUntil: u?.checkOutUntil || '12:00',
     selfCheckIn: Boolean(u?.selfCheckIn),
     wifi: u?.wifiName ? `${u.wifiName}${u.wifiPassword ? ` / password ${u.wifiPassword}` : ''}` : null,
   }
@@ -702,7 +702,7 @@ Your portal: ${siteUrl()}/portal`,
 /**
  * The evening before check-out: the time, and a thank-you. Sent the day
  * before because the sweep's timing on the day itself is not reliable enough
- * to beat an 11:00 check-out. Once per booking, by the outbox's dedupe.
+ * to beat a midday check-out. Once per booking, by the outbox's dedupe.
  */
 export async function notifyCheckoutReminder(reservationId: string): Promise<void> {
   const loaded = await loadReservation(reservationId)

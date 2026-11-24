@@ -19,8 +19,8 @@ type AddOnOption = {
 const ARRIVAL_TIMES = [
   'Not sure yet',
   'Morning (before 12:00)',
-  'Afternoon (12:00–15:00)',
-  'Standard check-in (15:00–18:00)',
+  'Early afternoon (12:00–14:00)',
+  'Standard check-in (14:00–18:00)',
   'Evening (18:00–21:00)',
   'Late arrival (after 21:00)',
 ]
@@ -324,7 +324,7 @@ export function BookingRequestForm({
       <div className="rounded-xl border border-black/[0.08] bg-white p-5 shadow-soft">
         <dl className="space-y-1.5 text-sm">
           <div className="flex justify-between text-muted-foreground">
-            <dt>Stay + cleaning</dt>
+            <dt>Your stay</dt>
             <dd className="tabular-nums">{formatMinor(baseTotalMinor, currency)}</dd>
           </div>
           {addOnsTotal > 0 && (

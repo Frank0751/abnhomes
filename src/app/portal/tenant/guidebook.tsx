@@ -138,7 +138,7 @@ export function GuidebookButton({ data }: { data: GuidebookData }) {
               </div>
 
               <p className="border-t border-black/[0.06] pt-3 text-xs text-muted-foreground">
-                Check-in from {data.checkInFrom ?? '15:00'} · checkout by {data.checkOutUntil ?? '11:00'} ·
+                Check-in from {data.checkInFrom ?? '14:00'} · checkout by {data.checkOutUntil ?? '12:00'} ·
                 Emergency? Call or WhatsApp +233 54 170 4048 — someone answers.
               </p>
             </section>

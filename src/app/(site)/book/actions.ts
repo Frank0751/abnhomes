@@ -39,7 +39,9 @@ const schema = z.object({
   name: z.string().min(2, 'Please give your full name.'),
   phone: z.string().min(6, 'We need a phone number to confirm your booking.'),
   email: z.string().email('That email does not look right.'),
-  arrivalTime: z.string().max(30).optional(),
+  // The longest choice on the form is 31 characters. At max(30) a guest who
+  // picked "Standard check-in" was refused with a validation error.
+  arrivalTime: z.string().max(60).optional(),
   purpose: z.enum(['LEISURE', 'BUSINESS', 'RELOCATION']).optional(),
   addOns: z.string().optional(), // JSON: [{id, qty}]
   couponCode: z.string().max(40).optional(),

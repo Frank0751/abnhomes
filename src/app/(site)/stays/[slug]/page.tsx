@@ -473,10 +473,10 @@ export default async function StayPage({
                   <Clock3 className="size-3.5" /> Responds within the hour, 7am–10pm GMT
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <DoorOpen className="size-3.5" /> {unit.selfCheckIn ? 'Self check-in from' : 'Check-in from'} {unit.checkInFrom ?? '15:00'}
+                  <DoorOpen className="size-3.5" /> {unit.selfCheckIn ? 'Self check-in from' : 'Check-in from'} {unit.checkInFrom ?? '14:00'}
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <Coffee className="size-3.5" /> Checkout by {unit.checkOutUntil ?? '11:00'}
+                  <Coffee className="size-3.5" /> Checkout by {unit.checkOutUntil ?? '12:00'}
                 </span>
               </p>
             </section>
