@@ -69,7 +69,8 @@ export async function StayRooms() {
 
   const cards: StayCard[] = [...groups.values()].map((group) => {
     // The room with the most photographs speaks for the group.
-    const lead = [...group].sort((a, b) => b.images.length - a.images.length)[0];
+    const byPhotos = [...group].sort((a, b) => b.images.length - a.images.length);
+    const lead = byPhotos[0];
     const single = group.length === 1;
     const names = TYPE_NAMES[lead.type];
     return {
@@ -81,7 +82,9 @@ export async function StayRooms() {
       sleeps: lead.maxGuests,
       nightlyMinor: lead.baseNightlyMinor ?? 0,
       currency: lead.currency,
-      images: lead.images.slice(0, 2),
+      // One of a kind: its own first two photos. Several rooms: one cover
+      // from each, so the card shows more than one of the apartments.
+      images: (single ? lead.images : [...new Set(byPhotos.map((r) => r.images[0]).filter(Boolean))]).slice(0, 2),
       // One of a kind: straight to its page. Several: to the search, which
       // shows whichever of them are free for the dates.
       href: single ? `/stays/${unitSlug(lead, lead.property)}` : null,
