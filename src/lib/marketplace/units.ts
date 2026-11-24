@@ -135,7 +135,8 @@ export async function searchMarketplace(filters: SearchFilters): Promise<SearchR
 
 export type ListingUnit = Prisma.UnitGetPayload<{
   include: {
-    property: { include: { owner: { select: { name: true } } } }
+    property: { include: { owner: { select: { name: true } }; manager: { select: { name: true } } } }
+    manager: { select: { name: true } }
     ratePlans: { where: { active: true } }
   }
 }>
@@ -143,8 +144,10 @@ export type ListingUnit = Prisma.UnitGetPayload<{
 export async function getListingBySlug(slug: string): Promise<ListingUnit | null> {
   const include = {
     property: {
-      include: { owner: { select: { name: true } } },
+      // Names only: the host card shows a first name, never contact details.
+      include: { owner: { select: { name: true } }, manager: { select: { name: true } } },
     },
+    manager: { select: { name: true } },
     ratePlans: { where: { active: true } },
   }
   const published = { published: true, property: { published: true, active: true } }

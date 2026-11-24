@@ -7,6 +7,8 @@ import { isUnitAvailable } from '@/lib/short-stay/availability'
 import { dateOnly, formatDate } from '@/lib/core/dates'
 import { formatMinor } from '@/lib/core/money'
 import { BookingRequestForm } from './booking-request-form'
+import { getCancellationPolicy } from '@/lib/policies'
+import { cancellationDates, cancellationSummary } from '@/lib/core/cancellation'
 
 export const metadata: Metadata = {
   title: 'Confirm your stay',
@@ -29,6 +31,7 @@ export default async function ConfirmPage({
   if (!params.unitId || !params.checkIn || !params.checkOut) notFound()
 
   const checkIn = dateOnly(params.checkIn)
+  const policy = await getCancellationPolicy()
   const checkOut = dateOnly(params.checkOut)
   const guests = Number(params.guests ?? 2) || 2
 
@@ -81,6 +84,7 @@ export default async function ConfirmPage({
                 guests={guests}
                 currency={quote.currency}
                 baseTotalMinor={quote.totalMinor}
+                cancellationText={cancellationSummary(policy)}
                 addOns={addOns.map((a) => ({
                   id: a.id,
                   name: a.name,
@@ -138,8 +142,8 @@ export default async function ConfirmPage({
                   </span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-muted-foreground">
-                  Add-ons and promo codes update the total in the form. Free cancellation until 7
-                  days before arrival.
+                  Add-ons and promo codes update the total in the form. Free cancellation until{' '}
+                  {formatDate(cancellationDates(policy, checkIn).fullUntil)}.
                 </p>
               </div>
             </div>

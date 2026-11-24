@@ -26,11 +26,16 @@ import { ReportFaultDialog } from './report-fault'
 import { PayNowButton } from './pay-now'
 import { ReviewStayButton } from './review-stay'
 import { GuidebookButton } from './guidebook'
+import { CancelStayButton } from './cancel-stay'
+import { getCancellationPolicy } from '@/lib/policies'
+import { refundPercent } from '@/lib/core/cancellation'
+import { dateOnly } from '@/lib/core/dates'
 
 const DAY = 24 * 60 * 60 * 1000
 
 export default async function TenantPortal() {
   const { partyId } = await requireParty()
+  const cancellation = await getCancellationPolicy()
 
   const [party, leases, balanceGhsMinor, balanceUsdMinor, tickets, stays, wishlist] = await Promise.all([
     db.party.findUniqueOrThrow({ where: { id: partyId } }),
@@ -270,6 +275,16 @@ export default async function TenantPortal() {
                     />
                   </p>
                 </div>
+
+                {stay.status === 'CONFIRMED' && dateOnly(stay.checkIn) > dateOnly(new Date()) && (
+                  <div className="mt-3 pl-6">
+                    <CancelStayButton
+                      reservationId={stay.id}
+                      homeName={stay.unit.name}
+                      refundPercent={refundPercent(cancellation, stay.checkIn)}
+                    />
+                  </div>
+                )}
 
                 {stay.status === 'CHECKED_OUT' && stay.reviews.length === 0 && (
                   <div className="mt-3 flex flex-wrap gap-2 pl-6">
