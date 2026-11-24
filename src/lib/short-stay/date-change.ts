@@ -13,7 +13,7 @@
 
 import type { Currency } from '@prisma/client'
 import { db, TX_OPTS } from '@/lib/db'
-import { postCharge } from '@/lib/core/ledger'
+import { postCharge, reverseEntry } from '@/lib/core/ledger'
 import { dateOnly, formatDate } from '@/lib/core/dates'
 import { assertAvailable } from './availability'
 import { quoteFromUnit } from './pricing'
@@ -115,11 +115,22 @@ export type DateChangeResult = {
 /** Move a confirmed booking to new dates. Throws a message fit to show. */
 export async function changeReservationDates(
   reservationId: string,
-  args: { checkIn: Date; checkOut: Date; actorUserId?: string | null }
+  args: {
+    checkIn: Date
+    checkOut: Date
+    actorUserId?: string | null
+    /**
+     * Staff only. Lets the stay move to dates that cost LESS. The stay's
+     * charges are reversed and one new charge posted at the lower price, and
+     * what the guest has paid is carried across to it. Anything paid beyond
+     * the new price is left as credit on their account, for staff to refund.
+     */
+    allowCheaper?: boolean
+  }
 ): Promise<DateChangeResult> {
   const priced = await quoteDateChange(reservationId, args)
   if (!priced.ok) throw new Error(priced.error)
-  if (priced.differenceMinor < 0) {
+  if (priced.differenceMinor < 0 && !args.allowCheaper) {
     throw new Error(
       'The new dates cost less than the booking. Our team needs to make this change so your refund is handled properly.'
     )
@@ -148,6 +159,64 @@ export async function changeReservationDates(
           checkInNoticeSentAt: null,
         },
       })
+
+      if (priced.differenceMinor < 0) {
+        // Cheaper. The ledger cannot be edited, so the stay's charges are
+        // reversed and one posted at the new price.
+        const old = await tx.charge.findMany({
+          where: { reservationId, type: 'NIGHTLY_STAY', status: { notIn: ['REVERSED', 'WAIVED'] } },
+          include: { ledgerEntries: { where: { kind: 'CHARGE' } }, allocations: true },
+        })
+        // What each payment had put towards the stay, before anything moves.
+        const paidBy = new Map<string, number>()
+        for (const c of old) for (const a of c.allocations) paidBy.set(a.paymentId, (paidBy.get(a.paymentId) ?? 0) + a.amountMinor)
+
+        for (const c of old) {
+          for (const entry of c.ledgerEntries) {
+            await reverseEntry(
+              entry.id,
+              { reason: `Dates changed on booking ${reservation.code}; stay re-priced`, actorUserId: args.actorUserId },
+              tx
+            )
+          }
+        }
+        await tx.allocation.deleteMany({ where: { chargeId: { in: old.map((c) => c.id) } } })
+
+        const { charge } = await postCharge(
+          {
+            propertyId: reservation.unit.propertyId,
+            partyId: reservation.guestPartyId,
+            unitId: reservation.unitId,
+            type: 'NIGHTLY_STAY',
+            description: `${priced.nights} night${priced.nights === 1 ? '' : 's'} at ${reservation.unit.name}, ${formatDate(checkIn)} to ${formatDate(checkOut)} (dates changed)`,
+            amountMinor: priced.newStayMinor,
+            currency: priced.currency,
+            dueDate: checkIn,
+            periodStart: checkIn,
+            periodEnd: checkOut,
+            reservationId,
+            actorUserId: args.actorUserId,
+          },
+          tx
+        )
+
+        // Carry what was paid across to the new charge, up to its price. The
+        // rest stays on the guest's account as credit.
+        let remaining = priced.newStayMinor
+        for (const [paymentId, paid] of paidBy) {
+          const take = Math.min(paid, remaining)
+          if (take <= 0) break
+          await tx.allocation.create({ data: { paymentId, chargeId: charge.id, amountMinor: take } })
+          remaining -= take
+        }
+        const settled = priced.newStayMinor - remaining
+        if (settled > 0) {
+          await tx.charge.update({
+            where: { id: charge.id },
+            data: { status: remaining === 0 ? 'SETTLED' : 'PART_PAID' },
+          })
+        }
+      }
 
       // What is already charged keeps its amount; it now falls due on the new
       // arrival date, so it is counted as revenue in the right month.

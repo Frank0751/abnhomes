@@ -8,6 +8,7 @@
  * open four times a year is expecting them not to use it.
  */
 
+import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
@@ -164,7 +165,9 @@ function StaffForm({
     setPending(false)
 
     if (result?.error) {
-      setError('That email and password did not match an active account.')
+      setError(
+        'That email and password did not match an active account. After five wrong tries, sign-in pauses for 15 minutes.'
+      )
       return
     }
     onDone(callbackUrl)
@@ -185,7 +188,12 @@ function StaffForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <div className="flex items-baseline justify-between">
+          <Label htmlFor="password">Password</Label>
+          <Link href="/forgot-password" className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+            Forgot password?
+          </Link>
+        </div>
         <Input
           id="password"
           name="password"
