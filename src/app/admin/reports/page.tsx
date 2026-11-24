@@ -25,7 +25,7 @@ export default async function ReportsPage({
 
   const [report, properties] = await Promise.all([
     portfolioReport({ from, to, propertyId }),
-    db.property.findMany({ select: { id: true, name: true }, orderBy: { name: 'asc' } }),
+    db.property.findMany({ where: { active: true }, select: { id: true, name: true }, orderBy: { name: 'asc' } }),
   ])
 
   const currency: Currency = 'USD'

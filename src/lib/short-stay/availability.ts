@@ -151,13 +151,15 @@ export async function findAvailableUnits(args: {
   const candidates = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // A building that has been switched off is gone from every list and total.
+      property: { active: true },
       // The rooftop is shared space, not a room. Counting it as an empty
       // unit would understate the building by a seventh, for ever.
       isAmenity: false,
       status: { notIn: ['OFF_MARKET', 'MAINTENANCE'] },
       ...(args.propertyId ? { propertyId: args.propertyId } : {}),
       ...(args.guests ? { maxGuests: { gte: args.guests } } : {}),
-      ...(args.publishedOnly ? { published: true, property: { published: true } } : {}),
+      ...(args.publishedOnly ? { published: true, property: { published: true, active: true } } : {}),
       // Exclude anything with an overlapping reservation or block, in SQL.
       reservations: {
         none: {
@@ -284,6 +286,8 @@ export async function occupancyRate(args: {
   const units = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // A building that has been switched off is gone from every list and total.
+      property: { active: true },
       // The rooftop is shared space, not a room. Counting it as an empty
       // unit would understate the building by a seventh, for ever.
       isAmenity: false,

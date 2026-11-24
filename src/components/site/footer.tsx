@@ -23,8 +23,6 @@ const footerNav = {
   ],
   Residences: [
     { key: "link.tantraPenthouse", href: "/residences" },
-    { key: "link.achimotaEstate", href: "/residences" },
-    { key: "link.furnished1br", href: "/residences" },
     { key: "link.bookATour", href: "/contact" },
   ],
   Services: [

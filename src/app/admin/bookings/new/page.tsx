@@ -16,6 +16,8 @@ export default async function NewBookingPage({
   const units = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // A building that has been switched off is gone from every list and total.
+      property: { active: true },
       status: { not: 'OFF_MARKET' },
       // Shared space — the rooftop — is not lettable. Offering it here and
       // then refusing it on submit would be a worse form than not offering it.

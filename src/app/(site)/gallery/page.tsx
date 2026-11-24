@@ -6,7 +6,7 @@ import { SocialFeed } from "@/components/site/social-feed";
 export const metadata: Metadata = {
   title: "Gallery - Visual Tour of ABN Homes",
   description:
-    "Step inside the ABN way of living. Browse real photos of our Tantra Hill penthouse, Achimota Petroleum Estate residence, living rooms, bedrooms, kitchens and exteriors across Accra.",
+    "Step inside ABN Apartments at 8 Asiko Street, Tantra Hill: real photos of the penthouse, the apartments, living rooms, bedrooms, kitchens and the building.",
 };
 
 export default function GalleryPage() {

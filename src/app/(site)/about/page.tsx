@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/site/page-hero";
 import { About } from "@/components/site/about";
-import { Testimonials } from "@/components/site/testimonials";
 import { Process } from "@/components/site/process";
 import { ServicesShowcase } from "@/components/site/services-showcase";
 import { COMPANY } from "@/lib/abn-data";
@@ -25,7 +24,6 @@ export default function AboutPage() {
       <About />
       <ServicesShowcase />
       <Process />
-      <Testimonials />
     </main>
   );
 }

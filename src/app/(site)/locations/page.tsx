@@ -4,17 +4,17 @@ import { Locations } from "@/components/site/locations";
 import { COMPANY } from "@/lib/abn-data";
 
 export const metadata: Metadata = {
-  title: "Locations - Where We Build in Accra",
+  title: "Location - 8 Asiko Street, Tantra Hill, Accra",
   description:
-    "ABN Homes operates across Accra, Ghana. Visit us at 8 Asiko Street, Tantra Hill, or explore our Achimota Petroleum Estate residence. Available across Greater Accra for short and long stays.",
+    "ABN Apartments is at 8 Asiko Street, Tantra Hill, Accra, about 27 minutes from Osu by car. Find us on Google Maps or Bolt.",
 };
 
 export default function LocationsPage() {
   return (
     <main className="min-h-screen bg-[#f5f7f5]">
       <PageHero
-        title="Three Accra neighbourhoods, one address you will love."
-        subtitle="From Tantra Hill to Achimota Petroleum Estate and across Greater Accra, ABN Homes operates where Accra lives, works and grows. Locate us on 8 Asiko Street on Bolt or Google Maps."
+        title="One address: 8 Asiko Street, Tantra Hill."
+        subtitle="Every ABN apartment is in one building in Tantra Hill, about 27 minutes from Osu by car. Search for ABN Apartments on Bolt or Google Maps."
         bgImage="/images/abn-real/abn-ig-3-hd.jpg"
         breadcrumb="Locations"
       />

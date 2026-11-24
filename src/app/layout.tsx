@@ -29,15 +29,15 @@ export const metadata: Metadata = {
     template: "%s | ABN Homes Company Limited",
   },
   description:
-    "ABN Homes Company Limited designs, builds and manages exceptional luxury apartments and homes across Accra, Ghana. Discover Tantra Hill, Sakumono and Nii Ayi Mensah residences with premium amenities, contemporary architecture and trusted ownership.",
+    "ABN Apartments by ABN Homes Company Limited: serviced apartments at 8 Asiko Street, Tantra Hill, Accra. A two-bedroom penthouse, one-bedroom apartments and a studio. Book direct, with live prices.",
   keywords: [
     "ABN Homes",
     "ABN Apartments",
     "luxury apartments Accra",
     "real estate Ghana",
     "Tantra Hill apartments",
-    "Sakumono estate",
-    "Nii Ayi Mensah",
+    "serviced apartments Accra",
+    "short stay Accra",
     "ABN Group of Companies",
     "Ghana property developer",
     "luxury homes Accra",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ABN Homes Company Limited | Luxury Real Estate in Accra, Ghana",
     description:
-      "Discover thoughtfully designed luxury apartments and homes across Accra. Tantra Hill, Sakumono and Nii Ayi Mensah residences with world-class amenities.",
+      "Serviced apartments at 8 Asiko Street, Tantra Hill, Accra: a penthouse, one-bedroom apartments and a studio. Book direct with live prices.",
     url: "https://abnhomesltd.com",
     siteName: "ABN Homes",
     images: [
@@ -141,8 +141,6 @@ const jsonLd = {
   ],
   areaServed: [
     { "@type": "Place", name: "Tantra Hill, Accra" },
-    { "@type": "Place", name: "Sakumono Estate, Accra" },
-    { "@type": "Place", name: "Nii Ayi Mensah, Amasaman" },
   ],
   sameAs: [
     "https://www.instagram.com/abn_homes/",

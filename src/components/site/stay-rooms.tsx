@@ -1,204 +1,95 @@
-"use client";
-
-import { motion } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { BedDouble, MessageCircle, Phone, Users } from "lucide-react";
-import { COMPANY } from "@/lib/abn-data";
+import { db } from "@/lib/db";
+import { unitSlug } from "@/lib/marketplace/units";
+import { StayRoomsGrid, type StayCard } from "./stay-rooms-grid";
 
 /**
- * The whole homepage below the hero, on purpose.
+ * The homepage below the hero: the homes that can be booked today, read from
+ * the booking system on every refresh. Nothing here is typed in by hand, so
+ * a price or a name can never drift from what checkout charges. (It used to
+ * be a hard-coded list, and it went on advertising rooms and prices that no
+ * longer existed.)
  *
- * A guest here to book wants three things: the room, the price, the button.
- * Photos carry the persuasion; the copy stays out of the way. Every card
- * opens /book with dates and party size already filled in.
+ * Rooms that are the same kind at the same price are shown once, as "4
+ * available", rather than as four cards a guest cannot tell apart. A home
+ * that is one of a kind gets its own card and links to its own page.
  */
 
-type Room = {
-  code: string;
-  name: string;
-  line: string;
-  beds: number;
-  sleeps: number;
-  rate: number;
-  images: string[];
+const TYPE_NAMES: Record<string, { one: string; many: string }> = {
+  STUDIO: { one: "Studio", many: "Studios" },
+  ONE_BED: { one: "One-Bedroom Apartment", many: "One-Bedroom Apartments" },
+  TWO_BED: { one: "Two-Bedroom Apartment", many: "Two-Bedroom Apartments" },
+  THREE_BED: { one: "Three-Bedroom Apartment", many: "Three-Bedroom Apartments" },
+  FOUR_BED: { one: "Four-Bedroom Home", many: "Four-Bedroom Homes" },
+  PENTHOUSE: { one: "Penthouse", many: "Penthouses" },
+  TOWNHOUSE: { one: "Townhouse", many: "Townhouses" },
+  DETACHED: { one: "House", many: "Houses" },
 };
 
-const ROOMS: Room[] = [
-  {
-    code: "PH",
-    name: "Tantra Hill Penthouse",
-    line: "Rooftop bar · 75-inch TVs · BBQ oven",
-    beds: 2,
-    sleeps: 4,
-    rate: 70,
-    images: ["/images/abn-real/abn-ig-2-hd.jpg", "/images/abn-real/abn-ig-7-hd.jpg"],
-  },
-  {
-    code: "A2",
-    name: "Two Bedroom Apartment",
-    line: "Balcony · Smart TV · Nightly or monthly",
-    beds: 2,
-    sleeps: 4,
-    rate: 85,
-    images: ["/images/abn-real/abn-ig-1-hd.jpg"],
-  },
-  {
-    code: "A1",
-    name: "Furnished One Bedroom",
-    line: "Move-in ready · Ideal for business trips",
-    beds: 1,
-    sleeps: 2,
-    rate: 50,
-    images: ["/images/abn-real/abn-ig-8-hd.jpg"],
-  },
-  {
-    code: "MAIN",
-    name: "Achimota Four Bedroom",
-    line: "Four ensuite bedrooms · Serene compound",
-    beds: 4,
-    sleeps: 8,
-    rate: 120,
-    images: ["/images/abn-real/abn-ig-5-hd.jpg"],
-  },
-];
+async function bookableRooms() {
+  // The build that proves the Cloudflare bundle runs with no database at all.
+  // There the page is built empty and filled on its first refresh.
+  if (!process.env.DATABASE_URL) return [];
 
-function iso(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+  return db.unit.findMany({
+    where: {
+      published: true,
+      isAmenity: false,
+      lettingMode: { in: ["SHORT_STAY", "BOTH"] },
+      status: { notIn: ["OFF_MARKET"] },
+      baseNightlyMinor: { not: null },
+      property: { published: true, active: true },
+    },
+    select: {
+      id: true,
+      code: true,
+      slug: true,
+      name: true,
+      type: true,
+      bedrooms: true,
+      maxGuests: true,
+      baseNightlyMinor: true,
+      currency: true,
+      images: true,
+      sortOrder: true,
+      property: { select: { slug: true } },
+    },
+    orderBy: [{ sortOrder: "asc" }],
+  });
 }
 
-export function StayRooms() {
-  const router = useRouter();
+export async function StayRooms() {
+  const rooms = await bookableRooms();
 
-  function bookRoom(room: Room) {
-    const now = new Date();
-    const out = new Date(now);
-    out.setDate(out.getDate() + 2);
-    router.push(
-      `/book?checkIn=${iso(now)}&checkOut=${iso(out)}&guests=${room.sleeps}`,
-    );
+  // Same kind, same size, same price: one card.
+  const groups = new Map<string, typeof rooms>();
+  for (const room of rooms) {
+    const key = [room.type, room.bedrooms, room.maxGuests, room.baseNightlyMinor, room.currency].join("|");
+    groups.set(key, [...(groups.get(key) ?? []), room]);
   }
 
-  return (
-    <section id="rooms" className="relative bg-[#f5f7f5] py-16 lg:py-24">
-      <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
-        {/* Header — one line each, then the rooms */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.7 }}
-          className="mb-10 flex flex-col gap-3 text-center lg:mb-14"
-        >
-          <h2 className="font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-[#0c1a16] md:text-5xl">
-            Rooms available now
-          </h2>
-        </motion.div>
+  const cards: StayCard[] = [...groups.values()].map((group) => {
+    // The room with the most photographs speaks for the group.
+    const lead = [...group].sort((a, b) => b.images.length - a.images.length)[0];
+    const single = group.length === 1;
+    const names = TYPE_NAMES[lead.type];
+    return {
+      key: lead.id,
+      name: single ? lead.name : (names?.many ?? lead.name),
+      count: group.length,
+      // A studio is one open room; calling it "1 bedroom" oversells it.
+      beds: lead.type === "STUDIO" ? 0 : lead.bedrooms,
+      sleeps: lead.maxGuests,
+      nightlyMinor: lead.baseNightlyMinor ?? 0,
+      currency: lead.currency,
+      images: lead.images.slice(0, 2),
+      // One of a kind: straight to its page. Several: to the search, which
+      // shows whichever of them are free for the dates.
+      href: single ? `/stays/${unitSlug(lead, lead.property)}` : null,
+    };
+  });
 
-        {/* Room cards */}
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-          {ROOMS.map((room, i) => (
-            <motion.article
-              key={room.code}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.6, delay: i * 0.08 }}
-              className="group flex cursor-pointer flex-col overflow-hidden border border-[#dce5e0] bg-white shadow-[0_10px_40px_-24px_rgba(12,26,22,0.35)] transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgba(12,26,22,0.5)]"
-              onClick={() => bookRoom(room)}
-            >
-              {/* Photo — second image fades in on hover where one exists */}
-              <div className="relative aspect-[4/5] overflow-hidden bg-[#0c1a16]">
-                <Image
-                  src={room.images[0]}
-                  alt={room.name}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                />
-                {room.images[1] && (
-                  <Image
-                    src={room.images[1]}
-                    alt={`${room.name} — another view`}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
-                    className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                  />
-                )}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0c1a16]/75 via-transparent to-transparent" />
+  // Dearest first: the penthouse leads, the way a hotel leads with its suite.
+  cards.sort((a, b) => b.nightlyMinor - a.nightlyMinor);
 
-                <span className="absolute right-3 top-3 bg-[#f5f7f5]/95 px-2.5 py-1 text-xs font-semibold text-[#0c1a16]">
-                  ${room.rate}
-                  <span className="font-normal text-[#5a6b64]"> / night</span>
-                </span>
-
-                <div className="absolute inset-x-4 bottom-3 flex items-end justify-between gap-2">
-                  <div className="min-w-0">
-                    <h3 className="truncate font-serif text-xl leading-tight text-white">
-                      {room.name}
-                    </h3>
-                    <p className="mt-0.5 flex items-center gap-3 text-[11px] text-white/80">
-                      <span className="inline-flex items-center gap-1">
-                        <BedDouble className="size-3.5 text-[#1fd39a]" />
-                        {room.beds} bed{room.beds > 1 ? "s" : ""}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Users className="size-3.5 text-[#1fd39a]" />
-                        sleeps {room.sleeps}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* The action */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  bookRoom(room);
-                }}
-                className="flex items-center justify-center gap-2 bg-[#0c1a16] py-3.5 text-sm font-semibold uppercase tracking-wide text-white transition-colors duration-300 group-hover:bg-[#00a878] group-hover:text-[#0c1a16]"
-              >
-                Book this room
-              </button>
-            </motion.article>
-          ))}
-        </div>
-
-        {/* One line, two ways to reach a human */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-[#2d433b]"
-        >
-          <span>Prefer to talk?</span>
-          <a
-            href={`${COMPANY.whatsapp}?text=${encodeURIComponent(
-              "Hello ABN Homes, I would like to book a stay.",
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-sm bg-[#00a878] px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-[#f5f7f5] transition-colors hover:bg-[#0c1a16] hover:text-white"
-          >
-            <MessageCircle className="size-4" />
-            WhatsApp us
-          </a>
-          <a
-            href={`tel:${COMPANY.phoneIntl}`}
-            className="inline-flex items-center gap-2 rounded-sm border border-[#0c1a16]/25 px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-[#0c1a16] transition-colors hover:border-[#00a878] hover:text-[#00a878]"
-          >
-            <Phone className="size-4" />
-            {COMPANY.phone}
-          </a>
-        </motion.div>
-      </div>
-    </section>
-  );
+  return <StayRoomsGrid cards={cards} />;
 }

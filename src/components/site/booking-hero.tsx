@@ -344,7 +344,6 @@ export function BookingHero() {
                 "marquee.tantra",
                 "marquee.wifi",
                 "marquee.parking",
-                "marquee.achimota",
                 "marquee.kitchens",
                 "marquee.ac",
                 "marquee.balcony",

@@ -15,7 +15,7 @@ const steps = [
     icon: Calendar,
     step: "02",
     titleKey: "process.step2",
-    body: "Visit Tantra Hill, Sakumono or Nii Ayi Mensah, or take a guided video tour if you are abroad. We walk you through the residence, the neighbourhood and the ownership or rental terms in plain language.",
+    body: "Visit us at 8 Asiko Street, Tantra Hill, or take a guided video tour if you are abroad. We walk you through the residence, the neighbourhood and the ownership or rental terms in plain language.",
   },
   {
     icon: KeyRound,
