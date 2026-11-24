@@ -49,7 +49,7 @@ export default async function VendorPortal() {
 
   return (
     <>
-      <header className="mb-8">
+      <header className="mb-8 text-center">
         <h1 className="font-serif text-3xl tracking-tight">{vendor.name}</h1>
         {vendor.vendorTrade && (
           <p className="mt-1.5 text-sm text-muted-foreground">{vendor.vendorTrade}</p>

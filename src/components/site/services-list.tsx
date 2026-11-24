@@ -11,7 +11,7 @@ export function ServicesList() {
   return (
     <section className="py-24 lg:py-32 bg-[#0c1a16] text-white">
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-end mb-16">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}

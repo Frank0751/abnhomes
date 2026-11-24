@@ -18,25 +18,9 @@ export type StayCard = {
   nightlyMinor: number;
   currency: Currency;
   images: string[];
-  /** The room's own page, or null for a group (which goes to the search). */
-  href: string | null;
+  /** The room's own page, or for a group the search filtered to that kind of room. */
+  href: string;
 };
-
-function iso(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-/** Tomorrow for two nights: a search that always has a real answer. */
-function searchHref(sleeps: number) {
-  const from = new Date();
-  from.setDate(from.getDate() + 1);
-  const to = new Date(from);
-  to.setDate(to.getDate() + 2);
-  return `/book?checkIn=${iso(from)}&checkOut=${iso(to)}&guests=${Math.min(sleeps, 2)}`;
-}
 
 /**
  * A guest here to book wants three things: the room, the price, the button.
@@ -74,7 +58,6 @@ export function StayRoomsGrid({ cards }: { cards: StayCard[] }) {
             }
           >
             {cards.map((card, i) => {
-              const href = card.href ?? searchHref(card.sleeps);
               return (
                 <motion.article
                   key={card.key}
@@ -82,8 +65,10 @@ export function StayRoomsGrid({ cards }: { cards: StayCard[] }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.6, delay: i * 0.08 }}
-                  className="group relative flex flex-col overflow-hidden border border-[#dce5e0] bg-white shadow-[0_10px_40px_-24px_rgba(12,26,22,0.35)] transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgba(12,26,22,0.5)]"
+                  className="border border-[#dce5e0] bg-white shadow-[0_10px_40px_-24px_rgba(12,26,22,0.35)] transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_rgba(12,26,22,0.5)]"
                 >
+                  {/* The whole card is one link: photo, name and button all go to the same place. */}
+                  <Link href={card.href} className="group flex flex-col overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00a878]">
                   {/* Photo: the second image fades in on hover where one exists */}
                   <div className="relative aspect-[4/5] overflow-hidden bg-[#0c1a16]">
                     {card.images[0] && (
@@ -119,10 +104,7 @@ export function StayRoomsGrid({ cards }: { cards: StayCard[] }) {
 
                     <div className="absolute inset-x-4 bottom-3">
                       <h3 className="font-serif text-2xl leading-tight text-white">
-                        {/* The whole card is the link; the heading carries it. */}
-                        <Link href={href} className="after:absolute after:inset-0 after:content-['']">
-                          {card.name}
-                        </Link>
+                        {card.name}
                       </h3>
                       <p className="mt-1 flex items-center gap-3 text-xs text-white/85">
                         <span className="inline-flex items-center gap-1">
@@ -138,9 +120,10 @@ export function StayRoomsGrid({ cards }: { cards: StayCard[] }) {
                   </div>
 
                   <span className="flex items-center justify-center gap-2 bg-[#0c1a16] py-3.5 text-sm font-semibold uppercase tracking-wide text-white transition-colors duration-300 group-hover:bg-[#00a878] group-hover:text-[#0c1a16]">
-                    {card.href ? "See photos and book" : "Check availability"}
+                    {card.count > 1 ? "Check availability" : "See photos and book"}
                     <ArrowRight className="size-4" />
                   </span>
+                  </Link>
                 </motion.article>
               );
             })}

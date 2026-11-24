@@ -29,7 +29,7 @@ export default async function SetPasswordPage({ params }: { params: Promise<{ to
             <h1 className="font-serif text-3xl tracking-tight text-balance">
               {invite.user.passwordHash ? 'Choose a new password' : `Welcome, ${invite.user.name.split(' ')[0]}`}
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground text-balance">
+            <p className="mt-2 text-center text-sm text-muted-foreground text-balance">
               Choose the password you will use to sign in as <strong className="text-foreground">{invite.user.email}</strong>.
             </p>
             <SetPasswordForm token={token} />
@@ -37,7 +37,7 @@ export default async function SetPasswordPage({ params }: { params: Promise<{ to
         ) : (
           <>
             <h1 className="font-serif text-3xl tracking-tight text-balance">This link no longer works</h1>
-            <p className="mt-2 text-sm text-muted-foreground text-balance">
+            <p className="mt-2 text-center text-sm text-muted-foreground text-balance">
               It has expired, has already been used, or a newer one has been sent. Ask an administrator to send you
               a fresh invitation.
             </p>

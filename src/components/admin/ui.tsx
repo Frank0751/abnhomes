@@ -19,16 +19,16 @@ export function PageHeader({
   actions?: React.ReactNode
 }) {
   return (
-    <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
+    <header className="mb-8 flex flex-col items-center gap-4 text-center">
       <div className="min-w-0">
         <h1 className="font-serif text-2xl tracking-tight text-balance sm:text-3xl">{title}</h1>
         {description && (
-          <p className="mt-1.5 max-w-2xl text-sm text-muted-foreground text-balance">
+          <p className="mx-auto mt-1.5 max-w-2xl text-sm text-muted-foreground text-balance">
             {description}
           </p>
         )}
       </div>
-      {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="flex flex-wrap items-center justify-center gap-2">{actions}</div>}
     </header>
   )
 }
@@ -285,14 +285,17 @@ export function Panel({
   return (
     <section className={cn('rounded-xl border border-black/[0.08] bg-white shadow-soft', className)}>
       {(title || actions) && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.06] px-5 py-3.5">
-          <div className="min-w-0">
+        // Three columns so the title sits in the true centre of the panel
+        // whether or not there are buttons on the right.
+        <div className="grid items-center gap-3 border-b border-black/[0.06] px-5 py-3.5 sm:grid-cols-[minmax(0,1fr)_minmax(0,3fr)_minmax(0,1fr)]">
+          <span className="hidden sm:block" aria-hidden />
+          <div className="min-w-0 text-center">
             {title && <h2 className="font-serif text-[17px] tracking-tight">{title}</h2>}
             {description && (
               <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
             )}
           </div>
-          {actions}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">{actions}</div>
         </div>
       )}
       {children}

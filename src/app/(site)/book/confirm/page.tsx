@@ -56,7 +56,7 @@ export default async function ConfirmPage({
     <main className="pt-28 pb-24">
       <div className="mx-auto max-w-4xl px-5">
         <h1 className="font-serif text-3xl tracking-tight sm:text-4xl">Confirm your stay</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 text-center text-sm text-muted-foreground">
           Ninety seconds, all-inclusive pricing, and your dates are held the moment you submit.
         </p>
 

@@ -51,7 +51,7 @@ export function PageHero({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/55"
+          className="mb-6 flex items-center justify-center gap-2 text-xs uppercase tracking-[0.2em] text-white/55"
         >
           <Link href="/" className="transition-colors hover:text-[#00a878]">
             {t("pagehero.home")}
@@ -65,11 +65,11 @@ export function PageHero({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.15 }}
         >
-          <h1 className="max-w-4xl font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-white md:text-5xl lg:text-7xl">
+          <h1 className="mx-auto max-w-4xl font-serif text-4xl leading-[1.05] tracking-[-0.02em] text-white md:text-5xl lg:text-7xl">
             {resolvedTitle}
           </h1>
           {resolvedSubtitle && (
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
+            <p className="mx-auto mt-6 max-w-2xl text-center text-base leading-relaxed text-white/70 md:text-lg">
               {resolvedSubtitle}
             </p>
           )}

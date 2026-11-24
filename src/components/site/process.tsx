@@ -40,7 +40,7 @@ export function Process() {
 
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10 relative">
         {/* Header */}
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-end mb-16">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}

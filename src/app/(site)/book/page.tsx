@@ -22,28 +22,17 @@ export const metadata: Metadata = {
     'See live availability and nightly rates for ABN Homes serviced apartments in Accra. Book directly with the owner — mobile money, card, no platform fees.',
 }
 
-const AMENITY_CHOICES = [
-  'Backup generator',
-  'Inverter backup',
-  'Air conditioning',
-  'Fast Wi-Fi',
-  'Dedicated workspace',
-  'Washing machine',
-  'Swimming pool',
-  'Gym',
-  'Free parking',
-  '24/7 security',
-  'Water storage',
-  'Fully equipped kitchen',
-]
 
-const TYPE_CHOICES: { value: UnitType; label: string }[] = [
-  { value: 'STUDIO', label: 'Studio' },
-  { value: 'ONE_BED', label: '1 bedroom' },
-  { value: 'TWO_BED', label: '2 bedrooms' },
-  { value: 'THREE_BED', label: '3 bedrooms' },
-  { value: 'PENTHOUSE', label: 'Penthouse' },
-]
+const TYPE_LABELS: Partial<Record<UnitType, string>> = {
+  STUDIO: 'Studio',
+  ONE_BED: '1 bedroom',
+  TWO_BED: '2 bedrooms',
+  THREE_BED: '3 bedrooms',
+  FOUR_BED: '4 bedrooms',
+  PENTHOUSE: 'Penthouse',
+  TOWNHOUSE: 'Townhouse',
+  DETACHED: 'House',
+}
 
 export default async function BookPage({
   searchParams,
@@ -72,7 +61,7 @@ export default async function BookPage({
     sort: (params.sort as SearchFilters['sort']) ?? 'recommended',
   }
 
-  const [results, hoods, homesThatFit] = await Promise.all([
+  const [results, hoods, homesThatFit, listed] = await Promise.all([
     nights > 0 ? searchMarketplace(filters) : Promise.resolve([]),
     activeNeighbourhoods(),
     // Every home on the site that sleeps this many, booked or not. Compared
@@ -86,7 +75,33 @@ export default async function BookPage({
         maxGuests: { gte: guests },
       },
     }),
+    // What the filters may offer: only kinds of home and features that some
+    // listed home actually has. A filter that can never match anything (the
+    // list used to offer a swimming pool and a gym) only produces dead ends.
+    db.unit.findMany({
+      where: {
+        published: true,
+        isAmenity: false,
+        property: { published: true, active: true },
+        lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      },
+      select: { type: true, features: true },
+    }),
   ])
+
+  const TYPE_CHOICES = [...new Set(listed.map((u) => u.type))]
+    .filter((t) => TYPE_LABELS[t])
+    .map((t) => ({ value: t, label: TYPE_LABELS[t]! }))
+  const featureCounts = new Map<string, number>()
+  for (const u of listed) for (const f of u.features) featureCounts.set(f, (featureCounts.get(f) ?? 0) + 1)
+  // Features shared by at least two homes are worth filtering on; one home's
+  // unique detail is not. A chosen filter always stays visible.
+  const AMENITY_CHOICES = [
+    ...new Set([
+      ...[...featureCounts.entries()].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).map(([f]) => f).slice(0, 10),
+      ...(filters.amenities ?? []),
+    ]),
+  ]
 
   // True when a filter (not the dates or guest count) has hidden some homes.
   const narrowed = Boolean(
@@ -106,9 +121,9 @@ export default async function BookPage({
   return (
     <main className="pt-28 pb-24">
       <div className="mx-auto max-w-6xl px-5">
-        <header className="mb-8">
+        <header className="mb-8 text-center">
           <h1 className="font-serif text-4xl tracking-tight text-balance sm:text-5xl">Find your stay</h1>
-          <p className="mt-3 max-w-xl text-muted-foreground text-balance">
+          <p className="mx-auto mt-3 max-w-xl text-muted-foreground text-balance">
             Live availability across our apartments in Accra. Book directly with the operator —
             mobile money or card, no platform fee in between.
           </p>

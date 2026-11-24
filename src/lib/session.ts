@@ -6,11 +6,17 @@
  * only sanctioned way to decide whether they may.
  */
 
+import { cache } from 'react'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { AccessError, type Actor, type Permission, assertCan, assertPropertyAccess } from '@/lib/rbac'
 
-export async function currentActor(): Promise<Actor | null> {
+/**
+ * Cached for the length of one request. The layout, the page and any helper
+ * they call all ask who is signed in; they now share one answer instead of
+ * decoding the session again each time.
+ */
+export const currentActor = cache(async function currentActor(): Promise<Actor | null> {
   const session = await auth()
   if (!session?.user?.id) return null
 
@@ -20,7 +26,27 @@ export async function currentActor(): Promise<Actor | null> {
     partyId: session.user.partyId ?? null,
     propertyIds: session.user.propertyIds ?? [],
   }
-}
+})
+
+/**
+ * The account behind a session, read fresh from the database once per
+ * request. The admin layout and every permission check on the page used to
+ * make this same lookup separately, so each admin page paid for it two or
+ * three times before doing any work of its own.
+ */
+export const loadAccount = cache(async function loadAccount(userId: string) {
+  return db.user.findUnique({
+    where: { id: userId },
+    select: {
+      name: true,
+      active: true,
+      suspendedAt: true,
+      role: true,
+      partyId: true,
+      propertyAccess: { select: { propertyId: true } },
+    },
+  })
+})
 
 /**
  * The actor behind a MUTATION, with the account confirmed still active.
@@ -44,16 +70,7 @@ export async function requireActor(): Promise<Actor> {
   const actor = await currentActor()
   if (!actor) throw new AccessError('You must be signed in.')
 
-  const account = await db.user.findUnique({
-    where: { id: actor.id },
-    select: {
-      active: true,
-      suspendedAt: true,
-      role: true,
-      partyId: true,
-      propertyAccess: { select: { propertyId: true } },
-    },
-  })
+  const account = await loadAccount(actor.id)
   if (!account || !account.active || account.suspendedAt) {
     throw new AccessError('This account is no longer active. Please sign in again.')
   }

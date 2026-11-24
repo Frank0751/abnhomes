@@ -51,7 +51,7 @@ export function SocialFeed() {
     <section className="relative py-24 lg:py-32 bg-[#f5f7f5] overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-5 lg:px-10">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-14">
+        <div className="flex flex-col items-center gap-8 mb-14 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}

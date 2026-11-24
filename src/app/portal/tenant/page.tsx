@@ -114,12 +114,12 @@ export default async function TenantPortal() {
 
   return (
     <>
-      <header className="mb-8">
+      <header className="mb-8 text-center">
         <h1 className="font-serif text-3xl tracking-tight sm:text-4xl">
           Hello, {party.name.split(' ')[0]}
         </h1>
         {lease ? (
-          <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+          <p className="mt-1.5 flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
             <Home className="size-3.5 shrink-0" aria-hidden />
             {lease.unit.name} · {lease.unit.property.name}
           </p>
