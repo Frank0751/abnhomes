@@ -156,7 +156,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
         {/* --------------------------------------------------- what it paid */}
         {payment.allocations.length > 0 && (
           <div className="border-b border-border px-6 py-6 sm:px-8">
-            <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <h2 className="text-left text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               What this settles
             </h2>
             <ul className="mt-3 divide-y divide-border">
@@ -196,7 +196,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
 
         {payment.notes && (
           <div className="border-b border-border px-6 py-5 sm:px-8">
-            <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <h2 className="text-left text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Note
             </h2>
             <p className="mt-1.5 text-sm">{payment.notes}</p>

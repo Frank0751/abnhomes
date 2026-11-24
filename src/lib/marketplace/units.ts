@@ -7,6 +7,7 @@
  * the live rate plans.
  */
 
+import { cache } from 'react'
 import type { Prisma, UnitType } from '@prisma/client'
 import { db } from '@/lib/db'
 import { dateOnly } from '@/lib/core/dates'
@@ -141,7 +142,13 @@ export type ListingUnit = Prisma.UnitGetPayload<{
   }
 }>
 
-export async function getListingBySlug(slug: string): Promise<ListingUnit | null> {
+/**
+ * Cached for the length of one request: the page and its <head> metadata both
+ * need the listing, and without this each fetched it separately.
+ */
+export const getListingBySlug = cache(loadListingBySlug)
+
+async function loadListingBySlug(slug: string): Promise<ListingUnit | null> {
   const include = {
     property: {
       // Names only: the host card shows a first name, never contact details.

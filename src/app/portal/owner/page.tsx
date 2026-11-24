@@ -69,7 +69,7 @@ export default async function OwnerPortal() {
 
   return (
     <>
-      <header className="mb-8">
+      <header className="mb-8 text-center">
         <h1 className="font-serif text-3xl tracking-tight">{owner.name}</h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
           {properties.length} propert{properties.length === 1 ? 'y' : 'ies'} managed by ABN Homes

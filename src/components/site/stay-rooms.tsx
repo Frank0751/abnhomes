@@ -87,7 +87,9 @@ export async function StayRooms() {
       images: (single ? lead.images : [...new Set(byPhotos.map((r) => r.images[0]).filter(Boolean))]).slice(0, 2),
       // One of a kind: straight to its page. Several: to the search, which
       // shows whichever of them are free for the dates.
-      href: single ? `/stays/${unitSlug(lead, lead.property)}` : null,
+      href: single
+        ? `/stays/${unitSlug(lead, lead.property)}`
+        : `/book?type=${lead.type}&guests=${Math.min(lead.maxGuests, 2)}`,
     };
   });
 

@@ -244,6 +244,14 @@
 }
 
 @layer base {
+  /* Every page title and section title is centred, on the public site, the
+     guest portal and the admin alike. A heading that must sit left (a
+     printed receipt's small labels) says so itself with text-left. */
+  h1,
+  h2 {
+    text-align: center;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

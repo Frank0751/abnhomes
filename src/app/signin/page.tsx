@@ -50,7 +50,7 @@ export default function SignInPage() {
           <h1 className="font-serif text-3xl tracking-tight text-balance">
             Sign in to operations
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground text-balance">
+          <p className="mt-2 text-center text-sm text-muted-foreground text-balance">
             Bookings, tenancies, payments and maintenance for every ABN Homes building.
           </p>
 

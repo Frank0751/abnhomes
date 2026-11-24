@@ -82,9 +82,15 @@ export default async function StayPage({
   const unit = await getListingBySlug(slug)
   if (!unit) notFound()
 
-  const { reviews, summary } = await publishedReviewsForUnit(unit.id)
-  const calendar = await publicCalendar(unit.id)
-  const similar = await similarUnits(unit)
+  // Nothing below depends on anything else below, so ask for it all at once.
+  // One after another, these made the page wait for each in turn.
+  const [{ reviews, summary }, calendar, similar, actor, policy] = await Promise.all([
+    publishedReviewsForUnit(unit.id),
+    publicCalendar(unit.id),
+    similarUnits(unit),
+    currentActor(),
+    getCancellationPolicy(),
+  ])
 
   const guests = Number(sp.guests ?? Math.min(2, unit.maxGuests)) || Math.min(2, unit.maxGuests)
   const checkIn = sp.checkIn ? new Date(sp.checkIn) : addDays(today(), 7)
@@ -101,15 +107,12 @@ export default async function StayPage({
 
   // Wishlist state for the signed-in guest; guests without accounts just see
   // the heart, which takes them to sign-in.
-  const actor = await currentActor()
   const saved = actor
     ? Boolean(await db.wishlistItem.findUnique({ where: { userId_unitId: { userId: actor.id, unitId: unit.id } } }))
     : false
 
-  const policy = await getCancellationPolicy()
-
   // The person who runs this home, by first name, when one has been assigned.
-  const hostFirstName = (unit.manager?.name ?? unit.property.manager?.name)?.trim().split(/s+/)[0] || null
+  const hostFirstName = (unit.manager?.name ?? unit.property.manager?.name)?.trim().split(' ')[0] || null
   const hostWhatsApp = `${COMPANY.whatsapp}?text=${encodeURIComponent(
     `Hello${hostFirstName ? ` ${hostFirstName}` : ''}, I have a question about ${unit.name} (${unit.property.name}) on abnhomesltd.com.`
   )}`
@@ -201,11 +204,11 @@ export default async function StayPage({
               <h1 className="mt-2 font-serif text-3xl tracking-tight text-balance sm:text-4xl">
                 {unit.name}
               </h1>
-              <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+              <p className="mt-2 flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
                 <MapPin className="size-3.5" />
                 {unit.property.name} · {unit.property.addressLine}, {unit.property.city}, Ghana
               </p>
-              <p className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-foreground/80">
+              <p className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-foreground/80">
                 <span className="inline-flex items-center gap-1.5">
                   <Users className="size-4" /> Sleeps {unit.maxGuests}
                 </span>

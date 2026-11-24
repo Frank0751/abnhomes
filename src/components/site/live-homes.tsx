@@ -29,13 +29,13 @@ export async function LiveHomes() {
   return (
     <section className="py-20">
       <div className="mx-auto max-w-7xl px-5 lg:px-10">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+        <div className="mb-10 flex flex-col items-center gap-5 text-center">
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#00a878]">
               Available to book now
             </p>
             <h2 className="font-serif text-3xl tracking-tight md:text-4xl">Our live collection</h2>
-            <p className="mt-2 max-w-xl text-[#2d433b]">
+            <p className="mx-auto mt-2 max-w-xl text-[#2d433b]">
               Every home below is published in our booking system with live pricing — what you
               see is what is real, and booking takes you straight to checkout.
             </p>

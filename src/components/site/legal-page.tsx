@@ -20,7 +20,7 @@ export function LegalPage({
   return (
     <main className="bg-[#f5f7f5] pb-24 pt-28">
       <article className="mx-auto max-w-3xl px-5">
-        <nav className="mb-4 text-xs text-muted-foreground">
+        <nav className="mb-4 text-center text-xs text-muted-foreground">
           <Link href="/" className="hover:underline">
             Home
           </Link>
@@ -28,8 +28,8 @@ export function LegalPage({
           <span className="text-foreground">{title}</span>
         </nav>
         <h1 className="font-serif text-4xl tracking-tight text-balance">{title}</h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-foreground/80">{intro}</p>
-        <p className="mt-2 text-xs text-muted-foreground">Last updated {updated}</p>
+        <p className="mx-auto mt-3 max-w-2xl text-center text-[15px] leading-relaxed text-foreground/80">{intro}</p>
+        <p className="mt-2 text-center text-xs text-muted-foreground">Last updated {updated}</p>
 
         <div className="mt-8 space-y-8 rounded-2xl border border-black/[0.08] bg-white px-6 py-7 sm:px-8">{children}</div>
 
