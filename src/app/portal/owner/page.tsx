@@ -9,9 +9,10 @@
 
 import { requireParty } from '@/lib/session'
 import { db } from '@/lib/db'
-import { formatDate, currentMonthPeriod } from '@/lib/core/dates'
+import { formatDate } from '@/lib/core/dates'
 import { formatMinor, basisPointsToPercent } from '@/lib/core/money'
-import { occupancyRate } from '@/lib/short-stay/availability'
+import { ownerDashboard } from '@/lib/reporting/owner'
+import { OwnerDashboardView } from '@/components/owner/owner-dashboard'
 import {
   EmptyState,
   Money,
@@ -34,7 +35,6 @@ type StatementLine = {
 
 export default async function OwnerPortal() {
   const { partyId } = await requireParty()
-  const period = currentMonthPeriod()
 
   const [owner, properties, statements] = await Promise.all([
     db.party.findUniqueOrThrow({ where: { id: partyId } }),
@@ -62,11 +62,7 @@ export default async function OwnerPortal() {
     0
   )
 
-  const occupancy = await occupancyRate({
-    from: period.start,
-    to: period.end,
-    propertyId: properties[0]?.id,
-  })
+  const dashboard = await ownerDashboard({ ownerPartyId: partyId })
 
   const latest = statements[0]
   const latestLines = (latest?.lines as StatementLine[] | null) ?? []
@@ -89,16 +85,15 @@ export default async function OwnerPortal() {
         />
         <StatCard label="Units" value={String(totalUnits)} sublabel={`${occupiedUnits} occupied`} />
         <StatCard
-          label="Occupancy this month"
-          value={`${Math.round(occupancy.rate * 100)}%`}
-          sublabel={`${occupancy.nightsSold} nights sold`}
-        />
-        <StatCard
           label="Statements"
           value={String(statements.length)}
           sublabel="Issued to date"
         />
       </StatGrid>
+
+      <div className="mt-6">
+        <OwnerDashboardView data={dashboard} />
+      </div>
 
       <Panel className="mt-8" title="Your properties">
         {properties.length === 0 ? (

@@ -6,6 +6,7 @@
  * arithmetic is identical and always reconciles.
  */
 
+import Link from 'next/link'
 import { requirePermission } from '@/lib/session'
 import { can, propertyWhere } from '@/lib/rbac'
 import { db } from '@/lib/db'
@@ -104,7 +105,9 @@ export default async function OwnersPage() {
                 <div>
                   <p className="text-sm font-medium">{property.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {property.owner.name}
+                    <Link href={`/admin/owners/${property.owner.id}`} className="underline underline-offset-2 hover:text-foreground">
+                      {property.owner.name}: dashboard
+                    </Link>
                     {property.agreements[0] && (
                       <>
                         {' · '}
