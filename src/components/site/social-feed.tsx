@@ -44,14 +44,6 @@ const posts = [
     likes: "768",
     href: "https://www.instagram.com/abn_homes/",
   },
-  {
-    platform: "Instagram",
-    handle: "@abn_homes",
-    image: "/images/abn-real/abn-ig-11-hd.jpg",
-    caption: "Promo ₵700 per day through the month of October. Make your reservations early and locate us on Google Maps at ABN Apartments #airbnb #accra",
-    likes: "1.5k",
-    href: "https://www.instagram.com/abn_homes/",
-  },
 ];
 
 export function SocialFeed() {

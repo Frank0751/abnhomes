@@ -121,6 +121,8 @@ export async function roomBoard(args: {
       ...propertyWhere(args.actor),
       ...(args.propertyId ? { propertyId: args.propertyId } : {}),
       status: { not: 'SOLD' },
+      // A building that has been switched off is gone from the board.
+      property: { active: true },
     },
     include: {
       property: { select: { name: true } },

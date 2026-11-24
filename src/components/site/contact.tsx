@@ -114,7 +114,6 @@ export function Contact() {
                 {t("contact.otherOffices")}
               </div>
               <ul className="space-y-1.5 text-sm text-white/65">
-                <li>Achimota Petroleum Estate, Accra</li>
                 <li>{t("contact.officesNote")}</li>
               </ul>
             </div>
@@ -193,7 +192,6 @@ export function Contact() {
                       className="w-full px-4 py-3.5 bg-[#f5f7f5] border border-[#dce5e0] text-[#0c1a16] focus:border-[#00a878] focus:outline-none transition-colors font-sans text-sm"
                     >
                       <option>Tantra Hill</option>
-                      <option>Achimota Petroleum Estate</option>
                       <option>{t("interest.furnished1br")}</option>
                       <option>{t("interest.customBuild")}</option>
                       <option>{t("interest.investment")}</option>

@@ -34,6 +34,8 @@ export default async function CalendarPage({
   const units = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // A building that has been switched off is gone from every list and total.
+      property: { active: true },
       ...propertyWhere(actor),
     },
     include: {

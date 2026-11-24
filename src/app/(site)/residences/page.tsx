@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/site/page-hero";
-import { Properties } from "@/components/site/properties";
-import { FeaturedSpotlight } from "@/components/site/featured-spotlight";
-import { Calculator } from "@/components/site/calculator-section";
 import { LiveHomes } from "@/components/site/live-homes";
 import { COMPANY } from "@/lib/abn-data";
 
 export const metadata: Metadata = {
-  title: "Residences - Luxury Apartments in Accra",
+  title: "Our Homes - Serviced Apartments at Tantra Hill, Accra",
   description:
-    "Explore ABN Homes residences across Accra: 2 bedroom penthouse at Tantra Hill with 75-inch Smart TVs and rooftop bar, 4 bedroom ensuite at Achimota Petroleum Estate, and furnished 1 bedroom apartments. From USD $50 per night.",
+    "The homes at ABN Apartments, 8 Asiko Street, Tantra Hill: a two-bedroom penthouse, one-bedroom apartments and a studio. Live prices, book direct in under a minute.",
 };
 
 export const dynamic = "force-dynamic";
@@ -18,23 +15,20 @@ export default function ResidencesPage() {
   return (
     <main className="min-h-screen bg-[#f5f7f5]">
       <PageHero
-        title="Three addresses. One uncompromising standard."
-        subtitle="From the 2 bedroom penthouse at Tantra Hill with 75-inch Smart TVs and open rooftop bar, to the 4 bedroom ensuite at Achimota Petroleum Estate, every ABN residence is crafted for those who expect more from where they stay in Accra."
-        bgImage="/images/properties/tantra4-atrium.jpg"
+        title="One building. Three ways to stay."
+        subtitle="The two-bedroom penthouse, the one-bedroom apartments and the studio are all at ABN Apartments, 8 Asiko Street, Tantra Hill. Prices below are live: what you see is what you pay."
+        bgImage="/images/penthouse/penthouse-living-and-kitchen.jpg"
         breadcrumb="Residences"
       />
 
       <LiveHomes />
-      <Properties />
-      <FeaturedSpotlight />
-      <Calculator />
 
       {/* CTA */}
       <section className="py-20 bg-[#0c1a16] text-white text-center">
         <div className="max-w-3xl mx-auto px-5 lg:px-10">
           <h2 className="font-serif text-3xl md:text-4xl mb-4">Planning a trip to Accra?</h2>
           <p className="text-white/65 mb-8 max-w-xl mx-auto">
-            Call {COMPANY.phone} to book your stay. Locate us on 8 Asiko Street on Bolt or Google Maps. Short and long stay options available.
+            Call {COMPANY.phone} to book your stay. Locate us on 8 Asiko Street on Bolt or Google Maps, or book online in under a minute.
           </p>
           <a
             href="/contact"

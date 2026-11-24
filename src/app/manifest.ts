@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "ABN Homes Company Limited",
     short_name: "ABN Homes",
     description:
-      "Luxury apartments and homes across Accra, Ghana. Tantra Hill, Sakumono and Nii Ayi Mensah residences by ABN Homes Company Limited.",
+      "Serviced apartments at 8 Asiko Street, Tantra Hill, Accra, by ABN Homes Company Limited.",
     start_url: "/",
     display: "standalone",
     background_color: "#f5f7f5",

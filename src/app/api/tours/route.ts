@@ -6,7 +6,7 @@ const TourSchema = z.object({
   name: z.string().min(2).max(120),
   email: z.string().email(),
   phone: z.string().max(40).optional().or(z.literal("")),
-  property: z.enum(["Tantra Hill", "Sakumono Estate", "Nii Ayi Mensah"]),
+  property: z.enum(["Tantra Hill"]),
   preferredDate: z.string(), // ISO date
   partySize: z.number().int().min(1).max(20).default(2),
   virtual: z.boolean().default(false),

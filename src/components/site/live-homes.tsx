@@ -16,7 +16,8 @@ export async function LiveHomes() {
     include: {
       units: {
         where: { published: true, lettingMode: { in: ['SHORT_STAY', 'BOTH'] }, status: { notIn: ['OFF_MARKET'] } },
-        orderBy: [{ code: 'asc' }],
+        // Dearest first: the penthouse leads, as a hotel leads with its suite.
+        orderBy: [{ baseNightlyMinor: 'desc' }, { sortOrder: 'asc' }],
       },
     },
     orderBy: [{ createdAt: 'asc' }],
@@ -34,14 +35,14 @@ export async function LiveHomes() {
               Available to book now
             </p>
             <h2 className="font-serif text-3xl tracking-tight md:text-4xl">Our live collection</h2>
-            <p className="mt-2 max-w-xl text-white/60">
+            <p className="mt-2 max-w-xl text-[#2d433b]">
               Every home below is published in our booking system with live pricing — what you
               see is what is real, and booking takes you straight to checkout.
             </p>
           </div>
           <Link
             href="/book"
-            className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-medium transition hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-full border border-[#0c1a16]/25 px-5 py-2.5 text-sm font-medium text-[#0c1a16] transition hover:border-[#00a878] hover:text-[#00a878]"
           >
             Check dates &amp; prices
             <ArrowRight className="size-4" />
@@ -79,7 +80,7 @@ export async function LiveHomes() {
                   {unit.sizeSqm ? ` · ${unit.sizeSqm} m²` : ''}
                 </p>
                 <p className="mt-2 text-xs text-white/60">
-                  {unit.bedrooms} bed · {unit.bathrooms} bath · sleeps {unit.maxGuests}
+                  {unit.type === 'STUDIO' ? 'Studio' : `${unit.bedrooms} bed`} · {unit.bathrooms} bath · sleeps {unit.maxGuests}
                 </p>
                 <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3.5">
                   {unit.baseNightlyMinor ? (

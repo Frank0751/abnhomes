@@ -16,41 +16,15 @@ const locations: Location[] = [
   {
     name: "Tantra Hill",
     area: "Greater Accra",
-    image: "/images/abn-real/abn-ig-11-hd.jpg",
+    image: "/images/building/abn-apartments-tantra-hill.jpg",
     description:
-      "Home to our flagship ABN Apartments at 8 Asiko Street. Tantra Hill is a rapidly growing residential enclave that blends quiet suburban calm with fast access to the airport, the city centre and the Independence Arch corridor. Locate us on Bolt or Google Maps.",
+      "ABN Apartments is at 8 Asiko Street, Tantra Hill: the penthouse, the one-bedroom apartments and the studio are all in this one building. Search for ABN Apartments on Google Maps or Bolt and it brings you to the gate.",
     highlights: [
-      { icon: Plane, label: "7.5 mi to Kotoka Intl Airport" },
-      { icon: Landmark, label: "8 mi to Kwame Nkrumah Park" },
-      { icon: Building, label: "8.7 mi to Independence Arch" },
+      { icon: MapPin, label: "8 Asiko Street, Tantra Hill, Accra" },
+      { icon: Building, label: "About 27 minutes from Osu by car" },
+      { icon: Landmark, label: "On Google Maps and Bolt as ABN Apartments" },
     ],
-    distance: "Central Accra in 25 minutes",
-  },
-  {
-    name: "Achimota Petroleum Estate",
-    area: "Accra",
-    image: "/images/abn-real/abn-ig-5-hd.jpg",
-    description:
-      "Our 4 bedroom ensuite residence with 2 halls and a spacious compound in a serene environment. Achimota Petroleum Estate is an established residential area popular with families seeking space, security and easy access to central Accra.",
-    highlights: [
-      { icon: Building, label: "4 bedrooms ensuite with 2 halls" },
-      { icon: MapPin, label: "Spacious compound, serene environment" },
-      { icon: Landmark, label: "Close to Achimota Mall" },
-    ],
-    distance: "Central Accra in 20 minutes",
-  },
-  {
-    name: "Accra Wide",
-    area: "Greater Accra Region",
-    image: "/images/abn-real/abn-ig-2-hd.jpg",
-    description:
-      "ABN Homes Company Limited operates across Accra, with furnished apartments and rental properties available for short and long stays. Whether you are visiting for business, a holiday, or relocating, we have a home for you. Call 054 170 4048 to book.",
-    highlights: [
-      { icon: Building, label: "Short and long stay options" },
-      { icon: MapPin, label: "Furnished apartments available" },
-      { icon: Landmark, label: "24/7 security at every property" },
-    ],
-    distance: "Available across Greater Accra",
+    distance: "About 27 minutes from Osu",
   },
 ];
 
@@ -69,19 +43,26 @@ export function Locations() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0c1a16] leading-[1.05] tracking-[-0.02em] mb-6">
-              Three Accra neighbourhoods, one address you will love.
+              Find us in Tantra Hill.
             </h2>
             <p className="text-[#2d433b] text-base md:text-lg leading-relaxed">
-              We choose our locations carefully, prioritising neighbourhoods
-              with strong infrastructure, growing demand and a clear sense of
-              community. Each ABN address is positioned to make everyday Accra
-              life easier and more rewarding.
+              ABN Apartments is one building at 8 Asiko Street. Open it in
+              Google Maps for directions from wherever you are.
             </p>
+            <a
+              href="https://maps.app.goo.gl/SmhD4Tbw8niTKvJT7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex items-center gap-2 bg-[#0c1a16] px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition-colors hover:bg-[#00a878]"
+            >
+              <MapPin className="size-4" />
+              Open in Google Maps
+            </a>
           </motion.div>
         </div>
 
         {/* Locations grid */}
-        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+        <div className="mx-auto grid max-w-xl gap-6 lg:gap-8">
           {locations.map((location, i) => (
             <motion.div
               key={location.name}

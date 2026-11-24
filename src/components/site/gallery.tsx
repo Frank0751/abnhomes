@@ -11,25 +11,32 @@ type Shot = {
   span: string;
 };
 
+// Every photo here is of ABN Apartments at 8 Asiko Street: the building, the
+// penthouse, the studio and the apartments. Photos of anywhere else do not
+// belong on this page.
 const shots: Shot[] = [
-  { src: "/images/abn-real/abn-ig-11-hd.jpg", title: "ABN Apartments Exterior", category: "Exterior", span: "lg:col-span-2 lg:row-span-2" },
-  { src: "/images/abn-real/abn-ig-1-hd.jpg", title: "Penthouse Open Plan Living", category: "Living", span: "" },
+  { src: "/images/building/abn-apartments-tantra-hill.jpg", title: "ABN Apartments, 8 Asiko Street", category: "Exterior", span: "lg:col-span-2 lg:row-span-2" },
+  { src: "/images/penthouse/penthouse-living-and-kitchen.jpg", title: "Penthouse Living and Kitchen", category: "Living", span: "" },
+  { src: "/images/penthouse/penthouse-master-bedroom.jpg", title: "Penthouse Master Bedroom", category: "Bedroom", span: "" },
+  { src: "/images/penthouse/penthouse-kitchen.jpg", title: "Penthouse Kitchen", category: "Kitchen", span: "" },
+  { src: "/images/penthouse/penthouse-hall.jpg", title: "Penthouse Hall", category: "Living", span: "lg:col-span-2" },
+  { src: "/images/penthouse/penthouse-master-washroom.jpg", title: "Penthouse Master Washroom", category: "Bath", span: "" },
+  { src: "/images/studio/studio-bed-and-lounge.jpg", title: "The Studio", category: "Bedroom", span: "" },
+  { src: "/images/penthouse/penthouse-second-bedroom.jpg", title: "Penthouse Second Bedroom", category: "Bedroom", span: "" },
+  { src: "/images/penthouse/penthouse-master-bedroom-balcony.jpg", title: "Master Bedroom Balcony", category: "Bedroom", span: "" },
+  { src: "/images/penthouse/penthouse-second-washroom.jpg", title: "Penthouse Second Washroom", category: "Bath", span: "" },
+  { src: "/images/abn-real/abn-ig-11-hd.jpg", title: "ABN Apartments Exterior", category: "Exterior", span: "lg:col-span-2" },
+  { src: "/images/penthouse/penthouse-visitors-washroom.jpg", title: "Visitors' Washroom", category: "Bath", span: "" },
+  { src: "/images/abn-real/abn-ig-8-hd.jpg", title: "Chandelier Living Room", category: "Living", span: "" },
   { src: "/images/abn-real/abn-ig-6-hd.jpg", title: "Cozy Bedroom", category: "Bedroom", span: "" },
   { src: "/images/abn-real/abn-ig-7-hd.jpg", title: "Open Plan Kitchen", category: "Kitchen", span: "" },
   { src: "/images/abn-real/abn-ig-2-hd.jpg", title: "Building Facade with Parking", category: "Exterior", span: "lg:col-span-2" },
-  { src: "/images/abn-real/abn-ig-4-hd.jpg", title: "Ensuite Bathroom", category: "Bath", span: "" },
-  { src: "/images/abn-real/abn-ig-5-hd.jpg", title: "Master Ensuite Bedroom", category: "Bedroom", span: "" },
-  { src: "/images/abn-real/abn-ig-8-hd.jpg", title: "Chandelier Living Room", category: "Living", span: "" },
-  { src: "/images/abn-real/abn-ig-3-hd.jpg", title: "Entrance and Arrival", category: "Exterior", span: "lg:col-span-2" },
+  { src: "/images/abn-real/abn-ig-1-hd.jpg", title: "Open Plan Living", category: "Living", span: "" },
   { src: "/images/abn-real/abn-ig-10-hd.jpg", title: "Modern Kitchen Interior", category: "Kitchen", span: "" },
   { src: "/images/abn-real/abn-ig-12-hd.jpg", title: "Furnished Lounge", category: "Living", span: "" },
   { src: "/images/abn-real/abn-ig-9-hd.jpg", title: "Bright Bedroom Suite", category: "Bedroom", span: "" },
-  { src: "/images/properties/tantra4-living.jpg", title: "4 Bedroom Chandelier Lounge", category: "Living", span: "lg:col-span-2" },
-  { src: "/images/properties/tantra4-atrium.jpg", title: "Double-Height Atrium", category: "Living", span: "" },
-  { src: "/images/properties/tantra4-bedroom.jpg", title: "En-suite Bedroom, Tantra Hill", category: "Bedroom", span: "" },
-  { src: "/images/properties/semi3-bath.jpg", title: "Marble En-suite Bathroom", category: "Bath", span: "" },
-  { src: "/images/properties/semi3-facade.jpg", title: "Semi Furnished Facade", category: "Exterior", span: "" },
-  { src: "/images/properties/tantra4-compound.jpg", title: "Paved Compound at Dusk", category: "Exterior", span: "lg:col-span-2" },
+  { src: "/images/abn-real/abn-ig-3-hd.jpg", title: "Entrance and Arrival", category: "Exterior", span: "lg:col-span-2" },
+  { src: "/images/abn-real/abn-ig-4-hd.jpg", title: "Ensuite Bathroom", category: "Bath", span: "" },
 ];
 
 const categories = ["All", "Exterior", "Living", "Bedroom", "Kitchen", "Bath"] as const;

@@ -48,6 +48,8 @@ export async function portfolioReport(args: {
   const units = await db.unit.findMany({
     where: {
       lettingMode: { in: ['SHORT_STAY', 'BOTH'] },
+      // A building that has been switched off is gone from every list and total.
+      property: { active: true },
       // The rooftop is shared space, not a room. Counting it as an empty
       // unit would understate the building by a seventh, for ever.
       isAmenity: false,

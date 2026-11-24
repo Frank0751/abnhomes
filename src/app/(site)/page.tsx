@@ -6,6 +6,10 @@ import { StayRooms } from "@/components/site/stay-rooms";
  * with photos second, a human on WhatsApp third. Everything longer — the
  * story, the amenities, the gallery — lives on its own page.
  */
+// Built ahead and refreshed every five minutes, and at once when a room,
+// rate or photo is changed in the admin. A visit never waits on the database.
+export const revalidate = 300;
+
 export default function Home() {
   return (
     <main className="relative min-h-screen bg-[#f5f7f5]">
