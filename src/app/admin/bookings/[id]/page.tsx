@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requirePermission } from '@/lib/session'
-import { hasPropertyAccess } from '@/lib/rbac'
+import { can, hasPropertyAccess } from '@/lib/rbac'
 import { db } from '@/lib/db'
 import { partyStatement } from '@/lib/core/ledger'
 import { formatDate, formatDateTime } from '@/lib/core/dates'
@@ -16,6 +16,7 @@ import {
 } from '@/components/admin/ui'
 import { BookingActions } from './booking-actions'
 import { PortalAccessCard } from './portal-access-card'
+import { ChangeBookingDates } from './change-dates'
 import { ArrowLeft } from 'lucide-react'
 
 export default async function BookingDetail({
@@ -72,6 +73,15 @@ export default async function BookingDetail({
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="space-y-6">
           <Panel title="Stay">
+            {reservation.status === 'CONFIRMED' && can(actor, 'bookings:write') && (
+              <div className="flex justify-center border-b border-black/[0.06] px-4 py-3">
+                <ChangeBookingDates
+                  reservationId={reservation.id}
+                  checkIn={reservation.checkIn.toISOString().slice(0, 10)}
+                  checkOut={reservation.checkOut.toISOString().slice(0, 10)}
+                />
+              </div>
+            )}
             <dl className="grid gap-x-6 gap-y-4 p-4 sm:grid-cols-3">
               <Field label="Arrives" value={formatDate(reservation.checkIn)} />
               <Field label="Leaves" value={formatDate(reservation.checkOut)} />

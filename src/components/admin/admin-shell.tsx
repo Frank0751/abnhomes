@@ -209,6 +209,13 @@ export function AdminShell({
             <p className="text-[13px] font-medium leading-tight">{user.name}</p>
             <p className="text-[11px] text-muted-foreground">{ROLE_LABELS[user.role]}</p>
             <p className="mt-0.5 text-[11px] text-muted-foreground">{user.scopeLabel}</p>
+            <Link
+              href="/admin/account"
+              onClick={() => setOpen(false)}
+              className="mt-2 inline-block text-[12px] text-muted-foreground underline underline-offset-2 hover:text-foreground"
+            >
+              Change password
+            </Link>
             <Button
               variant="ghost"
               size="sm"

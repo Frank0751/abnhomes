@@ -8,6 +8,7 @@ import {
   generatePreventiveTickets,
 } from '@/lib/short-stay/sweeper'
 import { revealExpiredWindows } from '@/lib/marketplace/reviews'
+import { sendPaymentReminders } from '@/lib/short-stay/payment-reminders'
 
 export const maxDuration = 60
 
@@ -26,6 +27,7 @@ export async function GET(request: NextRequest) {
   }
 
   const expiredReservations = await expirePendingReservations()
+  const paymentReminders = await sendPaymentReminders()
   const checkInReminders = await sendCheckInReminders()
   const checkoutReminders = await sendCheckoutReminders()
   const reviewRequests = await sendReviewRequests()
@@ -37,6 +39,7 @@ export async function GET(request: NextRequest) {
     ok: true,
     outbox,
     expiredReservations,
+    paymentReminders,
     checkInReminders,
     checkoutReminders,
     reviewRequests,

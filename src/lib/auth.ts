@@ -38,6 +38,8 @@ declare module 'next-auth' {
   }
 }
 
+const LOCKOUT_ATTEMPTS = 5
+const LOCKOUT_MINUTES = 15
 const OTP_TTL_MINUTES = 10
 const OTP_MAX_ATTEMPTS = 5
 
@@ -62,8 +64,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         })
         if (!user?.passwordHash || !user.active || user.suspendedAt) return null
 
+        // Five wrong passwords in fifteen minutes pause sign-in for that
+        // account, right or wrong, until the window passes. Guessing a
+        // password at five tries a quarter of an hour is not worth anyone's
+        // time. Counted from the audit log, so there is nothing to reset.
+        const windowStart = new Date(Date.now() - LOCKOUT_MINUTES * 60_000)
+        const failures = await db.auditEvent.count({
+          where: { action: 'auth.failed', entityType: 'User', entityId: user.id, at: { gt: windowStart } },
+        })
+        if (failures >= LOCKOUT_ATTEMPTS) return null
+
         const valid = await bcrypt.compare(password, user.passwordHash)
-        if (!valid) return null
+        if (!valid) {
+          await db.auditEvent
+            .create({ data: { action: 'auth.failed', entityType: 'User', entityId: user.id, actorLabel: 'Sign-in form' } })
+            .catch(() => undefined)
+          return null
+        }
 
         await db.user.update({
           where: { id: user.id },
