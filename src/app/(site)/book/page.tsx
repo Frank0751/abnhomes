@@ -251,6 +251,7 @@ export default async function BookPage({
                   return (
                     <a
                       key={a}
+                      rel="nofollow"
                       href={`/book?${next.toString()}`}
                       className={`rounded-full border px-3 py-1.5 text-xs transition ${
                         active
@@ -267,6 +268,7 @@ export default async function BookPage({
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <a
+                rel="nofollow"
                 href={filters.instantOnly ? relaxed({ instant: null }) : relaxed({ instant: '1' })}
                 className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
                   filters.instantOnly
@@ -277,7 +279,7 @@ export default async function BookPage({
                 <Zap className="size-3.5" />
                 Instant book only
               </a>
-              <a href={`/book?checkIn=${toISODate(checkIn)}&checkOut=${toISODate(checkOut)}&guests=${guests}`} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+              <a rel="nofollow" href={`/book?checkIn=${toISODate(checkIn)}&checkOut=${toISODate(checkOut)}&guests=${guests}`} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
                 Clear all filters
               </a>
               <button className="rounded-lg bg-[#0c1a16] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#1a2233]">
